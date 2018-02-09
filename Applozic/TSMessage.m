@@ -363,8 +363,6 @@ __weak static UIViewController *_defaultViewController;
      } completion:^(BOOL finished)
      {
          [currentView removeFromSuperview];
-             [[[[UIApplication sharedApplication] delegate] window] setWindowLevel:UIWindowLevelNormal];
-         
          if ([self.messages count] > 0)
          {
              [self.messages removeObjectAtIndex:0];
