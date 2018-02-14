@@ -43,4 +43,9 @@
 
 -(void)getMessageListForUser:(MessageListRequest *)messageListRequest withOpenGroup:(BOOL)isOpenGroup withCompletion:(void (^)(NSMutableArray *, NSError *, NSMutableArray *))completion;
 
+-(void)UpdateMessageMetaData:(NSString*) messageKey withMessageMetaData : (NSMutableDictionary *) metadata WithCompletionHandler:(void(^)(id theJson, NSError *theError))completion;
+
+-(void) getLatestMessageForUser:(NSString *)deviceKeyString  withMetaDataSync :(BOOL) isMetaDataUpdate withCompletion:(void (^)( ALSyncMessageFeed *, NSError *))completion;
+
+    
 @end

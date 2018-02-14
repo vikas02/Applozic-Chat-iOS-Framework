@@ -22,6 +22,8 @@
 #define ALMESSAGE_CHANNEL_NOTIFICATION 10
 #define ALMESSAGE_CONTENT_CUSTOM 101
 #define ALMESSAGE_CONTENT_HIDDEN 11
+#define ALMESSAGE_RICH_MESSAGING 13
+
 #define CATEGORY_PUSHNNOTIFICATION @"PUSHNOTIFICATION"
 #define CATEGORY_HIDDEN @"HIDDEN"
 #define AL_MESSAGE_REPLY_KEY @"AL_REPLY"
@@ -106,6 +108,8 @@ typedef enum {
 -(NSString *)getCreatedAtTime:(BOOL)today;
 
 -(id)initWithDictonary:(NSDictionary*)messageDictonary;
+-(id)initWithDictonaryForMessageMetaDataUpdate:(NSDictionary*)messageDictonary;
+
 
 -(BOOL)isDownloadRequired;
 -(BOOL)isUploadRequire;

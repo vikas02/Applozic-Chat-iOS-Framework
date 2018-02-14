@@ -259,11 +259,18 @@
     }
 }
 
--(void) getLatestMessageForUser:(NSString *)deviceKeyString withCompletion:(void (^)( ALSyncMessageFeed *, NSError *))completion
+-(void) getLatestMessageForUser:(NSString *)deviceKeyString  withMetaDataSync :(BOOL) isMetaDataUpdate withCompletion:(void (^)( ALSyncMessageFeed *, NSError *))completion
 {
     //@synchronized(self) {
-        
-    NSString * lastSyncTime = [NSString stringWithFormat:@"%@", [ALUserDefaultsHandler getLastSyncTime]];
+    
+    if(!deviceKeyString){
+        return;
+    }
+    
+    NSString * theUrlString = [NSString stringWithFormat:@"%@/rest/ws/message/sync",KBASE_URL];
+    
+    NSString * lastSyncTime ;
+    NSString * theParamString;
     
     if(lastSyncTime == NULL)
     {
@@ -271,8 +278,14 @@
     }
     
     NSLog(@"LAST SYNC TIME IN CALL :  %@", lastSyncTime);
-    NSString * theUrlString = [NSString stringWithFormat:@"%@/rest/ws/message/sync",KBASE_URL];
-    NSString * theParamString = [NSString stringWithFormat:@"lastSyncTime=%@",lastSyncTime];
+    if(isMetaDataUpdate){
+        lastSyncTime =  [NSString stringWithFormat:@"%@", [ALUserDefaultsHandler getLastSyncTimeForMetaData]];
+        theParamString =  [NSString stringWithFormat:@"lastSyncTime=%@&metadataUpdate=true",lastSyncTime];
+    }else{
+        lastSyncTime =  [NSString stringWithFormat:@"%@", [ALUserDefaultsHandler getLastSyncTime]];
+        theParamString =  [NSString stringWithFormat:@"lastSyncTime=%@",lastSyncTime];
+    }
+    
     
     NSMutableURLRequest * theRequest = [ALRequestHandler createGETRequestWithUrlString:theUrlString paramString:theParamString];
     
@@ -290,10 +303,19 @@
         NSLog(@"LATEST_MESSAGE_JSON: %@", (NSString *)theJson);
         completion(syncResponse,nil);
     }];
-        
+    
     //}
     
 }
+-(void) getLatestMessageForUser:(NSString *)deviceKeyString withCompletion:(void (^)( ALSyncMessageFeed *, NSError *))completion
+{
+    
+    [self getLatestMessageForUser:deviceKeyString withMetaDataSync:NO withCompletion:^(ALSyncMessageFeed *syncResponse, NSError *nsError) {
+        completion(syncResponse,nsError);
+    }];
+    
+}
+
 
 -(void)deleteMessage:(NSString *) keyString andContactId:(NSString *)contactId withCompletion:(void (^)(NSString *, NSError *))completion
 {
@@ -382,6 +404,31 @@
         }
     }];
 
+}
+
+-(void)UpdateMessageMetaData:(NSString*) messageKey withMessageMetaData : (NSMutableDictionary *) metadata WithCompletionHandler:(void(^)(id theJson, NSError *theError))completion
+{
+    
+    NSString * theUrlString = [NSString stringWithFormat:@"%@/rest/ws/message/update/metadata",KBASE_URL];
+
+    NSMutableDictionary *messageMetadata = [NSMutableDictionary new];
+    
+    [messageMetadata setObject:messageKey forKey:@"key"];
+    [messageMetadata setObject:metadata forKey:@"metadata"];
+    
+    NSError *error;
+    NSData *postdata = [NSJSONSerialization dataWithJSONObject:messageMetadata options:0 error:&error];
+    NSString *theParamString = [[NSString alloc] initWithData:postdata encoding: NSUTF8StringEncoding];
+    NSMutableURLRequest * theRequest = [ALRequestHandler createPOSTRequestWithUrlString:theUrlString paramString:theParamString];
+    
+    [ALResponseHandler processRequest:theRequest andTag:@"UPDATE MESSAGE META DATA" WithCompletionHandler:^(id theJson, NSError *theError) {
+        
+        if (theError) {
+            completion(nil,theError);
+            return;
+        }
+        completion(theJson,nil);
+    }];
 }
 
 @end

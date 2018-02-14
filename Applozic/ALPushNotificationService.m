@@ -64,7 +64,7 @@
         NSError *error = nil;
         NSDictionary *theMessageDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
         NSString *notificationMsg = [theMessageDict valueForKey:@"message"];
-       
+        
         //CHECK for any special messages...
         if ([self processMetaData:theMessageDict withAlert:alertValue withUpdateUI:updateUI])
         {
@@ -156,9 +156,9 @@
             ALMessageDBService* messageDBService = [[ALMessageDBService alloc] init];
             [messageDBService deleteMessageByKey: notificationMsg];
             /*
-                NSString * messageKey = [[theMessageDict valueForKey:@"message"] componentsSeparatedByString:@","][0];
-                [[NSNotificationCenter defaultCenter] postNotificationName:@"NOTIFY_MESSAGE_DELETED" object:messageKey];
-            */
+             NSString * messageKey = [[theMessageDict valueForKey:@"message"] componentsSeparatedByString:@","][0];
+             [[NSNotificationCenter defaultCenter] postNotificationName:@"NOTIFY_MESSAGE_DELETED" object:messageKey];
+             */
         }
         else if ([type isEqualToString:@"APPLOZIC_10"]){
             
@@ -199,7 +199,7 @@
             NSString * conversationID = parts[1];
             
             [self.alSyncCallService updateTableAtConversationDeleteForContact:contactID
-                                                                ConversationID:conversationID
+                                                               ConversationID:conversationID
                                                                    ChannelKey:nil];
         }
         else if ([type isEqualToString:@"APPLOZIC_23"] || [type isEqualToString:@"GROUP_CONVERSATION_DELETED"]){
@@ -210,7 +210,7 @@
                                                                    ChannelKey:groupID];
         }
         else if ([type isEqualToString:@"APPLOZIC_16"]){
-//            NSLog(@"BLOCKED / BLOCKED BY");
+            //            NSLog(@"BLOCKED / BLOCKED BY");
             if([self processUserBlockNotification:theMessageDict andUserBlockFlag:YES])
             {
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"USER_BLOCK_NOTIFICATION" object:nil];
@@ -218,7 +218,7 @@
         }
         else if ([type isEqualToString:@"APPLOZIC_17"])
         {
-//            NSLog(@"UNBLOCKED / UNBLOCKED BY");
+            //            NSLog(@"UNBLOCKED / UNBLOCKED BY");
             if([self processUserBlockNotification:theMessageDict andUserBlockFlag:NO])
             {
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"USER_UNBLOCK_NOTIFICATION" object:nil];
@@ -236,11 +236,54 @@
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"USER_DETAILS_UPDATE_CALL" object:userId];
             }
         }
+        else if( [type isEqualToString:@"APPLOZIC_33"]){
+            
+            NSString* keyString;
+            NSString* deviceKey;
+            @try
+            {
+                
+                NSDictionary * message = [theMessageDict objectForKey:@"message"];
+                ALMessage *alMessage = [[ALMessage alloc] initWithDictonaryForMessageMetaDataUpdate:message];
+                keyString = alMessage.key;
+                deviceKey = alMessage.deviceKey;
+                
+                
+            }
+            @catch (NSException * exp) {
+                NSLog(@"Exception in subscribing channel :: %@", exp.description);
+                @try
+                {
+                    NSString * messageKey = [theMessageDict valueForKey:@"message"];
+                    if(messageKey){
+                        ALMessageDBService * messagedbService = [[ALMessageDBService alloc]init];
+                        DB_Message * dbMessage  = (DB_Message *)[messagedbService getMessageByKey:@"key" value:messageKey];
+                        if (dbMessage != nil) {
+                            deviceKey = dbMessage.deviceKey;
+                        }
+                    }
+                    
+                }    @catch (NSException * exp) {
+                    NSLog(@"Exception in subscribing channel :: %@", exp.description);
+                }
+            
+                
+            }
+            
+            if (deviceKey != nil && [deviceKey isEqualToString:[ALUserDefaultsHandler getDeviceKeyString]]) {
+                return TRUE;
+            }
+            [ALMessageService syncMessageMetaData:[ALUserDefaultsHandler getDeviceKeyString] withCompletion:^(NSMutableArray *message, NSError *error) {
+                
+                NSLog(@"Success");
+                
+            }];
+        }
         else
         {
             NSLog(@"APNs NOTIFICATION \"%@\" IS NOT HANDLED",type);
         }
-
+        
         return TRUE;
     }
     
@@ -260,14 +303,14 @@
         NSLog(@"ASSISTING : OUR_VIEW_IS_IN_TOP");
         // Message View Controller
         [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotification"
-                                                             object:notificationMsg
-                                                           userInfo:dict];
+                                                            object:notificationMsg
+                                                          userInfo:dict];
         //Chat View Controller
         [[NSNotificationCenter defaultCenter] postNotificationName:@"notificationIndividualChat"
-                                                             object:notificationMsg
-                                                           userInfo:dict];
+                                                            object:notificationMsg
+                                                          userInfo:dict];
     }
-
+    
 }
 
 -(BOOL)processMetaData:(NSDictionary*)dict withAlert:alertValue withUpdateUI:(NSNumber *)updateUI
@@ -304,13 +347,13 @@
 
 -(void)notificationArrivedToApplication:(UIApplication*)application withDictionary:(NSDictionary *)userInfo
 {
-     if(application.applicationState == UIApplicationStateInactive)
-     {
+    if(application.applicationState == UIApplicationStateInactive)
+    {
         /* 
-        # App is transitioning from background to foreground (user taps notification), do what you need when user taps here!
+         # App is transitioning from background to foreground (user taps notification), do what you need when user taps here!
          
-        # SYNC AND PUSH DETAIL VIEW CONTROLLER
-        NSLog(@"APP_STATE_INACTIVE APP_DELEGATE");
+         # SYNC AND PUSH DETAIL VIEW CONTROLLER
+         NSLog(@"APP_STATE_INACTIVE APP_DELEGATE");
          */
         [self processPushNotification:userInfo updateUI:[NSNumber numberWithInt:APP_STATE_INACTIVE]];
     }
@@ -318,7 +361,7 @@
     {
         /*
          # App is currently active, can update badges count here
-       
+         
          # SYNC AND PUSH DETAIL VIEW CONTROLLER
          NSLog(@"APP_STATE_ACTIVE APP_DELEGATE");
          */
@@ -327,17 +370,17 @@
     else if(application.applicationState == UIApplicationStateBackground)
     {
         /* # App is in background, if content-available key of your notification is set to 1, poll to your backend to retrieve data and update your interface here
-        
-        # SYNC ONLY
-        NSLog(@"APP_STATE_BACKGROUND APP_DELEGATE");
-        */
-         [self processPushNotification:userInfo updateUI:[NSNumber numberWithInt:APP_STATE_BACKGROUND]];
+         
+         # SYNC ONLY
+         NSLog(@"APP_STATE_BACKGROUND APP_DELEGATE");
+         */
+        [self processPushNotification:userInfo updateUI:[NSNumber numberWithInt:APP_STATE_BACKGROUND]];
     }
 }
 
 +(void)applicationEntersForeground
 {
-   [[NSNotificationCenter defaultCenter] postNotificationName:@"appCameInForeground" object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"appCameInForeground" object:nil];
 }
 
 +(void)userSync
@@ -366,3 +409,4 @@
     return false;
 }
 @end
+

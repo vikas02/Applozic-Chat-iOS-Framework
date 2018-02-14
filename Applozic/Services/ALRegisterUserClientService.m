@@ -141,9 +141,12 @@
             NSLog(@"..");
         }
         
+        [ALUserDefaultsHandler setLastSyncTimeForMetaData:[NSNumber numberWithDouble:[response.currentTimeStamp doubleValue]]];
+
         completion(response,nil);
         
         [ALUserDefaultsHandler setLastSyncTime:[NSNumber numberWithDouble:[response.currentTimeStamp doubleValue]]];
+
         [ALUserDefaultsHandler setLastSyncChannelTime:(NSNumber *)response.currentTimeStamp];
         [self connect];
         ALMessageDBService * dbService = [[ALMessageDBService alloc] init];

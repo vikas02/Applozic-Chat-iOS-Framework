@@ -17,6 +17,7 @@
 #import "ALMessageInfoResponse.h"
 
 #define NEW_MESSAGE_NOTIFICATION @"newMessageNotification"
+#define MESSAGE_META_DATA_UPDATE @"messageMetaDataUpdateNotification"
 #define CONVERSATION_CALL_COMPLETED @"conversationCallCompleted"
 
 @interface ALMessageService : NSObject <NSURLConnectionDataDelegate>
@@ -80,6 +81,8 @@ withAttachmentAtLocation:(NSString *)attachmentLocalPath
 +(void)addBroadcastMessageToDB:(ALMessage *)alMessage;
 +(void)addOpenGroupMessage:(ALMessage*)alMessage;
 
+-(void)UpdateMessageMetaData:(NSString*) messageKey withMessageMetaData : (NSMutableDictionary *) metadata WithCompletionHandler:(void(^)(ALAPIResponse* theJson, NSError *theError))completion;
 
++(void) syncMessageMetaData:(NSString *)deviceKeyString withCompletion:(void (^)( NSMutableArray *, NSError *))completion;
 
 @end

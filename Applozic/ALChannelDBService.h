@@ -97,5 +97,10 @@
 -(NSMutableArray *)getListOfAllUsersInChannelByNameForContactsGroup:(NSString *)channelName;
 
 -(DB_CHANNEL *)getContactsGroupChannelByName:(NSString *)channelName;
+-(NSMutableArray *)getListOfAllUsersInChannel:(NSNumber *)key isExcludeLoggedInUser:(BOOL)isExclude;
+-(NSString *)stringFromChannelUserList:(NSNumber *)key paymentMessageTitle:(BOOL) isPaymentMessage;
+-(NSString *)stringFromChannelUserMetaData:(NSMutableDictionary *)metaData paymentMessageTitle:(BOOL) addloginUser;
+
+
 
 @end

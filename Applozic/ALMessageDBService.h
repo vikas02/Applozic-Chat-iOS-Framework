@@ -90,5 +90,9 @@
 
 -(void) updateMessageSentDetails:(NSString*)messageKeyString withCreatedAtTime : (NSNumber *) createdAtTime withDbMessage:(DB_Message *) dbMessage ;
 
+-(void) updateMessageMetaData:(NSString*)messageKeyString withMetadata:(NSMutableDictionary*) metadata ;
+
+-(ALMessage *) getMessage:(NSString *)key value :(NSString*) value;
+
 
 @end

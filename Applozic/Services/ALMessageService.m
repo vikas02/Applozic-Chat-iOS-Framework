@@ -152,7 +152,9 @@ static ALMessageClientService *alMsgClientService;
                        ALContactService *contactService = [ALContactService new];
                        NSMutableArray * userNotPresentIds = [NSMutableArray new];
                       
-                       for(ALMessage* msg  in messages){
+                       NSMutableArray * hiddenMsgFilteredArray = [[NSMutableArray alloc] initWithArray:messages];
+
+                       for(ALMessage* msg  in hiddenMsgFilteredArray){
                            
                            NSString* contactId = msg.to;
                            
@@ -160,7 +162,13 @@ static ALMessageClientService *alMsgClientService;
                                [userNotPresentIds addObject:contactId];
                            }
                            
+                           if([msg isHiddenMessage] && ![msg isVOIPNotificationMessage])
+                           {
+                               [messages removeObject:msg];
+                           }
+                           
                        }
+                    
                        
                        if(userNotPresentIds.count>0)
                        {
@@ -363,6 +371,60 @@ withAttachmentAtLocation:(NSString *)attachmentLocalPath
     }];
 
 }
+
+
++(void) syncMessageMetaData:(NSString *)deviceKeyString withCompletion:(void (^)( NSMutableArray *, NSError *))completion
+{
+    
+    if(!alMsgClientService)
+    {
+        alMsgClientService = [[ALMessageClientService alloc] init];
+    }
+    
+    @synchronized(alMsgClientService) {
+        
+        [alMsgClientService getLatestMessageForUser:deviceKeyString withMetaDataSync:YES withCompletion:^(ALSyncMessageFeed * syncResponse , NSError *error) {
+            NSMutableArray *messageArray = nil;
+            
+            if(!error)
+            {
+                
+                if(syncResponse.messagesList.count > 0)
+                {
+                    messageArray = [[NSMutableArray alloc] init];
+                    
+                    ALMessageDBService *messageDatabase  = [[ALMessageDBService alloc]init];
+                    
+                    for(ALMessage * message in syncResponse.messagesList)
+                    {
+                        
+                        [messageDatabase updateMessageMetaData:message.key withMetadata:message.metadata];
+                        [[NSNotificationCenter defaultCenter] postNotificationName:MESSAGE_META_DATA_UPDATE object:message userInfo:nil];
+                    }
+                    
+                    completion(syncResponse.messagesList,error);
+                    
+                }else
+                {
+                    completion(syncResponse.messagesList,error);
+                }
+                
+                [ALUserDefaultsHandler setLastSyncTimeForMetaData:syncResponse.lastSyncTime];
+                
+            }
+            else
+            {
+                completion(messageArray,error);
+            }
+            
+        }];
+    }
+    
+}
+
+
+
+
 +(void) getLatestMessageForUser:(NSString *)deviceKeyString withCompletion:(void (^)( NSMutableArray *, NSError *))completion
 {
     
@@ -943,6 +1005,24 @@ totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInte
         }];
         
     }
+}
+
+-(void)UpdateMessageMetaData:(NSString*) messageKey withMessageMetaData : (NSMutableDictionary *) metadata WithCompletionHandler:(void(^)(ALAPIResponse* theJson, NSError *theError))completion{
+    
+    
+    ALMessageClientService *messageservice = [[ALMessageClientService alloc] init];
+    [messageservice UpdateMessageMetaData:messageKey withMessageMetaData:metadata WithCompletionHandler:^(id theJson, NSError *theError) {
+        ALAPIResponse * alAPIResponse;
+
+        if(!theError){
+            ALMessageDBService *messagedb = [[ALMessageDBService alloc] init];
+            [messagedb updateMessageMetaData:messageKey withMetadata: metadata];
+            alAPIResponse = [[ALAPIResponse alloc] initWithJSONString:theJson];
+            
+        }
+        completion(alAPIResponse,theError);
+    }];
+    
 }
 
 

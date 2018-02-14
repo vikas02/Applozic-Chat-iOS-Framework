@@ -41,6 +41,8 @@
             
             [messageArray addObject:theMessage];
             
+        }else if(![theMessage isPushNotificationMessage] && theMessage.metadata != nil){
+            [self updateMessageMetaData:theMessage.key withMetadata:theMessage.metadata];
         }
     }
     NSError * error;
@@ -930,5 +932,42 @@ FETCH LATEST MESSSAGE FOR SUB GROUPS
             [theDBHandler.managedObjectContext save:nil];
 
 }
+
+
+-(void) updateMessageMetaData:(NSString*)messageKeyString withMetadata:(NSMutableDictionary*) metadata {
+    
+    
+    ALDBHandler * dbHandler = [ALDBHandler sharedInstance];
+    
+    DB_Message * dbMessage = (DB_Message *)[self getMessageByKey:@"key" value:messageKeyString];
+    
+    dbMessage.metadata = metadata.description;
+    
+    if(metadata != nil && [metadata objectForKey:@"hiddenStatus"] != nil){
+        dbMessage.msgHidden = [NSNumber numberWithBool: [[metadata objectForKey:@"hiddenStatus"] isEqualToString:@"true"]];
+    }
+    
+    
+    NSLog(@"data updating in db %@",metadata.description);
+    NSError *Error = nil;
+    
+    BOOL success = [dbHandler.managedObjectContext save:&Error];
+    
+    if (!success) {
+        NSLog(@"Unable to save meta data .");
+        NSLog(@"%@, %@", Error, Error.localizedDescription);
+    }
+}
+
+-(ALMessage *) getMessage:(NSString *)key value :(NSString*) value{
+
+    if(!key || !value){
+        return nil;
+    }
+    
+    DB_Message * dbMessage = (DB_Message *)[self getMessageByKey:key value:value];
+    return [self createMessageEntity:dbMessage];
+}
+
 
 @end

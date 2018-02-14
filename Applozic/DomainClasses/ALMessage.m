@@ -40,6 +40,12 @@
     return self;
 }
 
+-(id)initWithDictonaryForMessageMetaDataUpdate:(NSDictionary *)messageDictonary
+{
+    [self parseMessage:messageDictonary];
+    return self;
+}
+
 -(void)parseMessage:(id) messageJson
 {
     
@@ -157,7 +163,7 @@
     
     self.metadata = [[NSMutableDictionary  alloc] initWithDictionary:messageJson[@"metadata"]];
     
-    self.msgHidden = [self isMsgHidden];
+    self.msgHidden = [self isHiddenMessage];
     
 }
 
@@ -231,7 +237,7 @@
 {
     return ((self.contentType == ALMESSAGE_CONTENT_HIDDEN) || [self isVOIPNotificationMessage]
             || [self isPushNotificationMessage] || [self isMessageCategoryHidden]
-            || self.getReplyType== AL_REPLY_BUT_HIDDEN || self.isMsgHidden );
+            || self.getReplyType== AL_REPLY_BUT_HIDDEN || self.isMsgHidden  || self.isMessageHiddenStatus);
 }
 
 -(BOOL)isVOIPNotificationMessage
@@ -323,6 +329,14 @@
 -(BOOL)isMsgHidden
 {
     BOOL hide = [[self.metadata objectForKey:@"hide"] boolValue];
+    
+    return hide;
+}
+
+
+-(BOOL)isMessageHiddenStatus
+{
+    BOOL hide = [[self.metadata objectForKey:@"hiddenStatus"]  isEqualToString:@"true"];
     
     return hide;
 }

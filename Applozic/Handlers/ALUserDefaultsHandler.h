@@ -59,6 +59,8 @@
 #define KEY_PREFIX @"com.applozic.userdefault"
 #define GROUP_FILTER_LAST_SYNC_TIME @"com.applozic.GROUP_FILTER_LAST_SYNC_TIME"
 #define AL_USER_ROLE_TYPE @"com.applozic.userdefault.AL_USER_ROLE_TYPE"
+#define LAST_SYNC_TIME_FOR_META_DATA @"com.applozic.userdefault.LAST_SYNC_TIME_FOR_META_DATA"
+
 
 #import <Foundation/Foundation.h>
 
@@ -243,5 +245,8 @@
 
 +(void)setUserRoleType:(short)type;
 +(short)getUserRoleType;
++(void)setLastSyncTimeForMetaData :( NSNumber *) metaDataLastSyncTime;
+
++(NSNumber *)getLastSyncTimeForMetaData;
 
 @end

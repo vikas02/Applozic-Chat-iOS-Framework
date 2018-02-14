@@ -446,8 +446,12 @@
     
 }
 
--(NSMutableArray *)getListOfAllUsersInChannel:(NSNumber *)key
+
+
+
+-(NSMutableArray *)getListOfAllUsersInChannel:(NSNumber *)key isExcludeLoggedInUser:(BOOL)isExclude
 {
+    
     NSMutableArray *memberList = [[NSMutableArray alloc] init];
     ALDBHandler * dbHandler = [ALDBHandler sharedInstance];
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
@@ -465,17 +469,26 @@
     {
         for(DB_CHANNEL_USER_X *dbChannelUserX in resultArray)
         {
-            [memberList addObject:dbChannelUserX.userId];
+            if(![dbChannelUserX.userId isEqualToString:[ALUserDefaultsHandler getUserId]] ){
+                [memberList addObject:dbChannelUserX.userId];
+            }
         }
-        
         return memberList;
     }
     else
     {
         return nil;
     }
-    
+
 }
+
+-(NSMutableArray *)getListOfAllUsersInChannel:(NSNumber *)key
+{
+    
+    return [self getListOfAllUsersInChannel:key isExcludeLoggedInUser:NO];
+}
+
+
 
 
 //------------------------------------------
@@ -500,12 +513,81 @@
     
 }
 
--(NSString *)stringFromChannelUserList:(NSNumber *)key
-{
+
+
+-(NSString *)stringFromChannelUserMetaData:(NSMutableDictionary *)metaData paymentMessageTitle:(BOOL) addloginUser{
+    if(!metaData){
+        return @"";
+    }
+        NSString *orginalString =  [metaData objectForKey:@"usersRequested"];
+    
+
+    orginalString = [orginalString stringByReplacingOccurrencesOfString:@"["
+                                         withString:@""];
+    
+    orginalString = [orginalString stringByReplacingOccurrencesOfString:@"]"
+                                                             withString:@""];
+    
+    orginalString = [orginalString stringByReplacingOccurrencesOfString:@"\""
+                                                             withString:@""];
+    
+    
+    NSArray *nsArray = [orginalString componentsSeparatedByString:@","];
+
+
+    NSString *str;
+    if(nsArray.count == 0)
+    {
+        return @"";
+    }
+    
+    NSString * listString;
+    NSMutableArray * listArray = [NSMutableArray new];
+    ALContactDBService *contactDB = [ALContactDBService new];
+    for(NSString *userID in nsArray)
+    {
+        ALContact *contact = [contactDB loadContactByKey:@"userId" value:userID];
+        if([[ALUserDefaultsHandler getUserId] isEqualToString:userID]){
+            [listArray addObject: @"you"];
+        }else{
+            [listArray addObject: [contact getDisplayName]];
+
+        }
+
+    }
+    
+    if(listArray.count == 1)
+    {
+        listString = listArray[0];
+    }
+    else if(listArray.count == 2)
+    {
+        listString = [NSString stringWithFormat:@"%@, %@", listArray[0], listArray[1]];
+    }
+    else if(listArray.count > 2)
+    {
+        int counter = (int)listArray.count - 2;
+        str = [NSString stringWithFormat:@"+%d more", counter];
+        listString = [NSString stringWithFormat:@"%@, %@, %@", listArray[0], listArray[1], str];
+    }
+    return listString;
+    
+    
+}
+
+    
+    
+-(NSString *)stringFromChannelUserList:(NSNumber *)key paymentMessageTitle:(BOOL) isPaymentMessage{
+    
     NSString *listString = @"";
     NSString *str = @"";
-    
-    NSMutableArray * tempArray = [NSMutableArray arrayWithArray:[self getListOfAllUsersInChannel:key]];
+    NSMutableArray * tempArray;
+    if(isPaymentMessage){
+     tempArray   = [NSMutableArray arrayWithArray:[self getListOfAllUsersInChannel:key isExcludeLoggedInUser:isPaymentMessage]];
+    }else{
+      tempArray  = [NSMutableArray arrayWithArray:[self getListOfAllUsersInChannel:key]];
+
+    }
     
     if(tempArray.count == 0)
     {
@@ -532,8 +614,16 @@
         str = [NSString stringWithFormat:@"+%d more", counter];
         listString = [NSString stringWithFormat:@"%@, %@, %@", listArray[0], listArray[1], str];
     }
-    
     return listString;
+    
+}
+
+
+-(NSString *)stringFromChannelUserList:(NSNumber *)key
+{
+    return [self stringFromChannelUserList:key paymentMessageTitle:NO];
+
+    
 }
 
 -(ALChannel *)checkChannelEntity:(NSNumber *)channelKey
@@ -1018,5 +1108,7 @@
     dbChannel.notificationAfterTime = notificationAfterTime;
     [dbHandler.managedObjectContext save:nil];
 }
+
+
 
 @end

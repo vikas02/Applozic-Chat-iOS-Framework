@@ -185,10 +185,10 @@
                         }
                     }];
                 } else{
-                            [self syncReceivedMessage: alMessage withNSMutableDictionary:dict];
-                            
-                        }
-                    }
+                    [self syncReceivedMessage: alMessage withNSMutableDictionary:dict];
+                    
+                }
+            }
         }
         else if ([type isEqualToString:@"MESSAGE_SENT"] || [type isEqualToString:@"APPLOZIC_02"])
         {
@@ -312,6 +312,46 @@
         else if ([type isEqualToString:@"APPLOZIC_32"])
         {
             // BROADCAST MESSAGE : MESSAGE_DELIVERED_AND_READ
+        }else if( [type isEqualToString:@"APPLOZIC_33"]){
+            
+            NSString* keyString;
+            NSString* deviceKey;
+            @try
+            {
+                
+                NSDictionary * message = [theMessageDict objectForKey:@"message"];
+                ALMessage *alMessage = [[ALMessage alloc] initWithDictonaryForMessageMetaDataUpdate:message];
+                keyString = alMessage.key;
+                deviceKey = alMessage.deviceKey;
+                
+            }
+            @catch (NSException * exp) {
+                NSLog(@"Exception in subscribing channel :: %@", exp.description);
+                @try
+                {
+                    NSString * messageKey = [theMessageDict valueForKey:@"message"];
+                    if(messageKey){
+                        ALMessageDBService * messagedbService = [[ALMessageDBService alloc]init];
+                        DB_Message * dbMessage  = (DB_Message *)[messagedbService getMessageByKey:@"key" value:messageKey];
+                        if (dbMessage != nil) {
+                            deviceKey = dbMessage.deviceKey;
+                        }
+                    }
+                    
+                }    @catch (NSException * exp) {
+                    NSLog(@"Exception in subscribing channel :: %@", exp.description);
+                }
+            
+            }
+            if (deviceKey != nil && [deviceKey isEqualToString:[ALUserDefaultsHandler getDeviceKeyString]]) {
+                return;
+            }
+            [ALMessageService syncMessageMetaData:[ALUserDefaultsHandler getDeviceKeyString] withCompletion:^(NSMutableArray *message, NSError *error) {
+                
+                NSLog(@"Success");
+                
+            }];
+            
         }
         else
         {
@@ -486,7 +526,7 @@
             {
                 openGroupString = [NSString stringWithFormat:@"group-%@-%@", [ALUserDefaultsHandler getApplicationKey], channelKey];
             }
-
+            
             [self.session subscribeToTopic:openGroupString atLevel:MQTTQosLevelAtMostOnce];
             NSLog(@"MQTT_CHANNEL/OPEN_GROUP_SUBSCRIBTION_COMPLETE");
         }
@@ -500,7 +540,7 @@
 {
     NSLog(@"MQTT_/OPEN_GROUP_UNSUBSCRIBING");
     dispatch_async(dispatch_get_main_queue (), ^{
-
+        
         if (!self.session) {
             NSLog(@"MQTT_SESSION_NULL");
             return;
@@ -518,7 +558,7 @@
 -(void) syncReceivedMessage :(ALMessage *)alMessage withNSMutableDictionary:(NSMutableDictionary*)nsMutableDictionary{
     
     ALPushAssist* assistant = [[ALPushAssist alloc] init];
-
+    
     [ALMessageService getLatestMessageForUser:[ALUserDefaultsHandler getDeviceKeyString] withCompletion:^(NSMutableArray *message, NSError *error) {
         
         NSLog(@"ALMQTTConversationService SYNC CALL");
@@ -536,3 +576,4 @@
 }
 
 @end
+
