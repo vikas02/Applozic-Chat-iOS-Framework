@@ -27,6 +27,7 @@
 #import "ALContactService.h"
 #import "ALUserDefaultsHandler.h"
 #import "ALApplozicSettings.h"
+#import "NSString+Encode.h"
 
 @implementation ALUserService
 {
@@ -55,9 +56,8 @@
         return;
     }
     
-    
-    for(NSString* strr in contactIdsArr){
-        [repString appendString:strr];
+    for(NSString *strr in contactIdsArr){
+        [repString appendString:[NSString stringWithFormat:@"%@",[strr urlEncodeUsingNSUTF8StringEncoding]]];
     }
     
     NSLog(@"USER_ID_STRING :: %@",repString);
@@ -65,7 +65,7 @@
     ALUserClientService * client = [ALUserClientService new];
     [client subProcessUserDetailServerCall:repString withCompletion:^(NSMutableArray * userDetailArray, NSError * error) {
         
-        if(error)
+        if(error || !userDetailArray)
         {
             completionMark();
             return;
@@ -448,6 +448,36 @@
     ALUserClientService *clientService = [ALUserClientService new];
     [clientService updateApplicationInfoDeatils:userApplicationInfo withCompletion:^(NSString *json, NSError *error) {
         NSLog(@"Response For user application update reponse :%@",json);
+    }];
+    
+}
+
+
+-(void)updatePassword:(NSString*)oldPassword withNewPassword :(NSString *) newPassword  withCompletion:(void (^)(ALAPIResponse *apiResponse, NSError *error))completion{
+    
+    if(!oldPassword || !newPassword){
+        completion(nil, nil);
+    }
+    
+    ALUserClientService *clientService = [ALUserClientService new];
+    [clientService updatePassword:oldPassword  withNewPassword: newPassword  withCompletion:^(id theJson, NSError *theError) {
+        
+        ALAPIResponse *alAPIResponse = [[ALAPIResponse alloc] initWithJSONString:(NSString *)theJson];
+        
+        if(!theError){
+            
+            if([alAPIResponse.status isEqualToString:@"error"])
+            {
+                NSError * reponseError = [NSError errorWithDomain:@"Applozic" code:1
+                                                         userInfo:[NSDictionary dictionaryWithObject:@"ERROR IN UPDATING PASSWORD "
+                                                                                              forKey:NSLocalizedDescriptionKey]];
+                completion(alAPIResponse, reponseError);
+                return;
+            }
+            [ALUserDefaultsHandler setPassword:newPassword];
+        }
+        
+        completion(alAPIResponse, theError);
     }];
     
 }

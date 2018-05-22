@@ -710,5 +710,26 @@
     
 }
 
++(void)setPushNotificationFormat:(short)format{
+    [[NSUserDefaults standardUserDefaults] setInteger:format forKey:AL_USER_PUSH_NOTIFICATION_FORMATE];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
++(short)getPushNotificationFormat{
+    short pushNotificationFormat = [[NSUserDefaults standardUserDefaults] integerForKey:AL_USER_PUSH_NOTIFICATION_FORMATE];
+    return pushNotificationFormat ? pushNotificationFormat : 0;
+}
+
++(void)setUserEncryption:(NSString*)encryptionKey{
+    
+    [[NSUserDefaults standardUserDefaults] setValue:encryptionKey forKey:USER_MQTT_ENCRYPTION_KEY];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
++(NSString*)getUserEncryptionKey{
+    
+    return [[NSUserDefaults standardUserDefaults] valueForKey:USER_MQTT_ENCRYPTION_KEY];
+}
+
 
 @end

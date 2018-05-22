@@ -179,7 +179,7 @@
     {
         if(difference <= 60)
         {
-            formattedDateStr = NSLocalizedStringWithDefaultValue(@"justNow", nil,[NSBundle mainBundle], @"Just Now", @"");
+            formattedDateStr = NSLocalizedStringWithDefaultValue(@"justNow", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @"Just Now", @"");
             
         }
         else
@@ -239,17 +239,24 @@
     return (self.contentType == AV_CALL_CONTENT_TWO);
 }
 
+
+-(BOOL)isToIgnoreUnreadCountIncrement
+{
+    return (self.contentType == AV_CALL_CONTENT_THREE);
+}
+
+
 -(NSString*)getNotificationText
 {
     
     if(self.contentType == ALMESSAGE_CONTENT_LOCATION)
     {
-        return NSLocalizedStringWithDefaultValue(@"location", nil,[NSBundle mainBundle], @"Location", @"");
+        return NSLocalizedStringWithDefaultValue(@"location", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @"Location", @"");
         
     }
     else if(self.contentType == ALMESSAGE_CONTENT_VCARD)
     {
-        return NSLocalizedStringWithDefaultValue(@"contact", nil,[NSBundle mainBundle], @"Contact", @"");
+        return NSLocalizedStringWithDefaultValue(@"contact", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @"Contact", @"");
     }
     if(self.message && ![self.message isEqualToString:@""])
     {
@@ -257,7 +264,7 @@
     }
     else
     {
-        return NSLocalizedStringWithDefaultValue(@"attachment", nil,[NSBundle mainBundle], @"Attachment", @"");
+        return NSLocalizedStringWithDefaultValue(@"attachment", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @"Attachment", @"");
     }
 }
 

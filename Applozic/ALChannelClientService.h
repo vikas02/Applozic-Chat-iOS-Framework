@@ -43,6 +43,10 @@
 
 +(void)updateChannel:channelKey orClientChannelKey:clientChannelKey andNewName:newName andImageURL:imageURL metadata:metaData orChildKeys:childKeysList orChannelUsers:(NSMutableArray *)channelUsers andCompletion:(void(^)(NSError *error, ALAPIResponse *response))completion;
 
++(void)updateChannelMetaData:(NSNumber *)channelKey orClientChannelKey:(NSString *)clientChannelKey
+                    metadata:(NSMutableDictionary *)metaData
+               andCompletion:(void(^)(NSError *error, ALAPIResponse *response))completion;
+
 +(void)getChannelInformationResponse:(NSNumber *)channelKey orClientChannelKey:(NSString *)clientChannelKey withCompletion:(void(^)(NSError *error, AlChannelFeedResponse *response)) completion;
 
 
@@ -61,12 +65,12 @@
 
 +(void)removeClientChildKeyList:(NSMutableArray *)clientChildKeyList andClientParentKey:(NSString *)clientParentKey
                  withCompletion:(void (^)(id json, NSError * error))completion;
-    
+
 -(void) muteChannel:(ALMuteRequest *)ALMuteRequest withCompletion:(void(^)(ALAPIResponse * response, NSError * error))completion;
 
 -(void)getChannelInfoByIdsOrClientIds:(NSMutableArray*)channelIds
-              orClinetChannelIds:(NSMutableArray*) clientChannelIds
-                  withCompletion:(void(^)(NSMutableArray * channelInfoList, NSError * error))completion;
+                   orClinetChannelIds:(NSMutableArray*) clientChannelIds
+                       withCompletion:(void(^)(NSMutableArray * channelInfoList, NSError * error))completion;
 
 -(void)getChannelListForCategory:(NSString*)category
                   withCompletion:(void(^)(NSMutableArray * channelInfoList, NSError * error))completion;
@@ -88,5 +92,10 @@
 +(void) removeMemberFromContactGroupOfType:(NSString*) contactsGroupId  withGroupType:(short) groupType withUserId :(NSString*) userId  withCompletion:(void(^)(ALAPIResponse * response, NSError * error))completion;
 
 -(void) getMultipleContactGroup:(NSArray *)contactGroupIds  withCompletion:(void(^)(NSError *error, NSArray *channel)) completion;
+
++(void)createChannel:(NSString *)channelName andParentChannelKey:(NSNumber *)parentChannelKey
+  orClientChannelKey:(NSString *)clientChannelKey andMembersList:(NSMutableArray *)memberArray
+        andImageLink:(NSString *)imageLink channelType:(short)type andMetaData:(NSMutableDictionary *)metaData adminUser :(NSString *)adminUserId withGroupUsers :(NSMutableArray*)groupRoleUsers
+      withCompletion:(void(^)(NSError *error, ALChannelCreateResponse *response))completion;
 
 @end

@@ -44,7 +44,6 @@
     [user setDeviceApnsType:!isDevelopmentBuild()];
     [user setEnableEncryption:[ALUserDefaultsHandler getEnableEncryption]];
     [user setRoleName:[ALApplozicSettings getUserRoleName]];
-    
     if([ALUserDefaultsHandler getAppModuleName] != NULL)
     {
         [user setAppModuleName:[ALUserDefaultsHandler getAppModuleName]];
@@ -90,6 +89,10 @@
             [ALUserDefaultsHandler setUserKeyString:response.userKey];
             [ALUserDefaultsHandler setUserPricingPackage:response.pricingPackage];
             
+            if(user.pushNotificationFormat){
+                [ALUserDefaultsHandler setPushNotificationFormat:user.pushNotificationFormat];
+            }
+        
             if(response.roleType){
                 [ALUserDefaultsHandler setUserRoleType:response.roleType];
             }
@@ -102,6 +105,11 @@
             {
                 [ALUserDefaultsHandler setProfileImageLinkFromServer:response.imageLink];
             }
+            if(response.userEncryptionKey)
+            {
+                [ALUserDefaultsHandler setUserEncryption:response.userEncryptionKey];
+            }
+            
             if(response.statusMessage)
             {
                 [ALUserDefaultsHandler setLoggedInUserStatus:response.statusMessage];
@@ -202,7 +210,7 @@
     if([ALUserDefaultsHandler getAppModuleName] != NULL){
         [user setAppModuleName:[ALUserDefaultsHandler getAppModuleName]];
     }
-    
+    [user setPushNotificationFormat:[ALUserDefaultsHandler getPushNotificationFormat]];
     if([ALUserDefaultsHandler getNotificationSoundFileName] != nil){
         [user setNotificationSoundFileName:[ALUserDefaultsHandler getNotificationSoundFileName]];
     }

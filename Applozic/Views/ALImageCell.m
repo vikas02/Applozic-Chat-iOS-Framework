@@ -94,6 +94,10 @@ UIViewController * modalCon;
             self.transform = CGAffineTransformMakeScale(-1.0, 1.0);
             self.mImageView.transform = CGAffineTransformMakeScale(-1.0, 1.0);
         }
+        
+        UITapGestureRecognizer * menuTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(proccessTapForMenu:)];
+        [self.contentView addGestureRecognizer:menuTapGesture];
+        
     }
     
     return self;
@@ -268,7 +272,7 @@ UIViewController * modalCon;
         if(alContact.contactImageUrl)
         {
             NSURL * theUrl1 = [NSURL URLWithString:alContact.contactImageUrl];
-            [self.mUserProfileImageView sd_setImageWithURL:theUrl1 placeholderImage:nil options:SDWebImageRefreshCached];
+            [self.mUserProfileImageView sd_setImageWithURL:theUrl1 placeholderImage: [ALUtilityClass getImageFromFramworkBundle:@"ic_contact_picture_holo_light.png"] options:SDWebImageRefreshCached];
         }
         else
         {
@@ -276,6 +280,7 @@ UIViewController * modalCon;
             [self.mNameLabel setHidden:NO];
             self.mUserProfileImageView.backgroundColor = [ALColorUtility getColorForAlphabet:receiverName];
         }
+
         
     }
     else
@@ -410,6 +415,7 @@ UIViewController * modalCon;
             }break;
         }
         self.mMessageStatusImageView.image = [ALUtilityClass getImageFromFramworkBundle:imageName];
+        
     }
     
     self.imageWithText.text = alMessage.message;
@@ -430,19 +436,34 @@ UIViewController * modalCon;
     
     [self.mImageView sd_setImageWithURL:theUrl];
     
-   UIMenuItem * msgInfo = [[UIMenuItem alloc] initWithTitle:NSLocalizedStringWithDefaultValue(@"infoOptionTitle", nil,[NSBundle mainBundle], @"Info", @"") action:@selector(msgInfo:)];
-    
-    UIMenuItem * messageForward = [[UIMenuItem alloc] initWithTitle:NSLocalizedStringWithDefaultValue(@"forwardOptionTitle", nil,[NSBundle mainBundle], @"Forward", @"") action:@selector(messageForward:)];
-    UIMenuItem * messageReply = [[UIMenuItem alloc] initWithTitle:NSLocalizedStringWithDefaultValue(@"replyOptionTitle", nil,[NSBundle mainBundle], @"Reply", @"") action:@selector(messageReply:)];
-    
-    [[UIMenuController sharedMenuController] setMenuItems: @[msgInfo,messageReply,messageForward]];
-   
-    [[UIMenuController sharedMenuController] update];
-   
-    
     return self;
     
 }
+
+
+#pragma mark - Menu option tap Method -
+
+-(void) proccessTapForMenu:(id)tap{
+    
+    UIMenuItem * messageForward = [[UIMenuItem alloc] initWithTitle:NSLocalizedStringWithDefaultValue(@"forwardOptionTitle", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @"Forward", @"") action:@selector(messageForward:)];
+    UIMenuItem * messageReply = [[UIMenuItem alloc] initWithTitle:NSLocalizedStringWithDefaultValue(@"replyOptionTitle", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @"Reply", @"") action:@selector(messageReply:)];
+    
+    if ([self.mMessage.type isEqualToString:@MT_INBOX_CONSTANT]){
+        
+        [[UIMenuController sharedMenuController] setMenuItems: @[messageForward,messageReply]];
+        
+    }else if ([self.mMessage.type isEqualToString:@MT_OUTBOX_CONSTANT]){
+
+        
+        UIMenuItem * msgInfo = [[UIMenuItem alloc] initWithTitle:NSLocalizedStringWithDefaultValue(@"infoOptionTitle", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @"Info", @"") action:@selector(msgInfo:)];
+        
+        [[UIMenuController sharedMenuController] setMenuItems: @[msgInfo,messageReply,messageForward]];
+    }
+    [[UIMenuController sharedMenuController] update];
+    
+}
+
+
 
 #pragma mark - KAProgressLabel Delegate Methods -
 

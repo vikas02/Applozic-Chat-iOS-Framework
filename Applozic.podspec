@@ -1,3 +1,4 @@
+# coding: utf-8
 #
 #  Be sure to run `pod spec lint Applozic.podspec' to ensure this is a
 #  valid spec and to remove all comments including this before submitting the spec.
@@ -16,7 +17,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "Applozic"
-  s.version      = "5.1.0"
+  s.version      = "5.7.0"
   s.summary      = "Applozic Light weight CocoaPod for in-app messaging and chat SDK"
 
   # This description is used to generate tags and improve search results.
@@ -92,7 +93,7 @@ Pod::Spec.new do |s|
   s.source_files  = "Applozic", "Applozic/**/*.{h,m,swift}"
   s.exclude_files = "Classes/Exclude"
 
-  s.xcconfig = { 'SWIFT_VERSION' => '3.2' }
+  s.xcconfig = { 'SWIFT_VERSION' => '4.1' }
   # s.public_header_files = "Classes/**/*.h"
 
 

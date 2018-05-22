@@ -13,6 +13,8 @@
 
 #define CHANNEL_SPECIAL_CASE 7
 #define CHANNEL_DEFAULT_MUTE @"MUTE"
+#define CHANNEL_CONVERSATION_STATUS @"CONVERSATION_STATUS"
+
 
 /*********************
  type = 7 SPECIAL CASE
@@ -31,7 +33,6 @@ typedef enum
     CONTACT_GROUP = 9,
     BROADCAST_ONE_BY_ONE = 106
 } CHANNEL_TYPE;
-
 
 @interface ALChannel : ALJson
 
@@ -60,7 +61,10 @@ typedef enum
 -(void)parseMessage:(id) messageJson;
 -(NSNumber *)getChannelMemberParentKey:(NSString *)userId;
 -(BOOL) isNotificationMuted;
+-(BOOL) isConversationClosed;
+
 -(NSString*)getReceiverIdInGroupOfTwo;
+
 -(NSMutableDictionary *)getMetaDataDictionary:(NSString *)string;
 
 @end

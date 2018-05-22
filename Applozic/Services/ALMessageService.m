@@ -152,7 +152,15 @@ static ALMessageClientService *alMsgClientService;
                        ALContactService *contactService = [ALContactService new];
                        NSMutableArray * userNotPresentIds = [NSMutableArray new];
                       
-                       for(ALMessage* msg  in messages){
+                       NSMutableArray  *messageArray = messages;
+                       NSMutableArray * hiddenMsgFilteredArray = [[NSMutableArray alloc] initWithArray:messageArray];
+                       
+                       for(ALMessage* msg  in hiddenMsgFilteredArray){
+                           
+                           if([msg isHiddenMessage] && ![msg isVOIPNotificationMessage])
+                           {
+                               [messageArray removeObject:msg];
+                           }
                            
                            NSString* contactId = msg.to;
                            
@@ -395,7 +403,7 @@ withAttachmentAtLocation:(NSString *)attachmentLocalPath
                         {
                             [messageArray removeObject:message];
                         }
-                        else
+                        else if(![message isToIgnoreUnreadCountIncrement])
                         {
                             [ALMessageService incrementContactUnreadCount:message];
                         }
@@ -727,6 +735,20 @@ withAttachmentAtLocation:(NSString *)attachmentLocalPath
         {
             NSLog(@"FILE_META_PRESENT : %@",msg.fileMeta );
         }
+    }
+}
+
++(void)syncMessages{
+    
+    if([ALUserDefaultsHandler isLoggedIn])
+    {
+        [ALMessageService getLatestMessageForUser:[ALUserDefaultsHandler getDeviceKeyString] withCompletion:^(NSMutableArray *messageArray, NSError *error) {
+            
+            if(error)
+            {
+                NSLog(@"ERROR IN LATEST MSG APNs CLASS : %@",error);
+            }
+        }];
     }
 }
 

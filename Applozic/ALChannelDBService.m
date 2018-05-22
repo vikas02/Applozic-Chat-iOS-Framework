@@ -529,7 +529,7 @@
     else if(listArray.count > 2)
     {
         int counter = (int)listArray.count - 2;
-        str = [NSString stringWithFormat:@"+%d %@",counter, NSLocalizedStringWithDefaultValue(@"moreMember", nil, [NSBundle mainBundle], @"more", @"")];
+        str = [NSString stringWithFormat:@"+%d %@",counter, NSLocalizedStringWithDefaultValue(@"moreMember", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"more", @"")];
         listString = [NSString stringWithFormat:@"%@, %@, %@", listArray[0], listArray[1], str];
     }
     
@@ -734,6 +734,33 @@
     }
 }
 
+-(void)updateChannelMetaData:(NSNumber *)channelKey metaData:(NSMutableDictionary *)newMetaData{
+    
+    ALDBHandler * dbHandler = [ALDBHandler sharedInstance];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"DB_CHANNEL" inManagedObjectContext:dbHandler.managedObjectContext];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"channelKey = %@",channelKey];
+    [fetchRequest setEntity:entity];
+    [fetchRequest setPredicate:predicate];
+    
+    NSError *fetchError = nil;
+    NSArray *result = [dbHandler.managedObjectContext executeFetchRequest:fetchRequest error:&fetchError];
+    
+    if (result.count)
+    {
+        DB_CHANNEL *dbChannel = [result objectAtIndex:0];
+        if(newMetaData!=nil) {
+            dbChannel.metadata = newMetaData.description;
+        }
+        
+        [dbHandler.managedObjectContext save:nil];
+    }
+    else
+    {
+        NSLog(@"UPDATE_CHANNEL_DB : NO CHANNEL FOUND");
+    }
+}
 
 -(void) updateChannelParentKey:(NSNumber *)channelKey andWithParentKey:(NSNumber *)channelParentKey isAdding:(BOOL)flag
 {
@@ -827,6 +854,19 @@
     DB_CHANNEL *dbChannel = [self getChannelByKey:groupId];
     return (dbChannel.deletedAtTime != nil);
 }
+
+-(BOOL)isConversaionClosed:(NSNumber *)groupId
+{
+    DB_CHANNEL *dbChannel = [self getChannelByKey:groupId];
+    ALChannel *channel = [ALChannel new];
+    NSMutableDictionary *metadata =   [channel getMetaDataDictionary:dbChannel.metadata];
+    
+    if( metadata && [metadata  valueForKey:CHANNEL_CONVERSATION_STATUS] ){
+        return ([[metadata  valueForKey:CHANNEL_CONVERSATION_STATUS] isEqualToString:@"CLOSE"]);
+    }
+    return NO;
+}
+
 
 -(void)processArrayAfterSyncCall:(NSMutableArray *)channelArray
 {

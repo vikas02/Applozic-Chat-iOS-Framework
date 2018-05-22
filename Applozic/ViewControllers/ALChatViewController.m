@@ -67,6 +67,7 @@
 @import AddressBookUI;
 #import "ALAudioVideoBaseVC.h"
 #import "ALVOIPNotificationHandler.h"
+#import "ALChannelService.h"
 #import <Applozic/Applozic-Swift.h>
 
 #define MQTT_MAX_RETRY 3
@@ -173,7 +174,7 @@
     [self initialSetUp];
     [self fetchMessageFromDB];
     [self loadChatView];
-    self.placeHolderTxt = NSLocalizedStringWithDefaultValue(@"placeHolderText", nil, [NSBundle mainBundle], @"Write a Message...", @"");
+    self.placeHolderTxt = NSLocalizedStringWithDefaultValue(@"placeHolderText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Write a Message...", @"");
     self.sendMessageTextView.text = self.placeHolderTxt;
     self.defaultMessageViewHeight = 56.0;
     
@@ -188,7 +189,7 @@
     [self.loadEarlierAction setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.loadEarlierAction setBackgroundColor:[UIColor grayColor]];
     [self markConversationRead];
-    [self.loadEarlierAction setTitle:NSLocalizedStringWithDefaultValue(@"loadEarlierMessagesText", nil,[NSBundle mainBundle], @"Load Earlier Messages", @"") forState:UIControlStateNormal];
+    [self.loadEarlierAction setTitle:NSLocalizedStringWithDefaultValue(@"loadEarlierMessagesText", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @"Load Earlier Messages", @"") forState:UIControlStateNormal];
     [[[self navigationController] interactivePopGestureRecognizer] setEnabled:NO];
     [UIView animateWithDuration:0.3 animations:^{
         [self subProcessTextViewDidChange:self.sendMessageTextView];
@@ -351,8 +352,8 @@
         [self.pickerView reloadAllComponents];
     }
     
+     [self checkIfChannelLeft];
     [self setCallButtonInNavigationBar];
-    [self checkIfChannelLeft];
     [self checkUserBlockStatus];
     if(self.contactIds ){
       [self checkUserDeleted];
@@ -628,6 +629,8 @@
         {
             [self.navRightBarButtonItems addObject:self.callButton];
         }
+        
+     
     }
     
     self.navigationItem.rightBarButtonItems = [self.navRightBarButtonItems mutableCopy];
@@ -837,16 +840,16 @@
 -(void)showBlockedAlert
 {
     UIAlertController * alert = [UIAlertController
-                                 alertControllerWithTitle:NSLocalizedStringWithDefaultValue(@"oppsText", nil,[NSBundle mainBundle], @"OOPS !!!", @"")
+                                 alertControllerWithTitle:NSLocalizedStringWithDefaultValue(@"oppsText", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @"OOPS !!!", @"")
                                  message:
-                                 NSLocalizedStringWithDefaultValue(@"userBlockedInfo", nil,[NSBundle mainBundle], @"THIS USER IS BLOCKED BY YOU", @"")
+                                 NSLocalizedStringWithDefaultValue(@"userBlockedInfo", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @"THIS USER IS BLOCKED BY YOU", @"")
                                  preferredStyle:UIAlertControllerStyleAlert];
     
     [ALUtilityClass setAlertControllerFrame:alert andViewController:self];
     
     UIAlertAction* ok = [UIAlertAction
                          actionWithTitle:
-                         NSLocalizedStringWithDefaultValue(@"okText", nil,[NSBundle mainBundle], @"Ok", @"")
+                         NSLocalizedStringWithDefaultValue(@"okText", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @"Ok", @"")
                          style:UIAlertActionStyleDefault
                          handler:^(UIAlertAction * action)
                          {
@@ -855,7 +858,7 @@
                          }];
     
     UIAlertAction* unblock = [UIAlertAction
-                              actionWithTitle:NSLocalizedStringWithDefaultValue(@"unBlock", nil,[NSBundle mainBundle], @"UNBLOCK", @"")
+                              actionWithTitle:NSLocalizedStringWithDefaultValue(@"unBlock", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @"UNBLOCK", @"")
                               style:UIAlertActionStyleDefault
                               handler:^(UIAlertAction * action)
                               {
@@ -872,12 +875,12 @@
                                           self.isUserBlocked = NO;
                                           [self.label setHidden:self.isUserBlocked];
                                           
-                                          NSString * unblokInfo = NSLocalizedStringWithDefaultValue(@"blockedSusccessFullyInfo", nil,[NSBundle mainBundle], @" is unblocked successfully", @"");
+                                          NSString * unblokInfo = NSLocalizedStringWithDefaultValue(@"blockedSusccessFullyInfo", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @" is unblocked successfully", @"");
                                           NSString *alertText = [NSString stringWithFormat:@"%@",[self.alContact getDisplayName]] ;
                                           
                                           [alertText stringByAppendingString:unblokInfo];
                                           
-                                          [ALUtilityClass showAlertMessage:alertText andTitle:   NSLocalizedStringWithDefaultValue(@"userUnBlock", nil,[NSBundle mainBundle], @"USER UNBLOCK", @"")];
+                                          [ALUtilityClass showAlertMessage:alertText andTitle:   NSLocalizedStringWithDefaultValue(@"userUnBlock", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @"USER UNBLOCK", @"")];
                                       }
                                       
                                   }];
@@ -890,6 +893,8 @@
 
 -(void)checkIfChannelLeft
 {
+    [self.navRightBarButtonItems removeObject:self.closeButton];
+    
     ALChannelService * alChannelService = [[ALChannelService alloc] init];
     if([alChannelService isChannelLeft:self.channelKey])
     {
@@ -901,11 +906,18 @@
     {
         [self freezeView:YES];
         [ALNotificationView showLocalNotification:[ALApplozicSettings getGroupDeletedTitle]];
+    }else if([ALChannelService isConversationClosed:self.channelKey]){
+        [self freezeView:YES];
     }
     else
     {
+        if(!self.contactIds && self.channelKey && [ALApplozicSettings isConversationCloseButtonEnabled]){
+            [self.navRightBarButtonItems addObject:self.closeButton];
+        }
+
         [self freezeView:NO];
     }
+
 }
 
 //==============================================================================================================================================
@@ -924,6 +936,24 @@
 {
     ALNotificationView * notification = [ALNotificationView new];
     [notification noDataConnectionNotificationView];
+}
+
+-(void)closeConversation {
+    
+    if(self.channelKey && !self.contactIds){
+        
+        [ALChannelService closeGroupConverstion : self.channelKey withCompletion:^(NSError *error){
+            
+            if(!error){
+                
+                [self.navRightBarButtonItems removeObject:self.closeButton];
+                self.navigationItem.rightBarButtonItems = [self.navRightBarButtonItems mutableCopy];
+                [self freezeView:YES];
+            }
+        }];
+        
+    }
+    
 }
 
 //==============================================================================================================================================
@@ -1070,6 +1100,9 @@
     ALChannelService *channelService = [[ALChannelService alloc] init];
     self.alChannel = [channelService getChannelByKey:self.channelKey];
     [titleLabelButton setTitle:self.alChannel.name forState:UIControlStateNormal];
+    if([self.alChannel isConversationClosed]){
+      [self freezeView:YES];
+    }
     if(self.alChannel.type == GROUP_OF_TWO)
     {
         NSLog(@"CURENT clientChannelKey :: %@",self.alChannel.clientChannelKey);
@@ -1081,12 +1114,11 @@
 
 -(void)didTapTitleView:(id)sender
 {
-    ALChannelService * alChannelService  = [[ALChannelService alloc] init];
     if(self.contactIds && !self.channelKey)
     {
         [self getUserInformation];
     }
-    else if (![ALApplozicSettings isGroupInfoDisabled] && (self.alChannel.type != GROUP_OF_TWO) && ![ALChannelService isChannelDeleted:self.channelKey])
+    else if (![ALApplozicSettings isGroupInfoDisabled] && (self.alChannel.type != GROUP_OF_TWO) && ![ALChannelService isChannelDeleted:self.channelKey] && ![ALChannelService isConversationClosed:self.channelKey])
     {
         UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"Applozic" bundle:[NSBundle bundleForClass:[self class]]];
         ALGroupDetailViewController * groupDetailViewController = (ALGroupDetailViewController*)[storyboard instantiateViewControllerWithIdentifier:@"ALGroupDetailViewController"];
@@ -1138,7 +1170,7 @@
     
     [self.sendMessageTextView resignFirstResponder];
     [self.view makeToast:
-     NSLocalizedStringWithDefaultValue(@"syncMessagesInfo", nil, [NSBundle mainBundle],@"Syncing messages with the server,\n it might take few mins!"
+     NSLocalizedStringWithDefaultValue(@"syncMessagesInfo", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle],@"Syncing messages with the server,\n it might take few mins!"
                                        , @"")  duration:1.0
                 position:CSToastPositionBottom
                    title:nil];
@@ -1407,13 +1439,13 @@
 
     if (!self.sendMessageTextView.text.length || [self.sendMessageTextView.text isEqualToString:self.placeHolderTxt])
     {
-        [ALUtilityClass showAlertMessage:NSLocalizedStringWithDefaultValue(@"forgetToTypeMessageInfo", nil, [NSBundle mainBundle], @"Did you forget to type the message", @"")  andTitle:NSLocalizedStringWithDefaultValue(@"emptyText", nil, [NSBundle mainBundle], @"Empty", @"")];
+        [ALUtilityClass showAlertMessage:NSLocalizedStringWithDefaultValue(@"forgetToTypeMessageInfo", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Did you forget to type the message", @"")  andTitle:NSLocalizedStringWithDefaultValue(@"emptyText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Empty", @"")];
         return;
     }
 
     if([ALApplozicSettings getMessageAbuseMode] && [self checkRestrictWords:self.sendMessageTextView.text])
     {
-        [ALUtilityClass showAlertMessage:[ALApplozicSettings getAbuseWarningText] andTitle:NSLocalizedStringWithDefaultValue(@"warningText", nil, [NSBundle mainBundle], @"WARNING", @"")];
+        [ALUtilityClass showAlertMessage:[ALApplozicSettings getAbuseWarningText] andTitle:NSLocalizedStringWithDefaultValue(@"warningText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"WARNING", @"")];
         return;
     }
     
@@ -1426,7 +1458,7 @@
             
             if (![ALDataNetworkConnection checkDataNetworkAvailable])
             {
-                [ALUtilityClass showAlertMessage:nil andTitle:NSLocalizedStringWithDefaultValue(@"noInternetMessage", nil, [NSBundle mainBundle], @"No Internet Connectivity", @"")];
+                [ALUtilityClass showAlertMessage:nil andTitle:NSLocalizedStringWithDefaultValue(@"noInternetMessage", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"No Internet Connectivity", @"")];
                 
                 return;
             }
@@ -1702,12 +1734,13 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    if(self.conversationId && [ALApplozicSettings getContextualChatOption])
-    {
+    ALChannelService * alChannelService = [ALChannelService new];
+    ALChannel * alChannel = [alChannelService getChannelByKey:self.channelKey];
+    if(self.conversationId && [ALApplozicSettings getContextualChatOption]){
         return self.getHeaderView.frame.size.height;
-    }
-    else
-    {
+    }else if(alChannel.metadata!=nil && [alChannel.metadata objectForKey:@"title"]){
+        return self.getContextGroupOfTwoView.frame.size.height;
+    } else {
         return 0;
     }
 }
@@ -1718,7 +1751,49 @@
 
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    return self.getHeaderView;
+    ALChannelService * alChannelService = [ALChannelService new];
+    ALChannel * alChannel = [alChannelService getChannelByKey:self.channelKey];
+    if(alChannel.metadata!=nil && [alChannel.metadata objectForKey:@"title"]){
+        return self.getContextGroupOfTwoView;
+    }else{
+        return self.getHeaderView;
+    }
+}
+
+-(UIView *)getContextGroupOfTwoView
+{
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 84)];
+    
+    ALChannelService * alChannelService = [ALChannelService new];
+    
+    ALChannel * alChannel = [alChannelService getChannelByKey:self.channelKey];
+    
+    // Image View ....
+    UIImageView *imageView = [[UIImageView alloc] init];
+    NSURL * url = [NSURL URLWithString: [alChannel.metadata valueForKey:@"link"]];
+    [imageView sd_setImageWithURL:url placeholderImage:nil options:SDWebImageRefreshCached];
+    
+    imageView.frame = CGRectMake(5, 5, 70, 70);
+    imageView.backgroundColor = [UIColor blackColor];
+    [view addSubview:imageView];
+    
+    
+    UILabel * priceUILabel = [[UILabel alloc] init];
+    priceUILabel.text = [alChannel.metadata valueForKey:@"price"];
+    
+    priceUILabel.frame = CGRectMake( imageView.frame.size.width+ 10, imageView.frame.origin.y,
+                                    (view.frame.size.width-imageView.frame.size.width)/2, 50);
+    
+    UILabel * titleUILabel = [[UILabel alloc] init];
+    titleUILabel.text = [alChannel.metadata valueForKey:@"title"];
+    
+    
+    titleUILabel.frame = CGRectMake(imageView.frame.size.width + 10, 58,
+                                    (view.frame.size.width-imageView.frame.size.width)-20, 50);
+    titleUILabel.numberOfLines = 1;
+    [self setLabelViews:@[titleUILabel,priceUILabel] onView:view];
+    
+    return view;
 }
 
 -(UIView *)getHeaderView
@@ -1788,10 +1863,10 @@
     view.layer.shadowOffset = CGSizeMake(1.0f, 1.0f);
     view.layer.shadowRadius = 3.0f;
     view.layer.shadowOpacity = 1.0f;
-    
+
     for (UILabel * label in labelArray)
     {
-        label.textColor = [UIColor whiteColor];
+        label.textColor = [ALApplozicSettings getColorForNavigationItem];
         label.font = [UIFont fontWithName:@"Helvetica" size:11.0];
         [self resizeLabels:label];
         [view addSubview:label];
@@ -1886,7 +1961,7 @@
 -(void)setRightNavButtonToDone
 {
     UIBarButtonItem *donePickerSelectionButton = [[UIBarButtonItem alloc]
-                                                  initWithTitle:NSLocalizedStringWithDefaultValue(@"doneText", nil, [NSBundle mainBundle], @"DONE", @"")
+                                                  initWithTitle:NSLocalizedStringWithDefaultValue(@"doneText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"DONE", @"")
                                                   style:UIBarButtonItemStylePlain
                                                   target:self action:@selector(donePicking:)];
     
@@ -2566,7 +2641,7 @@
 
 -(void) showActionSheet
 {
-    UIActionSheet * actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:NSLocalizedStringWithDefaultValue(@"cancelText", nil, [NSBundle mainBundle], @"cancel", @"") destructiveButtonTitle:nil otherButtonTitles:@"current location",@"take photo",@"photo library", nil];
+    UIActionSheet * actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:NSLocalizedStringWithDefaultValue(@"cancelText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"cancel", @"") destructiveButtonTitle:nil otherButtonTitles:@"current location",@"take photo",@"photo library", nil];
     
     [actionSheet showInView:self.view];
 }
@@ -2578,37 +2653,37 @@
     
     [ALUtilityClass setAlertControllerFrame:theController andViewController:self];
     
-    [theController addAction:[UIAlertAction actionWithTitle: NSLocalizedStringWithDefaultValue(@"cancelOptionText", nil, [NSBundle mainBundle], @"Cancel", @"") style:UIAlertActionStyleCancel handler:nil]];
+    [theController addAction:[UIAlertAction actionWithTitle: NSLocalizedStringWithDefaultValue(@"cancelOptionText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Cancel", @"") style:UIAlertActionStyleCancel handler:nil]];
     if(![ALApplozicSettings isCameraOptionHidden]){
-        [theController addAction:[UIAlertAction actionWithTitle:NSLocalizedStringWithDefaultValue(@"takePhotoText", nil, [NSBundle mainBundle], @"Take photo", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [theController addAction:[UIAlertAction actionWithTitle:NSLocalizedStringWithDefaultValue(@"takePhotoText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Take photo", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
 
             [self openCamera];
         }]];
     }
     if(![ALApplozicSettings isLocationOptionHidden]){
-        [theController addAction:[UIAlertAction actionWithTitle: NSLocalizedStringWithDefaultValue(@"currentLocationOption", nil, [NSBundle mainBundle], @"Current location", @"")  style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [theController addAction:[UIAlertAction actionWithTitle: NSLocalizedStringWithDefaultValue(@"currentLocationOption", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Current location", @"")  style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
 
             [self openLocationView];
         }]];
     }
 
     if(![ALApplozicSettings isSendAudioOptionHidden]){
-        [theController addAction:[UIAlertAction actionWithTitle: NSLocalizedStringWithDefaultValue(@"sendAudioOption", nil, [NSBundle mainBundle], @"Send Audio", @"")  style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [theController addAction:[UIAlertAction actionWithTitle: NSLocalizedStringWithDefaultValue(@"sendAudioOption", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Send Audio", @"")  style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
 
             [self openAudioMic];
         }]];
     }
 
     if(![ALApplozicSettings isSendVideoOptionHidden]){
-        [theController addAction:[UIAlertAction actionWithTitle: NSLocalizedStringWithDefaultValue(@"sendVideoOption", nil, [NSBundle mainBundle],  @"Send Video", @"")  style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [theController addAction:[UIAlertAction actionWithTitle: NSLocalizedStringWithDefaultValue(@"sendVideoOption", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle],  @"Send Video", @"")  style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
 
             [self openVideoCamera];
         }]];
     }
     
-    if((!self.channelKey && !self.conversationId) || (self.alChannel.type == GROUP_OF_TWO))
+    if(((!self.channelKey && !self.conversationId) || (self.alChannel.type == GROUP_OF_TWO)) && ![ALApplozicSettings isBlockUserOptionHidden])
     {
-        [theController addAction:[UIAlertAction actionWithTitle:NSLocalizedStringWithDefaultValue(@"blockUserOption", nil, [NSBundle mainBundle], @"BLOCK USER", @"")  style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [theController addAction:[UIAlertAction actionWithTitle:NSLocalizedStringWithDefaultValue(@"blockUserOption", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"BLOCK USER", @"")  style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             
             if(![ALDataNetworkConnection checkDataNetworkAvailable])
             {
@@ -2624,21 +2699,21 @@
                     self.isUserBlocked = YES;
                     [self.label setHidden:self.isUserBlocked];
                     [self.typingLabel setHidden:self.isUserBlocked];
-                    NSString * alertText = [NSString stringWithFormat:[@"%@ " stringByAppendingString:NSLocalizedStringWithDefaultValue(@"blockedSuccessfullyText", nil, [NSBundle mainBundle], @"is blocked successfully", @"")], [self.alContact getDisplayName]];
-                    [ALUtilityClass showAlertMessage:alertText andTitle:NSLocalizedStringWithDefaultValue(@"userBlock", nil, [NSBundle mainBundle], @"USER BLOCK", @"")  ];
+                    NSString * alertText = [NSString stringWithFormat:[@"%@ " stringByAppendingString:NSLocalizedStringWithDefaultValue(@"blockedSuccessfullyText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"is blocked successfully", @"")], [self.alContact getDisplayName]];
+                    [ALUtilityClass showAlertMessage:alertText andTitle:NSLocalizedStringWithDefaultValue(@"userBlock", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"USER BLOCK", @"")  ];
                 }
             }];
         }]];
     }
     if(![ALApplozicSettings isShareContactOptionHidden]){
-        [theController addAction:[UIAlertAction actionWithTitle: NSLocalizedStringWithDefaultValue(@"shareContact", nil, [NSBundle mainBundle], @"Share Contact", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [theController addAction:[UIAlertAction actionWithTitle: NSLocalizedStringWithDefaultValue(@"shareContact", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Share Contact", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
 
             [self openContactsView];
         }]];
     }
 
     if(![ALApplozicSettings isPhotoGalleryOptionHidden]){
-        [theController addAction:[UIAlertAction actionWithTitle:NSLocalizedStringWithDefaultValue(@"photosOrVideoOption", nil, [NSBundle mainBundle], @"Photos/Videos" , @"")  style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [theController addAction:[UIAlertAction actionWithTitle:NSLocalizedStringWithDefaultValue(@"photosOrVideoOption", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Photos/Videos" , @"")  style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
 
             UIStoryboard* storyboardM = [UIStoryboard storyboardWithName:@"Applozic" bundle:[NSBundle bundleForClass:ALChatViewController.class]];
             ALMultipleAttachmentView *launchChat = (ALMultipleAttachmentView *)[storyboardM instantiateViewControllerWithIdentifier:@"collectionView"];
@@ -2650,13 +2725,13 @@
     if(!self.channelKey && !self.conversationId && [ALApplozicSettings isAudioVideoEnabled])
     {
     
-        [theController addAction:[UIAlertAction actionWithTitle:  NSLocalizedStringWithDefaultValue(@"videoCall", nil, [NSBundle mainBundle], @"Video Call" , @"")
+        [theController addAction:[UIAlertAction actionWithTitle:  NSLocalizedStringWithDefaultValue(@"videoCall", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Video Call" , @"")
 style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             
             [self openCallView:NO];
         }]];
         
-        [theController addAction:[UIAlertAction actionWithTitle:NSLocalizedStringWithDefaultValue(@"audioCall", nil, [NSBundle mainBundle], @"Audio Call" , @"")
+        [theController addAction:[UIAlertAction actionWithTitle:NSLocalizedStringWithDefaultValue(@"audioCall", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Audio Call" , @"")
  style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             
             [self openCallView:YES];
@@ -2704,14 +2779,14 @@ style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 }
                 else
                 {
-                    [ALUtilityClass permissionPopUpWithMessage:NSLocalizedStringWithDefaultValue(@"permissionPopMessageForCamera", nil, [NSBundle mainBundle], @"Enable Camera Permission", @"") andViewController:self];
+                    [ALUtilityClass permissionPopUpWithMessage:NSLocalizedStringWithDefaultValue(@"permissionPopMessageForCamera", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Enable Camera Permission", @"") andViewController:self];
                 }
             });
         }];
     }
     else
     {
-        [ALUtilityClass showAlertMessage:NSLocalizedStringWithDefaultValue(@"permissionNotAvailableMessageForCamera", nil, [NSBundle mainBundle], @"Camera is not Available !!!", @"") andTitle:@"OOPS !!!"];
+        [ALUtilityClass showAlertMessage:NSLocalizedStringWithDefaultValue(@"permissionNotAvailableMessageForCamera", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Camera is not Available !!!", @"") andTitle:@"OOPS !!!"];
     }
 }
 
@@ -2732,14 +2807,14 @@ style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 }
                 else
                 {
-                    [ALUtilityClass permissionPopUpWithMessage:NSLocalizedStringWithDefaultValue(@"permissionPopMessageForCamera", nil, [NSBundle mainBundle], @"Enable Camera Permission", @"") andViewController:self];
+                    [ALUtilityClass permissionPopUpWithMessage:NSLocalizedStringWithDefaultValue(@"permissionPopMessageForCamera", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Enable Camera Permission", @"") andViewController:self];
                 }
             });
         }];
     }
     else
     {
-        [ALUtilityClass showAlertMessage:NSLocalizedStringWithDefaultValue(@"permissionNotAvailableMessageForCamera", nil, [NSBundle mainBundle], @"Camera is not Available !!!", @"") andTitle:NSLocalizedStringWithDefaultValue(@"oppsText", nil, [NSBundle mainBundle], @"OOPS !!!", @"")];
+        [ALUtilityClass showAlertMessage:NSLocalizedStringWithDefaultValue(@"permissionNotAvailableMessageForCamera", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Camera is not Available !!!", @"") andTitle:NSLocalizedStringWithDefaultValue(@"oppsText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"OOPS !!!", @"")];
     }
 }
 
@@ -2763,7 +2838,7 @@ style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             }
             else
             {
-                [ALUtilityClass permissionPopUpWithMessage:NSLocalizedStringWithDefaultValue(@"permissionPopMessageForMicroPhone", nil, [NSBundle mainBundle], @"Enable MicroPhone Permission", @"")  andViewController:self];
+                [ALUtilityClass permissionPopUpWithMessage:NSLocalizedStringWithDefaultValue(@"permissionPopMessageForMicroPhone", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Enable MicroPhone Permission", @"")  andViewController:self];
             }
         });
     }];
@@ -2785,7 +2860,7 @@ style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                                                          }
                                                          else
                                                          {
-                                                             [ALUtilityClass permissionPopUpWithMessage:NSLocalizedStringWithDefaultValue(@"permissionPopMessageForContacts", nil, [NSBundle mainBundle], @"Enable Contacts Permission", @"")  andViewController:self];
+                                                             [ALUtilityClass permissionPopUpWithMessage:NSLocalizedStringWithDefaultValue(@"permissionPopMessageForContacts", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Enable Contacts Permission", @"")  andViewController:self];
                                                          }
                                                      });
                                                  });
@@ -2805,7 +2880,7 @@ style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 }
                 else
                 {
-                    [ALUtilityClass permissionPopUpWithMessage:NSLocalizedStringWithDefaultValue(@"permissionPopMessageForContacts", nil, [NSBundle mainBundle], @"Enable Contacts Permission", @"")  andViewController:self];
+                    [ALUtilityClass permissionPopUpWithMessage:NSLocalizedStringWithDefaultValue(@"permissionPopMessageForContacts", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Enable Contacts Permission", @"")  andViewController:self];
                 }
             });
         }];
@@ -2815,7 +2890,7 @@ style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
 
 -(void)openLocationView
 {
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Applozic" bundle:[NSBundle bundleForClass:[self class]]];
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Applozic" bundle:[NSBundle bundleForClass:ALChatViewController.class]];
     ALMapViewController *mapView = (ALMapViewController *)[storyboard instantiateViewControllerWithIdentifier:@"shareLoactionViewTag"];
     mapView.controllerDelegate = self;
     [self.navigationController pushViewController:mapView animated:YES];
@@ -3420,17 +3495,17 @@ style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
     if([serverdate compare:todaydate] == NSOrderedSame)
     {
         
-        NSString *str = NSLocalizedStringWithDefaultValue(@"lastSeenLabelText", nil, [NSBundle mainBundle], @"Last seen ", @"");
+        NSString *str = NSLocalizedStringWithDefaultValue(@"lastSeenLabelText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Last seen ", @"");
         
         double minutes = 2 * 60.00;
         if(alUserDetail.connected)
         {
-            [self.label setText:NSLocalizedStringWithDefaultValue(@"onlineLabelText", nil, [NSBundle mainBundle], @"Online", @"")];
+            [self.label setText:NSLocalizedStringWithDefaultValue(@"onlineLabelText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Online", @"")];
             
         }
         else if(difference < minutes)
         {
-            [self.label setText:NSLocalizedStringWithDefaultValue(@"lastSeenJustNowLabelText", nil, [NSBundle mainBundle], @"Last seen Just Now ", @"")];
+            [self.label setText:NSLocalizedStringWithDefaultValue(@"lastSeenJustNowLabelText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Last seen Just Now ", @"")];
             
         }
         else
@@ -3447,7 +3522,7 @@ style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                     theTime = [theTime substringFromIndex:[@"0" length]];
                 }
                 str = [str stringByAppendingString:theTime];
-                str = [str stringByAppendingString:NSLocalizedStringWithDefaultValue(@"hrsAgo", nil, [NSBundle mainBundle], @" hrs ago", @"")];
+                str = [str stringByAppendingString:NSLocalizedStringWithDefaultValue(@"hrsAgo", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @" hrs ago", @"")];
             }
             else
             {
@@ -3457,7 +3532,7 @@ style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                     theTime = [theTime substringFromIndex:[@"0" length]];
                 }
                 str = [str stringByAppendingString:theTime];
-                str = [str stringByAppendingString:NSLocalizedStringWithDefaultValue(@"mins", nil, [NSBundle mainBundle], @" mins ago", @"")];
+                str = [str stringByAppendingString:NSLocalizedStringWithDefaultValue(@"mins", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @" mins ago", @"")];
                 
                 
             }
@@ -3467,7 +3542,7 @@ style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
     }
     else if ([serverdate compare:yesterdaydate] == NSOrderedSame)
     {
-        NSString *str = NSLocalizedStringWithDefaultValue(@"lastSeenJustNowLabelText", nil, [NSBundle mainBundle], @"Last seen yesterday ", @"");
+        NSString *str = NSLocalizedStringWithDefaultValue(@"lastSeenJustNowLabelText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Last seen yesterday ", @"");
         [format setDateFormat:@"hh:mm a"];
         str = [str stringByAppendingString:[format stringFromDate:date]];
         if([str hasPrefix:@"0"])
@@ -3479,7 +3554,7 @@ style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
     else
     {
         [format setDateFormat:@"EE, MMM dd, yyy"];
-        NSString *str = NSLocalizedStringWithDefaultValue(@"lastSeenLabelText", nil, [NSBundle mainBundle], @"Last seen ", @"");
+        NSString *str = NSLocalizedStringWithDefaultValue(@"lastSeenLabelText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Last seen ", @"");
         str = [str stringByAppendingString:[format stringFromDate:date]];
         [self.label setText:str];
     }
@@ -3798,11 +3873,11 @@ style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         NSString * typingText = @"";
         if(self.channelKey)
         {
-            typingText = [NSString stringWithFormat:@"%@ %@", [contact getDisplayName], NSLocalizedStringWithDefaultValue(@"userTyping", nil, [NSBundle mainBundle],@"is typing...", @"")];
+            typingText = [NSString stringWithFormat:@"%@ %@", [contact getDisplayName], NSLocalizedStringWithDefaultValue(@"userTyping", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle],@"is typing...", @"")];
         }
         else
         {
-            typingText = [NSString stringWithFormat:@"%@ %@", [contact getDisplayName], NSLocalizedStringWithDefaultValue(@"userTyping", nil, [NSBundle mainBundle],@"is typing...", @"")];
+            typingText = [NSString stringWithFormat:@"%@ %@", [contact getDisplayName], NSLocalizedStringWithDefaultValue(@"userTyping", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle],@"is typing...", @"")];
         }
         [self.typingLabel setText:typingText];
         [self.typingLabel setHidden:NO];
