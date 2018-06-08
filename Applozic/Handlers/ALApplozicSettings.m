@@ -1123,4 +1123,16 @@
    return [[NSUserDefaults standardUserDefaults] valueForKey:APPLOZIC_LOCALIZABLE];
 
 }
+
++(BOOL)isDeleteConversationOptionEnabled
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:DELETE_CONVERSATION_OPTION];
+}
+
++(void)setDeleteConversationOption:(BOOL)flag
+{
+    [[NSUserDefaults standardUserDefaults] setBool:flag forKey:DELETE_CONVERSATION_OPTION];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
 @end
