@@ -969,7 +969,6 @@
 			children = (
 				6D6DF0DD1BC5364C00EBA00F /* Images.xcassets */,
 				6D6DF0DF1BC5364C00EBA00F /* Files */,
-				6D6DF0E41BC5364C00EBA00F /* Images */,
 				6D6DF1301BC5364C00EBA00F /* ProgressView */,
 			);
 			name = Resources;
@@ -982,13 +981,6 @@
 				6D6DF0E11BC5364C00EBA00F /* ALConstant.h */,
 			);
 			path = Files;
-			sourceTree = "<group>";
-		};
-		6D6DF0E41BC5364C00EBA00F /* Images */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Images;
 			sourceTree = "<group>";
 		};
 		6D6DF1301BC5364C00EBA00F /* ProgressView */ = {

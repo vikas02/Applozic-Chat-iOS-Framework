@@ -43,6 +43,7 @@ import Foundation
             self.isHidden = false
         } else {
             self.isHidden = false
+            startAudioRecord()
         }
     }
 
@@ -75,7 +76,10 @@ import Foundation
         addGestureRecognizer(longGesture)
 
         layer.cornerRadius = 12
-        displayDefaultText()
+       // displayDefaultText()
+        
+        
+        startAudioRecord()
     }
 
     private func displayDefaultText() {
@@ -85,9 +89,13 @@ import Foundation
         setTitle(holdToTalkMessage, for: .normal)
         setTitle(holdToTalkMessage, for: .highlighted)
     }
+    
+    //19,66,142
 
     private func displayDefaultRecordingText() {
-        backgroundColor = UIColor.red
+        
+        backgroundColor = UIColor.init(19, green: 66, blue: 142)
+        
         let swipeUpToCancelMessage = NSLocalizedString("swipeUpToCancel", value: "Swipe up to cancel",comment: "")
         let recordingMessage = NSLocalizedString("initialRecordingMessage", value: "00:00:00)", comment: "")
         setTitle("\(recordingMessage)   \(swipeUpToCancelMessage)", for: .normal)
@@ -154,6 +162,8 @@ import Foundation
         let width = self.frame.size.width
         let height = self.frame.size.height
 
+        stopAudioRecord()
+        /*
         if sender.state == .ended {
             stopAudioRecord()
         }
@@ -181,10 +191,19 @@ import Foundation
             }
 
         }
+         */
     }
 
     @objc fileprivate func startAudioRecord()
     {
+        
+        if checkMicrophonePermission() == false {
+            if delegate != nil {
+                delegate.permissionNotGrant()
+            }
+            return
+        }
+        
         isTimerStart = true
         counter = 0
         displayDefaultRecordingText()
@@ -216,10 +235,12 @@ import Foundation
     }
 
     @objc fileprivate func singleTapAudioRecord() {
-        cancelAudioRecord()
+        
+        /*cancelAudioRecord()
         if delegate != nil {
             delegate.cancelRecordingAudio()
-        }
+        }*/
+        stopAudioRecord()
 
     }
 
@@ -242,7 +263,7 @@ import Foundation
         {
             isTimerStart = false
             timer.invalidate()
-            displayDefaultText()
+            //displayDefaultText()
 
             audioRecorder.stop()
             audioRecorder = nil
@@ -258,6 +279,8 @@ import Foundation
                 }
                 delegate.finishRecordingAudio(fileUrl: audioFilename.path as NSString)
             }
+            
+            hide()
         }
     }
 

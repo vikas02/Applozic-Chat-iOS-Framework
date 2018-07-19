@@ -177,8 +177,9 @@
         [self showMicButton];
     }
     
- 
 
+    [self loadAllImages];
+    
     [self initialSetUp];
     [self fetchMessageFromDB];
     [self loadChatView];
@@ -2208,6 +2209,53 @@
 #pragma mark - VIEW HELPER METHODS
 //==============================================================================================================================================
 
+
+-(void)loadAllImages
+{
+   
+    
+   // BOOL isLoadEarlierTapped = [self.alMessageWrapper getUpdatedMessageArray].count == 0 ? NO : YES ;
+    ALDBHandler * theDbHandler = [ALDBHandler sharedInstance];
+    NSFetchRequest * theRequest = [NSFetchRequest fetchRequestWithEntityName:@"DB_Message"];
+    [theRequest setFetchLimit:self.rp];
+    NSPredicate* predicate1;
+    if(self.conversationId && [ALApplozicSettings getContextualChatOption])
+    {
+        predicate1 = [NSPredicate predicateWithFormat:@"conversationId = %d", [self.conversationId intValue]];
+    }
+    else if(self.isGroup)
+    {
+        predicate1 = [NSPredicate predicateWithFormat:@"groupId = %d", [self.channelKey intValue]];
+    }
+    else
+    {
+        predicate1 = [NSPredicate predicateWithFormat:@"contactId = %@ && groupId = nil", self.contactIds];
+    }
+    
+    self.mTotalCount = [theDbHandler.managedObjectContext countForFetchRequest:theRequest error:nil];
+    
+    NSPredicate* predicate2 = [NSPredicate predicateWithFormat:@"deletedFlag == NO AND msgHidden == %@",@(NO)];
+    NSPredicate* predicate3 = [NSPredicate predicateWithFormat:@"contentType != %i",ALMESSAGE_CONTENT_HIDDEN];
+    NSPredicate* compoundPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[predicate1,predicate2,predicate3]];
+    [theRequest setPredicate:compoundPredicate];
+    [theRequest setFetchOffset:self.startIndex];
+    [theRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"createdAt" ascending:NO]]];
+    
+    NSArray * theArray = [theDbHandler.managedObjectContext executeFetchRequest:theRequest error:nil];
+    ALMessageDBService* messageDBService = [[ALMessageDBService alloc]init];
+    
+    NSMutableArray *tempArray = [[NSMutableArray alloc] init];
+    
+    for (DB_Message * theEntity in theArray)
+    {
+        ALMessage * theMessage = [messageDBService createMessageEntity:theEntity];
+        NSLog(@"Path = %@",theMessage.imageFilePath);
+        [tempArray insertObject:theMessage atIndex:0];
+        //[self.mMessageListArrayKeyStrings insertObject:theMessage.key atIndex:0];
+    }
+    
+   
+}
 -(void)loadChatView
 {
     [self setTitle];
@@ -2240,13 +2288,14 @@
     [theRequest setSortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"createdAt" ascending:NO]]];
     
     NSArray * theArray = [theDbHandler.managedObjectContext executeFetchRequest:theRequest error:nil];
-    ALMessageDBService* messageDBService = [[ALMessageDBService alloc]init];
+    ALMessageDBService* messageDBService = [[ALMessageDBService alloc] init];
     
     NSMutableArray *tempArray = [[NSMutableArray alloc] init];
     
     for (DB_Message * theEntity in theArray)
     {
         ALMessage * theMessage = [messageDBService createMessageEntity:theEntity];
+        NSLog(@"Path = %@",theMessage.imageFilePath);
         [tempArray insertObject:theMessage atIndex:0];
         //[self.mMessageListArrayKeyStrings insertObject:theMessage.key atIndex:0];
     }
