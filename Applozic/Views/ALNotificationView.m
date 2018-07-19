@@ -59,19 +59,19 @@
     
     if(alMessage.contentType == ALMESSAGE_CONTENT_LOCATION)
     {
-        return NSLocalizedStringWithDefaultValue(@"shareadLocationText", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @"Shared a Location", @"") ;
+        return NSLocalizedStringWithDefaultValue(@"shareadLocationText", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], NSLocalizedString(@"Shared a Location", nil), @"") ;
     }
     else if(alMessage.contentType == ALMESSAGE_CONTENT_VCARD)
     {
-        return NSLocalizedStringWithDefaultValue(@"shareadContactText", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @"Shared a Contact", @"");
+        return NSLocalizedStringWithDefaultValue(@"shareadContactText", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], NSLocalizedString(@"Shared a Contact", nil), @"");
     }
     else if (alMessage.contentType == ALMESSAGE_CONTENT_CAMERA_RECORDING)
     {
-        return NSLocalizedStringWithDefaultValue(@"shareadVideoText", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @"Shared a Video", @"");
+        return NSLocalizedStringWithDefaultValue(@"shareadVideoText", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], NSLocalizedString(@"Shared a Video", nil), @"");
     }
     else if (alMessage.contentType == ALMESSAGE_CONTENT_AUDIO)
     {
-        return NSLocalizedStringWithDefaultValue(@"shareadAudioText", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @"Shared an Audio", @"");
+        return NSLocalizedStringWithDefaultValue(@"shareadAudioText", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle],NSLocalizedString(@"Shared an Audio", nil) , @"");
     }
     else if (alMessage.contentType == AV_CALL_CONTENT_THREE)
     {
@@ -80,7 +80,7 @@
     }else if (alMessage.contentType == ALMESSAGE_CONTENT_ATTACHMENT ||
              [alMessage.message isEqualToString:@""] || alMessage.fileMeta != NULL)
     {
-        return NSLocalizedStringWithDefaultValue(@"shareadAttachmentText", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @"Shared an Attachment", @"");
+        return NSLocalizedStringWithDefaultValue(@"shareadAttachmentText", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], NSLocalizedString(@"Shared an Attachment", nil), @"");
     }
     else{
         return alMessage.message;
@@ -191,7 +191,7 @@
     // ** Attachment ** //
     if(self.alMessageObject.contentType == ALMESSAGE_CONTENT_LOCATION)
     {
-        subtitle = [NSString stringWithFormat:@"Shared location"];
+        subtitle = [NSString stringWithFormat:NSLocalizedString(@"Shared location", nil)];
     }
 
     subtitle = (subtitle.length > 20) ? [NSString stringWithFormat:@"%@...",[subtitle substringToIndex:17]] : subtitle;
@@ -288,7 +288,7 @@
     // ** Attachment ** //
     if(self.alMessageObject.contentType == ALMESSAGE_CONTENT_LOCATION)
     {
-        subtitle = NSLocalizedStringWithDefaultValue(@"shareadLocation", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @"Shared Location", @"");
+        subtitle = NSLocalizedStringWithDefaultValue(@"shareadLocation", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle],NSLocalizedString(@"Shared location", nil), @"");
         
     }
     
@@ -443,13 +443,13 @@
 -(void)showGroupLeftMessage
 {
     [[TSMessageView appearance] setTitleTextColor:[UIColor whiteColor]];
-    [TSMessage showNotificationWithTitle: NSLocalizedStringWithDefaultValue(@"youHaveLeftGroupMesasge", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"You have left this group", @"") type:TSMessageNotificationTypeWarning];
+    [TSMessage showNotificationWithTitle: NSLocalizedStringWithDefaultValue(@"youHaveLeftGroupMesasge", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"You have left this group", nil), @"") type:TSMessageNotificationTypeWarning];
 }
 
 -(void)noDataConnectionNotificationView
 {
     [[TSMessageView appearance] setTitleTextColor:[UIColor whiteColor]];
-    [TSMessage showNotificationWithTitle: NSLocalizedStringWithDefaultValue(@"noInternetMessage", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"No Internet Connectivity", @"")
+    [TSMessage showNotificationWithTitle: NSLocalizedStringWithDefaultValue(@"noInternetMessage", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"No Internet Connectivity", nil), @"")
                                     type:TSMessageNotificationTypeWarning];
 }
 

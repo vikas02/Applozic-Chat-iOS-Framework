@@ -25,14 +25,14 @@
 
                                if(connectionError.code == kCFURLErrorUserCancelledAuthentication)
                                {
-                                   NSString * failingURL = connectionError.userInfo[@"NSErrorFailingURLStringKey"] != nil ? connectionError.userInfo[@"NSErrorFailingURLStringKey"]:@"Empty";
+                                   NSString * failingURL = connectionError.userInfo[@"NSErrorFailingURLStringKey"] != nil ? connectionError.userInfo[@"NSErrorFailingURLStringKey"]:NSLocalizedString(@"Empty", nil);
                                    NSLog(@"Authentication error: HTTP 401 : ERROR CODE : %ld, FAILING URL: %@",  (long)connectionError.code,  failingURL);
                                    reponseCompletion(nil,[self errorWithDescription:@"Authentication error: 401"]);
                                    return;
                                }
                                else if(connectionError.code == kCFURLErrorNotConnectedToInternet)
                                {
-                                   NSString * failingURL = connectionError.userInfo[@"NSErrorFailingURLStringKey"] != nil ? connectionError.userInfo[@"NSErrorFailingURLStringKey"]:@"Empty";
+                                   NSString * failingURL = connectionError.userInfo[@"NSErrorFailingURLStringKey"] != nil ? connectionError.userInfo[@"NSErrorFailingURLStringKey"]:NSLocalizedString(@"Empty", nil);
                                    NSLog(@"NO INTERNET CONNECTIVITY, ERROR CODE : %ld, FAILING URL: %@",  (long)connectionError.code, failingURL);
                                    reponseCompletion(nil,[self errorWithDescription:@"No Internet connectivity"]);
                                    return;

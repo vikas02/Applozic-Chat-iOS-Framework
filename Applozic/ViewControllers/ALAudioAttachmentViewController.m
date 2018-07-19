@@ -246,10 +246,10 @@
 
 -(void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
 {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"DONE"
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: NSLocalizedString(@"Done", nil)
                                                     message: @"FINISH PLAYING !!!"
                                                    delegate: nil
-                                          cancelButtonTitle: @"OK"
+                                          cancelButtonTitle: NSLocalizedString(@"Ok", nil)
                                           otherButtonTitles: nil];
     [alert show];
 }

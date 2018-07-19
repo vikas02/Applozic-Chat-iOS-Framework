@@ -35,7 +35,7 @@
     [self.navigationBar setTintColor:[ALApplozicSettings getColorForNavigation]];
     [self.navigationBar setBarTintColor:[ALApplozicSettings getColorForNavigation]];
     
-    [self.backBarButton setTitle:NSLocalizedStringWithDefaultValue(@"back", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Back", @"")];
+    [self.backBarButton setTitle:NSLocalizedStringWithDefaultValue(@"back", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Back", nil), @"")];
     self.navigationBar.topItem.title = NSLocalizedStringWithDefaultValue(@"imagePreview", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Image Preview", @"");
     self.navigationBar.titleTextAttributes = @{
                                                NSForegroundColorAttributeName:[ALApplozicSettings getColorForNavigationItem]

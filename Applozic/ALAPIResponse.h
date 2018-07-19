@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "ALJson.h"
-
+//amol
 #define RESPONSE_SUCCESS @"success"
 
 @interface ALAPIResponse : ALJson

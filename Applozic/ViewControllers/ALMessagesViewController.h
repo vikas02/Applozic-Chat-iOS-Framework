@@ -24,6 +24,11 @@
 @property (nonatomic, strong) id <ALMessagesViewDelegate> messagesViewDelegate;
 
 @property(nonatomic,strong) ALChatViewController * detailChatViewController;
+@property (nonatomic, strong) ALMessageDBService *dBService;
+
+
+//amolchat
+@property(nonatomic,strong) UIStoryboard * aplozicStoryboard;
 
 -(void)createDetailChatViewController: (NSString *) contactIds;
 

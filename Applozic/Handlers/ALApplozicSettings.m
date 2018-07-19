@@ -148,7 +148,7 @@
 +(NSString *)getTitleForBackButtonChatVC
 {
     NSString * text = [[NSUserDefaults standardUserDefaults] valueForKey:BACK_BUTTON_TITLE_CHATVC];
-    return text ? text : NSLocalizedStringWithDefaultValue(@"chatViewBack", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @"Back", @"");
+    return text ? text : NSLocalizedStringWithDefaultValue(@"chatViewBack", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], NSLocalizedString(@"Back", nil), @"");
 
 }
 
@@ -419,7 +419,7 @@
 +(NSString *)getEmptyConversationText
 {
     NSString * text = [[NSUserDefaults standardUserDefaults] valueForKey:EMPTY_CONVERSATION_TEXT];
-    return text ? text : NSLocalizedStringWithDefaultValue(@"noConversationTitle", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @"You have no conversations yet", @"");
+    return text ? text : NSLocalizedStringWithDefaultValue(@"noConversationTitle", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle],  NSLocalizedString(@"You have no conversations yet", nil), @"");
 }
 
 +(void)setVisibilityNoConversationLabelChatVC:(BOOL)flag
@@ -605,7 +605,7 @@
 +(NSString *)getAbuseWarningText
 {
     NSString * msg = [[NSUserDefaults standardUserDefaults] valueForKey:ABUSE_WORDS_WARNING_TEXT];
-    return msg ? msg :  NSLocalizedStringWithDefaultValue(@"restrictionWorldInfo", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"AVOID USE OF ABUSE WORDS", @"");
+    return msg ? msg :  NSLocalizedStringWithDefaultValue(@"restrictionWorldInfo", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"AVOID USE OF ABUSE WORDS", nil), @"");
     ;
 }
 
@@ -814,7 +814,7 @@
 +(NSString *)getGroupDeletedTitle
 {
     NSString * title = [[NSUserDefaults standardUserDefaults] stringForKey:GROUP_DELETED_TITLE];
-    return title ? title : NSLocalizedStringWithDefaultValue(@"groupDeletedInfo", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"This Group has been Deleted", @"");;
+    return title ? title : NSLocalizedStringWithDefaultValue(@"groupDeletedInfo", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"This Group has been Deleted", nil), @"");;
 }
 
 +(void)setGroupDeletedTitle:(NSString *)title;
@@ -826,7 +826,7 @@
 +(NSString *)getUserDeletedText
 {
     NSString *text = [[NSUserDefaults standardUserDefaults] valueForKey:USER_DELETED_TEXT];
-    return text ? text :NSLocalizedStringWithDefaultValue(@"userDeletedInfo", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"User has been deleted", @"");
+    return text ? text :NSLocalizedStringWithDefaultValue(@"userDeletedInfo", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"User has been deleted", nil), @"");
 }
 
 +(void)setUserDeletedText:(NSString *)text
@@ -852,7 +852,7 @@
 +(NSString *)getChatListTabTitle
 {
     NSString *stringtext = [[NSUserDefaults standardUserDefaults] valueForKey:CHAT_LIST_TAB_TITLE];
-    return (stringtext && stringtext.length) ? stringtext :NSLocalizedStringWithDefaultValue(@"tabbarChatsTitle", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Chats", @"");
+    return (stringtext && stringtext.length) ? stringtext :NSLocalizedStringWithDefaultValue(@"tabbarChatsTitle", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Chats", nil), @"");
 }
 
 +(void)setChatListTabTitle:(NSString *)title
@@ -878,7 +878,7 @@
 +(NSString *)getProfileTabTitle
 {
     NSString *stringtext = [[NSUserDefaults standardUserDefaults] valueForKey:USER_PROFILE_TAB_TITLE];
-    return (stringtext && stringtext.length) ? stringtext : NSLocalizedStringWithDefaultValue(@"tabbarProfileTitle", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Profile", @"");
+    return (stringtext && stringtext.length) ? stringtext : NSLocalizedStringWithDefaultValue(@"tabbarProfileTitle", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Profile", nil), @"");
 }
 
 +(void)setProfileTabTitle:(NSString *)title

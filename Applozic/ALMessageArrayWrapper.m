@@ -36,7 +36,7 @@
     if([self getUpdatedMessageArray].count == 0)
     {
         ALMessage *dateLabel = [self getDatePrototype:
-                                NSLocalizedStringWithDefaultValue(@"today", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Today", @"")
+                                NSLocalizedStringWithDefaultValue(@"today", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Today", nil), @"")
                                    andAlMessageObject:alMessage];
         [self.messageArray addObject:dateLabel];
     }
@@ -141,7 +141,7 @@
     if(tempArray.count == 1)
     {
         
-        self.dateCellText = NSLocalizedStringWithDefaultValue(@"today", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Today", @"");
+        self.dateCellText = NSLocalizedStringWithDefaultValue(@"today", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Today", nil), @"");
         
         ALMessage *dateLabel = [self getDatePrototype:self.dateCellText andAlMessageObject:tempArray[0]];
         
@@ -225,12 +225,12 @@
     {
         if([newerDateString isEqualToString:todaydate])
         {
-            self.dateCellText = NSLocalizedStringWithDefaultValue(@"today", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Today", @"");
+            self.dateCellText = NSLocalizedStringWithDefaultValue(@"today", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Today", nil), @"");
             
         }
         else if([newerDateString isEqualToString:yesterdaydate])
         {
-            self.dateCellText = NSLocalizedStringWithDefaultValue(@"yesterday", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Yesterday", @"");
+            self.dateCellText = NSLocalizedStringWithDefaultValue(@"yesterday", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Yesterday", nil), @"");
         }
         else
         {
@@ -264,11 +264,11 @@
     
     if([string isEqualToString:todaydate])
     {
-        actualDate = NSLocalizedStringWithDefaultValue(@"today", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Today", @"");
+        actualDate = NSLocalizedStringWithDefaultValue(@"today", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Today", nil), @"");
     }
     else if ([string isEqualToString:yesterdaydate])
     {
-        actualDate = NSLocalizedStringWithDefaultValue(@"yesterday", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Yesterday", @"");    }
+        actualDate = NSLocalizedStringWithDefaultValue(@"yesterday", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Yesterday", nil), @"");    }
     else
     {
         [format setDateFormat:@"EEEE MMM dd,yyyy"];

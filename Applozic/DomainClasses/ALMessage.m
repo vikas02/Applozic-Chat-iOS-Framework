@@ -180,14 +180,14 @@
     {
         if(difference <= 60)
         {
-            formattedDateStr = NSLocalizedStringWithDefaultValue(@"justNow", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @"Just Now", @"");
+            formattedDateStr = NSLocalizedStringWithDefaultValue(@"justNow", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], NSLocalizedString(@"Just Now", nil), @"");
             
         }
         else
         {
             minutes = difference/60;
             formattedDateStr = [NSString stringWithFormat:@"%.0f", minutes];
-            formattedDateStr = [formattedDateStr stringByAppendingString:@" m"];
+            formattedDateStr = [formattedDateStr stringByAppendingString:NSLocalizedString(@" m", nil)];
         }
     }
     else if(difference <= 7200)
@@ -196,7 +196,7 @@
         formattedDateStr = [NSString stringWithFormat:@"%.0f", minutes];
         NSString *hour = @"1h ";
         formattedDateStr = [hour stringByAppendingString:formattedDateStr];
-        formattedDateStr = [formattedDateStr stringByAppendingString:@"m"];
+        formattedDateStr = [formattedDateStr stringByAppendingString:NSLocalizedString(@"m", nil)];
     }
     else
     {
@@ -252,12 +252,12 @@
     
     if(self.contentType == ALMESSAGE_CONTENT_LOCATION)
     {
-        return NSLocalizedStringWithDefaultValue(@"location", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @"Location", @"");
+        return NSLocalizedStringWithDefaultValue(@"location", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], NSLocalizedString(@"Location", nil), @"");
         
     }
     else if(self.contentType == ALMESSAGE_CONTENT_VCARD)
     {
-        return NSLocalizedStringWithDefaultValue(@"contact", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @"Contact", @"");
+        return NSLocalizedStringWithDefaultValue(@"contact", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], NSLocalizedString(@"Contact", nil), @"");
     }
     if(self.message && ![self.message isEqualToString:@""])
     {
@@ -265,7 +265,7 @@
     }
     else
     {
-        return NSLocalizedStringWithDefaultValue(@"attachment", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], @"Attachment", @"");
+        return NSLocalizedStringWithDefaultValue(@"attachment", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle],  NSLocalizedString(@"Attachment", nil), @"");
     }
 }
 

@@ -80,7 +80,7 @@
 @property (strong, nonatomic) UIBarButtonItem *barButtonItem;
 @property (strong, nonatomic) UIBarButtonItem *refreshButton;
 
-@property (nonatomic, strong) ALMessageDBService *dBService;
+//@property (nonatomic, strong) ALMessageDBService *dBService;
 
 @end
 
@@ -140,6 +140,27 @@
         [self createAndLaunchChatView ];
     }
     
+    //amolchat
+   self.aplozicStoryboard = [UIStoryboard storyboardWithName:@"Applozic" bundle:[NSBundle bundleForClass:ALChatViewController.class]];
+
+    
+}
+
+//amolchat
+-(void)createCustomLeftItems
+{
+    UIButton *btnMenu = [UIButton buttonWithType:UIButtonTypeCustom];
+    btnMenu.frame = CGRectMake(0, 0, 44, 44);
+    [btnMenu setImage:[UIImage imageNamed:@"menu"] forState:UIControlStateNormal];
+    UIBarButtonItem *menu =   [[UIBarButtonItem alloc] initWithCustomView:btnMenu];
+    
+    
+    UIButton *btnGuo = [UIButton buttonWithType:UIButtonTypeCustom];
+    btnGuo.frame = CGRectMake(0, 0, 44, 44);
+    [btnGuo setImage:[UIImage imageNamed:@"img_photo"] forState:UIControlStateNormal];
+    UIBarButtonItem *menuGuo =   [[UIBarButtonItem alloc] initWithCustomView:btnGuo];
+    
+    self.navigationItem.leftBarButtonItems = @[menu];
 }
 
 -(void)loadMessages:(NSNotification *)notification
@@ -177,8 +198,21 @@
         [self dropShadowInNavigationBar];
     }
 
+    
+    //amolchat
+     self.tabBarController.navigationController.navigationBarHidden = YES;
+    self.navigationController.navigationBarHidden = YES;
+    //self.navigationItem.hidesBackButton = YES;
+    
     [self.navigationController.navigationBar addSubview:[ALUtilityClass setStatusBarStyle]];
-    [self.navigationItem setLeftBarButtonItem:self.barButtonItem];
+   
+    //amolchat
+   // [self.navigationItem setLeftBarButtonItem:self.barButtonItem];
+     [self.navigationItem setLeftBarButtonItems:nil];
+   // [self createCustomLeftItems];
+    
+    
+    
     [self.tabBarController.tabBar setHidden:[ALUserDefaultsHandler isBottomTabBarHidden]];
     
     if ([self.detailChatViewController refreshMainView])
@@ -355,7 +389,8 @@
 
 -(void)refreshMessageList
 {
-    NSString * toastMsg = @"Syncing messages with the server,\n it might take few mins!";
+    NSString * toastMsg = NSLocalizedString(@"Syncing messages with the server, It might take fews mins!", nil)
+;
     [self.view makeToast:toastMsg duration:1.0 position:CSToastPositionBottom title:nil];
     
     [ALMessageService getLatestMessageForUser:[ALUserDefaultsHandler getDeviceKeyString] withCompletion:^(NSMutableArray  * messageList, NSError *error) {
@@ -637,9 +672,14 @@
             newBtn.userInteractionEnabled = YES;
             
             
-            [newBtn setTitle:NSLocalizedStringWithDefaultValue(@"createGroupOptionTitle", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Create Group", @"")
-                    forState:UIControlStateNormal];
+//            [newBtn setTitle:NSLocalizedStringWithDefaultValue(@"createGroupOptionTitle", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Create Group", @"")
+//                    forState:UIControlStateNormal];
+            [newBtn setContentMode:UIViewContentModeScaleAspectFit];
+
+            [newBtn setImage:[UIImage imageNamed:@"create_group"] forState:UIControlStateNormal];
             [newBtn sizeToFit];
+            
+            
             
            // Add group button.....
             UIButton *newBroadCast = (UIButton*)[contactCell viewWithTag:102];
@@ -647,7 +687,7 @@
             
             [newBroadCast sizeToFit];
             
-            [newBroadCast setTitle:NSLocalizedStringWithDefaultValue(@"broadcastGroupOptionTitle", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"New Broadcast", @"")
+            [newBroadCast setTitle:NSLocalizedStringWithDefaultValue(@"broadcastGroupOptionTitle", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"New Broadcast", nil), @"")
                           forState:UIControlStateNormal];
             
             newBroadCast.userInteractionEnabled = [ALApplozicSettings isBroadcastGroupEnable];
@@ -845,26 +885,26 @@
         if([message.fileMeta.contentType hasPrefix:@"image"])
         {
             //        contactCell.imageNameLabel.text = NSLocalizedString(@"MEDIA_TYPE_IMAGE", nil);
-            contactCell.imageNameLabel.text = NSLocalizedStringWithDefaultValue(@"image", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Image", @"");
+            contactCell.imageNameLabel.text = NSLocalizedStringWithDefaultValue(@"image", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Image", nil), @"");
             
             contactCell.imageMarker.image = [ALUtilityClass getImageFromFramworkBundle:@"ic_action_camera.png"];
         }
         else if([message.fileMeta.contentType hasPrefix:@"video"])
         {
             //            contactCell.imageNameLabel.text = NSLocalizedString(@"MEDIA_TYPE_VIDEO", nil);
-            contactCell.imageNameLabel.text = NSLocalizedStringWithDefaultValue(@"video", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Video", @"");
+            contactCell.imageNameLabel.text = NSLocalizedStringWithDefaultValue(@"video", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Video", nil), @"");
             contactCell.imageMarker.image = [ALUtilityClass getImageFromFramworkBundle:@"ic_action_video.png"];
         }
         else if (message.contentType == ALMESSAGE_CONTENT_LOCATION)   // location..
         {
             contactCell.mMessageLabel.hidden = YES;
-            contactCell.imageNameLabel.text = NSLocalizedStringWithDefaultValue(@"location", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Location", @"");
+            contactCell.imageNameLabel.text = NSLocalizedStringWithDefaultValue(@"location", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle],  NSLocalizedString(@"Location", nil), @"");
             contactCell.imageMarker.image = [ALUtilityClass getImageFromFramworkBundle:@"location_filled.png"];
         }
         else if (message.fileMeta.contentType)           //other than video and image
         {
             //        contactCell.imageNameLabel.text = NSLocalizedString(@"MEDIA_TYPE_ATTACHMENT", nil);
-            contactCell.imageNameLabel.text =  NSLocalizedStringWithDefaultValue(@"attachment", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"Attachment", @"");
+            contactCell.imageNameLabel.text =  NSLocalizedStringWithDefaultValue(@"attachment", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle],  NSLocalizedString(@"Attachment", nil), @"");
             contactCell.imageMarker.image = [ALUtilityClass getImageFromFramworkBundle:@"ic_action_attachment.png"];
         }
         else
@@ -916,7 +956,12 @@
 {
     if (!(self.detailChatViewController))
     {
-        self.detailChatViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"ALChatViewController"];
+        //amolchat
+        //self.detailChatViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"ALChatViewController"];
+        self.detailChatViewController = [self.aplozicStoryboard instantiateViewControllerWithIdentifier:@"ALChatViewController"];
+        self.detailChatViewController.navigationController.navigationBarHidden = NO;
+
+
     }
     if([ALApplozicSettings isContactsGroupEnabled ] && _contactsGroupId)
     {
@@ -932,7 +977,11 @@
 {   
     if(!(self.detailChatViewController))
     {
-        self.detailChatViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"ALChatViewController"];
+        //amolchat
+       // self.detailChatViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"ALChatViewController"];
+        self.detailChatViewController = [self.aplozicStoryboard instantiateViewControllerWithIdentifier:@"ALChatViewController"];
+        self.detailChatViewController.navigationController.navigationBarHidden = NO;
+
     }
     
     if(message.conversationId)
@@ -967,7 +1016,12 @@
     }
     
     self.detailChatViewController.chatViewDelegate = self;
-    [self.navigationController pushViewController:self.detailChatViewController animated:YES];
+    
+    //amolchat
+    //[self.navigationController pushViewController: self.detailChatViewController animated:YES];
+    
+    [self.tabBarController.navigationController pushViewController: self.detailChatViewController animated:YES];
+
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -1462,7 +1516,7 @@
         return;
     }
     
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Applozic" bundle:[NSBundle bundleForClass:[self class]]];
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Applozic" bundle:[NSBundle bundleForClass:[ALMessagesViewController class]]];
     
     ALGroupCreationViewController * groupCreation = (ALGroupCreationViewController *)[storyboard instantiateViewControllerWithIdentifier:@"ALGroupCreationViewController"];
     
@@ -1491,7 +1545,10 @@
 {
     if (!(self.detailChatViewController))
     {
+        //amolchat
+        //self.detailChatViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"ALChatViewController"];
         self.detailChatViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"ALChatViewController"];
+
     }
     
     self.detailChatViewController.contactIds = self.userIdToLaunch;
@@ -1584,7 +1641,7 @@
         if([ALApplozicSettings getVisibilityForNoMoreConversationMsgVC])
         {
             [[TSMessageView appearance] setTitleTextColor:[UIColor whiteColor]];
-            [TSMessage showNotificationWithTitle:NSLocalizedStringWithDefaultValue(@"noMoreConversations", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], @"No more conversations", @"")
+            [TSMessage showNotificationWithTitle:NSLocalizedStringWithDefaultValue(@"noMoreConversations", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"No more conversations", nil), @"")
                                             type:TSMessageNotificationTypeWarning];
         }
         [self.mActivityIndicator stopAnimating];

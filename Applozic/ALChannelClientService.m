@@ -804,7 +804,7 @@
         NSNumber * lastFetchTime = [NSNumber numberWithLong:[[response.response valueForKey:@"lastFetchTime"] longValue]];
         [ALUserDefaultsHandler setLastGroupFilterSyncTime:lastFetchTime];
         
-        NSDictionary * theChannelFeedDict = [response.response valueForKey:@"groups"];
+        NSDictionary * theChannelFeedDict = [response.response valueForKey:NSLocalizedString(@"Groups", nil)];
         
         for ( NSMutableDictionary *dic  in theChannelFeedDict)
         {
