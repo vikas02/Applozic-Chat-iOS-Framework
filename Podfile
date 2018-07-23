@@ -4,5 +4,6 @@ target 'Applozic' do
 
 # use_frameworks!
 pod 'SDWebImage', '~> 4.4'
+pod 'IDMPhotoBrowser'
 
 end

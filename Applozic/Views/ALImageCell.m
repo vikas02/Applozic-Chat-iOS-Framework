@@ -27,6 +27,7 @@
 #import "ALMessageClientService.h"
 #import "ALConnection.h"
 #import "ALConnectionQueueHandler.h"
+#import <IDMPhotoBrowser/IDMPhotoBrowser.h>
 
 // Constants
 #define MT_INBOX_CONSTANT "4"
@@ -554,7 +555,8 @@ UIViewController * modalCon;
 
 -(void)imageFullScreen:(UITapGestureRecognizer*)sender
 {
-    UIStoryboard * applozicStoryboard = [UIStoryboard storyboardWithName:@"Applozic" bundle:[NSBundle bundleForClass:ALChatViewController.class]];
+   
+    /*UIStoryboard * applozicStoryboard = [UIStoryboard storyboardWithName:@"Applozic" bundle:[NSBundle bundleForClass:ALChatViewController.class]];
     
     ALShowImageViewController * alShowImageViewController = [applozicStoryboard instantiateViewControllerWithIdentifier:@"showImageViewController"];
     alShowImageViewController.view.backgroundColor = [UIColor lightGrayColor];
@@ -564,9 +566,47 @@ UIViewController * modalCon;
     [alShowImageViewController setAlMessage:self.mMessage];
     
     [self.delegate showFullScreen:alShowImageViewController];
+     */
+    
+    
+    NSMutableArray *urlsArr = [NSMutableArray new];
+    
+   
+    IDMPhoto *photo = [IDMPhoto photoWithImage:self.mImageView.image];
+    [urlsArr addObject:photo];
+    
+    IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotos:urlsArr];
+    browser.displayActionButton = NO;
+    browser.displayCounterLabel = YES;
+    browser.autoHideInterface = NO;
+    //  browser.selected_idx =selected_idx;
+    [[self topMostControllerNormal] presentViewController:browser animated:YES completion:nil];
     
     return;
 }
+
+- (UIViewController *) topMostControllerNormal
+{
+    UIViewController *topViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
+    while (true)
+    {
+        if (topViewController.presentedViewController) {
+            topViewController = topViewController.presentedViewController;
+        } else if ([topViewController isKindOfClass:[UINavigationController class]]) {
+            UINavigationController *nav = (UINavigationController *)topViewController;
+            topViewController = nav.topViewController;
+        } else if ([topViewController isKindOfClass:[UITabBarController class]]) {
+            UITabBarController *tab = (UITabBarController *)topViewController;
+            topViewController = tab.selectedViewController;
+        } else {
+            break;
+        }
+    }
+    
+    
+    return topViewController;
+}
+
 
 -(void)setupProgress
 {

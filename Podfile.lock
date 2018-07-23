@@ -1,18 +1,31 @@
 PODS:
+  - DACircularProgress (2.3.1)
+  - IDMPhotoBrowser (1.10.2):
+    - DACircularProgress
+    - pop
+    - SDWebImage
+  - pop (1.0.10)
   - SDWebImage (4.4.1):
     - SDWebImage/Core (= 4.4.1)
   - SDWebImage/Core (4.4.1)
 
 DEPENDENCIES:
+  - IDMPhotoBrowser
   - SDWebImage (~> 4.4)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
+    - DACircularProgress
+    - IDMPhotoBrowser
+    - pop
     - SDWebImage
 
 SPEC CHECKSUMS:
+  DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
+  IDMPhotoBrowser: 4bb459b1faffc228e92bccdf7c54ad6d6b7e8c37
+  pop: 82ca6b068ce9278fd350fd9dd09482a0ce9492e6
   SDWebImage: 47e9b5b925cbce75946c23f0c42dd19464189af4
 
-PODFILE CHECKSUM: 33a3cdb814f54a051ab93a2b2c9eb45eb2311c5e
+PODFILE CHECKSUM: a5c43b9c7274d8f319484fbd313c15311f4b175d
 
 COCOAPODS: 1.5.3
