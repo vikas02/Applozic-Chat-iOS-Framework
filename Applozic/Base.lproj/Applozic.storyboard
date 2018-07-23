@@ -326,6 +326,7 @@
                                     <segment title="Contacts"/>
                                     <segment title="Groups"/>
                                 </segments>
+                                <color key="tintColor" red="0.074509803921568626" green="0.25882352941176467" blue="0.55686274509803924" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
                                     <action selector="segmentControlAction:" destination="oZy-jo-Qf5" eventType="valueChanged" id="5WN-Az-5bU"/>
                                 </connections>
