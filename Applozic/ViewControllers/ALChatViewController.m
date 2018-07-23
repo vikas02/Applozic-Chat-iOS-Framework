@@ -217,7 +217,7 @@
     [super viewDidAppear:animated];
     [self.view endEditing:YES];
     [self.loadEarlierAction setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [self.loadEarlierAction setBackgroundColor:[UIColor grayColor]];
+    [self.loadEarlierAction setBackgroundColor:[UIColor colorWithRed:19/255.0 green:66/255.0 blue:142/255.0 alpha:0.7]];
     [self markConversationRead];
     [self.loadEarlierAction setTitle:NSLocalizedStringWithDefaultValue(@"loadEarlierMessagesText", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle],NSLocalizedString(@"Load Earlier Messages", nil), @"") forState:UIControlStateNormal];
     [[[self navigationController] interactivePopGestureRecognizer] setEnabled:NO];

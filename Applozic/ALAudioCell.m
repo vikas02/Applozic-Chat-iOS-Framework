@@ -81,7 +81,7 @@
     {
         
         self.mediaName = [[UILabel alloc] init];
-        [self.mediaName setTextColor:[UIColor whiteColor]];
+        [self.mediaName setTextColor:[UIColor blackColor]];
         [self.mediaName setBackgroundColor:[UIColor clearColor]];
         [self.mediaName setFont:[UIFont fontWithName:[ALApplozicSettings getFontFace] size:DATE_LABEL_SIZE]];
         [self.contentView addSubview:self.mediaName];
@@ -92,13 +92,14 @@
         
         self.playPauseStop = [[UIButton alloc] init];
         [self.playPauseStop addTarget:self action:@selector(mediaButtonAction) forControlEvents:UIControlEventTouchDown];
+        self.playPauseStop.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
         [self.contentView addSubview:self.playPauseStop];
         
         self.mediaTrackProgress = [[UIProgressView alloc] init];
         [self.contentView addSubview:self.mediaTrackProgress];
         
         self.mediaTrackLength = [[UILabel alloc] init];
-        [self.mediaTrackLength setTextColor:[UIColor whiteColor]];
+        [self.mediaTrackLength setTextColor:[UIColor blackColor]];
         [self.mediaTrackLength setFont:[UIFont fontWithName:[ALApplozicSettings getFontFace] size:DATE_LABEL_SIZE]];
         [self.contentView addSubview:self.mediaTrackLength];
         
@@ -166,6 +167,9 @@
     
     if([alMessage.type isEqualToString:@MT_INBOX_CONSTANT])
     {
+        
+        [self.mediaTrackLength setTextColor:[ALApplozicSettings getReceiveMsgTextColor]];
+
         self.mBubleImageView.backgroundColor = [ALApplozicSettings getReceiveMsgColor];
         
         [self.mUserProfileImageView setFrame:CGRectMake(USER_PROFILE_PADDING_X, 0, USER_PROFILE_WIDTH, USER_PROFILE_HEIGHT)];
@@ -280,6 +284,9 @@
     
     }else
     {
+        
+        [self.mediaTrackLength setTextColor:[ALApplozicSettings getSendMsgTextColor]];
+
 
         [self.mUserProfileImageView setFrame:CGRectMake(viewSize.width - USER_PROFILE_PADDING_X_OUTBOX, 0, 0, USER_PROFILE_HEIGHT)];
         

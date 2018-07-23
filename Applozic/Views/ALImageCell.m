@@ -171,16 +171,16 @@ UIViewController * modalCon;
         //Shift for message reply and channel name..
         
         CGFloat requiredHeight = viewSize.width - BUBBLE_PADDING_HEIGHT;
-        CGFloat imageViewHeight = requiredHeight -IMAGE_VIEW_PADDING_HEIGHT;
+        CGFloat imageViewHeight = requiredHeight ;//-IMAGE_VIEW_PADDING_HEIGHT;
         
-        CGFloat imageViewY = self.mBubleImageView.frame.origin.y + IMAGE_VIEW_PADDING_Y;
+        CGFloat imageViewY = self.mBubleImageView.frame.origin.y ;//+ IMAGE_VIEW_PADDING_Y;
         
         self.mBubleImageView.frame = CGRectMake(self.mUserProfileImageView.frame.size.width + BUBBLE_PADDING_X,
                                                 0, viewSize.width - BUBBLE_PADDING_WIDTH, requiredHeight);
         
         self.mBubleImageView.layer.shadowOpacity = 0.3;
         self.mBubleImageView.layer.shadowOffset = CGSizeMake(0, 2);
-        self.mBubleImageView.layer.shadowRadius = 1;
+        self.mBubleImageView.layer.shadowRadius = 10;
         self.mBubleImageView.layer.masksToBounds = NO;
         
       
@@ -211,9 +211,15 @@ UIViewController * modalCon;
         }
         self.mBubleImageView.frame = CGRectMake(self.mUserProfileImageView.frame.size.width + BUBBLE_PADDING_X,
                                                 0, viewSize.width - BUBBLE_PADDING_WIDTH, requiredHeight);
-        self.mImageView.frame = CGRectMake(self.mBubleImageView.frame.origin.x + IMAGE_VIEW_PADDING_X,
+//        self.mImageView.frame = CGRectMake(self.mBubleImageView.frame.origin.x + IMAGE_VIEW_PADDING_X,
+//                                           imageViewY,
+//                                           self.mBubleImageView.frame.size.width - IMAGE_VIEW_PADDING_WIDTH ,
+//                                           imageViewHeight);
+        
+        
+        self.mImageView.frame = CGRectMake(self.mBubleImageView.frame.origin.x ,
                                            imageViewY,
-                                           self.mBubleImageView.frame.size.width - IMAGE_VIEW_PADDING_WIDTH ,
+                                           self.mBubleImageView.frame.size.width  ,
                                            imageViewHeight);
         
         
@@ -309,13 +315,13 @@ UIViewController * modalCon;
         
         self.mBubleImageView.layer.shadowOpacity = 0.3;
         self.mBubleImageView.layer.shadowOffset = CGSizeMake(0, 2);
-        self.mBubleImageView.layer.shadowRadius = 1;
+        self.mBubleImageView.layer.shadowRadius = 10;
         self.mBubleImageView.layer.masksToBounds = NO;
         
         CGFloat requiredHeight = viewSize.width - BUBBLE_PADDING_HEIGHT;
-        CGFloat imageViewHeight = requiredHeight -IMAGE_VIEW_PADDING_HEIGHT;
+        CGFloat imageViewHeight = requiredHeight ;//-IMAGE_VIEW_PADDING_HEIGHT;
         
-        CGFloat imageViewY = self.mBubleImageView.frame.origin.y + IMAGE_VIEW_PADDING_Y;
+        CGFloat imageViewY = self.mBubleImageView.frame.origin.y ;//+ IMAGE_VIEW_PADDING_Y;
         
         [self.mBubleImageView setFrame:CGRectMake((viewSize.width - self.mUserProfileImageView.frame.origin.x + 60),
                                                   0, viewSize.width - BUBBLE_PADDING_WIDTH, requiredHeight)];
@@ -334,9 +340,14 @@ UIViewController * modalCon;
         
         
         
-        self.mImageView.frame = CGRectMake(self.mBubleImageView.frame.origin.x + IMAGE_VIEW_PADDING_X,
+//        self.mImageView.frame = CGRectMake(self.mBubleImageView.frame.origin.x + IMAGE_VIEW_PADDING_X,
+//                                           imageViewY,
+//                                           self.mBubleImageView.frame.size.width - IMAGE_VIEW_PADDING_WIDTH,
+//                                           imageViewHeight);
+        
+        self.mImageView.frame = CGRectMake(self.mBubleImageView.frame.origin.x,
                                            imageViewY,
-                                           self.mBubleImageView.frame.size.width - IMAGE_VIEW_PADDING_WIDTH,
+                                           self.mBubleImageView.frame.size.width,
                                            imageViewHeight);
         
         [self.mMessageStatusImageView setHidden:NO];
