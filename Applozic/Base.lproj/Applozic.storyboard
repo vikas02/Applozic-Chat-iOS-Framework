@@ -410,7 +410,7 @@
         <!--Create Group-->
         <scene sceneID="lv3-2p-LvI">
             <objects>
-                <viewController storyboardIdentifier="ALGroupCreationViewController" id="Aee-Wf-Lu6" customClass="ALGroupCreationViewController" sceneMemberID="viewController">
+                <viewController id="Aee-Wf-Lu6" customClass="ALGroupCreationViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="jkY-Dh-YVO"/>
                         <viewControllerLayoutGuide type="bottom" id="YdH-6c-go9"/>
@@ -503,6 +503,100 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TgV-Hf-2V9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="3942" y="-387"/>
+        </scene>
+        <!--Group Creation View Controller-->
+        <scene sceneID="EQp-CE-wLU">
+            <objects>
+                <viewController storyboardIdentifier="ALGroupCreationViewController" id="6yt-5g-An5" customClass="ALGroupCreationViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Nft-ju-8js"/>
+                        <viewControllerLayoutGuide type="bottom" id="PrA-BK-8BA"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" restorationIdentifier="ALGroupCreationViewController" id="Zsx-Qd-mPN">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qZ1-hN-Yda">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="100"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mfE-Md-eG0">
+                                        <rect key="frame" x="10" y="20" width="60" height="60"/>
+                                        <color key="backgroundColor" red="0.81960784310000001" green="0.81960784310000001" blue="0.81960784310000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="60" id="VDk-GO-WF4"/>
+                                            <constraint firstAttribute="height" constant="60" id="oTh-b2-EWO"/>
+                                        </constraints>
+                                        <state key="normal" image="ic_creat_group_img"/>
+                                        <connections>
+                                            <action selector="groupIconClicked:" destination="6yt-5g-An5" eventType="touchUpInside" id="cua-Uk-huH"/>
+                                        </connections>
+                                    </button>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="bottom" placeholder="Sample" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="03t-HG-epN">
+                                        <rect key="frame" x="88" y="30" width="270" height="40"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="40" id="KAW-IQ-kIt"/>
+                                        </constraints>
+                                        <nil key="textColor"/>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
+                                        <textInputTraits key="textInputTraits"/>
+                                    </textField>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ekg-OE-i1l">
+                                        <rect key="frame" x="88" y="74" width="270" height="1"/>
+                                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="1" id="oVA-dw-MgA"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" red="0.73725490199999999" green="0.1843137255" blue="0.1529411765" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstItem="Ekg-OE-i1l" firstAttribute="trailing" secondItem="03t-HG-epN" secondAttribute="trailing" id="2je-BJ-fCC"/>
+                                    <constraint firstItem="03t-HG-epN" firstAttribute="leading" secondItem="mfE-Md-eG0" secondAttribute="trailing" constant="18" id="Agu-fi-fL8"/>
+                                    <constraint firstItem="Ekg-OE-i1l" firstAttribute="leading" secondItem="03t-HG-epN" secondAttribute="leading" id="Jgm-fg-GcA"/>
+                                    <constraint firstAttribute="bottom" secondItem="mfE-Md-eG0" secondAttribute="bottom" constant="20" id="RPs-g4-Sm7"/>
+                                    <constraint firstAttribute="trailing" secondItem="03t-HG-epN" secondAttribute="trailing" constant="17" id="WZb-vO-QE8"/>
+                                    <constraint firstItem="03t-HG-epN" firstAttribute="top" secondItem="qZ1-hN-Yda" secondAttribute="top" constant="30" id="WaR-pt-LNc"/>
+                                    <constraint firstItem="Ekg-OE-i1l" firstAttribute="top" secondItem="03t-HG-epN" secondAttribute="bottom" constant="4" id="XBU-XH-zxc"/>
+                                    <constraint firstItem="mfE-Md-eG0" firstAttribute="top" secondItem="qZ1-hN-Yda" secondAttribute="top" constant="20" id="aqj-jS-9DV"/>
+                                    <constraint firstItem="03t-HG-epN" firstAttribute="centerY" secondItem="qZ1-hN-Yda" secondAttribute="centerY" id="gul-L1-Bkf"/>
+                                    <constraint firstItem="mfE-Md-eG0" firstAttribute="leading" secondItem="qZ1-hN-Yda" secondAttribute="leading" constant="10" id="mQD-29-rcV"/>
+                                </constraints>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="16k-L8-x8w">
+                                <rect key="frame" x="0.0" y="100" width="375" height="567"/>
+                                <connections>
+                                    <action selector="dismissKeyOnClick:" destination="6yt-5g-An5" eventType="touchUpInside" id="yLq-HI-2rC"/>
+                                </connections>
+                            </button>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Il0-P6-L9S">
+                                <rect key="frame" x="177.5" y="323.5" width="20" height="20"/>
+                                <color key="color" red="0.016804177310000001" green="0.19835099580000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </activityIndicatorView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="PrA-BK-8BA" firstAttribute="top" secondItem="16k-L8-x8w" secondAttribute="bottom" id="4jm-ce-Qa2"/>
+                            <constraint firstAttribute="trailing" secondItem="16k-L8-x8w" secondAttribute="trailing" id="9up-q9-56H"/>
+                            <constraint firstItem="qZ1-hN-Yda" firstAttribute="leading" secondItem="Zsx-Qd-mPN" secondAttribute="leading" id="Bhy-Uu-uOd"/>
+                            <constraint firstItem="Il0-P6-L9S" firstAttribute="centerY" secondItem="Zsx-Qd-mPN" secondAttribute="centerY" id="CQT-EE-31l"/>
+                            <constraint firstItem="16k-L8-x8w" firstAttribute="leading" secondItem="Zsx-Qd-mPN" secondAttribute="leading" id="NeY-IM-MFD"/>
+                            <constraint firstItem="Il0-P6-L9S" firstAttribute="centerX" secondItem="Zsx-Qd-mPN" secondAttribute="centerX" id="Udy-Jb-Nbp"/>
+                            <constraint firstItem="qZ1-hN-Yda" firstAttribute="top" secondItem="Zsx-Qd-mPN" secondAttribute="top" id="aNO-So-brh"/>
+                            <constraint firstItem="16k-L8-x8w" firstAttribute="top" secondItem="qZ1-hN-Yda" secondAttribute="bottom" id="ajs-a8-xtw"/>
+                            <constraint firstAttribute="trailing" secondItem="qZ1-hN-Yda" secondAttribute="trailing" id="urO-oc-74G"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="activityIndicator" destination="Il0-P6-L9S" id="PwZ-8K-hdN"/>
+                        <outlet property="btnGroupImage" destination="mfE-Md-eG0" id="zGL-D6-nqn"/>
+                        <outlet property="groupNameInput" destination="03t-HG-epN" id="2by-nJ-Kfs"/>
+                        <outlet property="viewBG" destination="qZ1-hN-Yda" id="hrP-i8-Ba7"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="8yU-1R-5bU" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3388" y="-268.51574212893553"/>
         </scene>
         <!--Group Detail View Controller-->
         <scene sceneID="vxh-bT-xMf">
@@ -1715,7 +1809,7 @@ Upload Image Button.centerX = scd_profile_BG.centerX + 50</string>
                                         </connections>
                                     </button>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Path" translatesAutoresizingMaskIntoConstraints="NO" id="oVG-6b-cXM">
-                                        <rect key="frame" x="508" y="8" width="40" height="17"/>
+                                        <rect key="frame" x="517" y="8" width="31" height="17"/>
                                         <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="17" identifier="beakHeight" id="R36-n0-JWM"/>
@@ -1725,7 +1819,7 @@ Upload Image Button.centerX = scd_profile_BG.centerX + 50</string>
                                         <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                                     </imageView>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Au-pr-u6p" customClass="PSPDFTextView">
-                                        <rect key="frame" x="46" y="8" width="489" height="40"/>
+                                        <rect key="frame" x="46" y="8" width="498" height="40"/>
                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="40" identifier="textView-Height" id="ZEF-sY-zaa"/>
@@ -1757,7 +1851,7 @@ Upload Image Button.centerX = scd_profile_BG.centerX + 50</string>
                                     <constraint firstItem="oVG-6b-cXM" firstAttribute="leading" secondItem="4Au-pr-u6p" secondAttribute="trailing" constant="-27" identifier="BeakLeading" id="b3o-YC-mEx"/>
                                     <constraint firstItem="4Au-pr-u6p" firstAttribute="bottom" secondItem="6XL-ms-PBf" secondAttribute="bottom" identifier="sendMessageTextViewBottom" id="cyR-uC-0VF"/>
                                     <constraint firstItem="4Au-pr-u6p" firstAttribute="top" relation="lessThanOrEqual" secondItem="Npf-hG-Fxp" secondAttribute="top" constant="8" id="dft-Vb-CWP"/>
-                                    <constraint firstItem="6XL-ms-PBf" firstAttribute="leading" secondItem="4Au-pr-u6p" secondAttribute="trailing" constant="17" identifier="sednButtomLEading" id="e9x-Mi-ywy"/>
+                                    <constraint firstItem="6XL-ms-PBf" firstAttribute="leading" secondItem="4Au-pr-u6p" secondAttribute="trailing" constant="8" identifier="sednButtomLEading" id="e9x-Mi-ywy"/>
                                     <constraint firstAttribute="bottom" secondItem="6XL-ms-PBf" secondAttribute="bottom" constant="8" identifier="SendButtonToBottom" id="mwc-na-VjY"/>
                                     <constraint firstItem="6XL-ms-PBf" firstAttribute="leading" secondItem="JFb-Gb-Lfr" secondAttribute="trailing" constant="8" identifier="sednButtonLeading" id="n1h-KM-mYO"/>
                                 </constraints>
@@ -1921,12 +2015,13 @@ Upload Image Button.centerX = scd_profile_BG.centerX + 50</string>
         <image name="Path" width="360" height="186"/>
         <image name="SendButton20" width="37" height="37"/>
         <image name="applozic_edit" width="18" height="18"/>
-        <image name="applozic_group_icon" width="100" height="100"/>
+        <image name="applozic_group_icon" width="50" height="50"/>
         <image name="applozic_uploadCamera" width="20" height="16"/>
         <image name="attachments" width="24" height="24"/>
         <image name="audio_mic" width="462" height="726"/>
         <image name="create_group" width="32" height="21"/>
         <image name="ic_action_camera" width="64" height="64"/>
+        <image name="ic_creat_group_img" width="51" height="51"/>
         <image name="ic_phone_gray" width="30" height="32"/>
         <image name="online_show" width="200" height="200"/>
     </resources>

@@ -651,5 +651,49 @@
 }
 
 
++(void)showActionSheet:(NSString *)title optionsArray:(NSArray *)arrData completion:(void(^)(NSInteger index))completion
+{
+    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:title message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    for (NSString *str in arrData) {
+        [actionSheet addAction:[UIAlertAction actionWithTitle:str style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            NSInteger index = [actionSheet.actions indexOfObject:action];
+            [[self topMostControllerNormal] dismissViewControllerAnimated:YES completion:^{
+            }];
+            completion(index);
+        }]];
+    }
+    [actionSheet addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"message_dialog_cancel", nil).capitalizedString style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+        [[self topMostControllerNormal] dismissViewControllerAnimated:YES completion:^{
+        }];
+    }]];
+    
+    [[self topMostControllerNormal] presentViewController:actionSheet animated:YES completion:nil];
+    
+    
+}
+
++(UIViewController *) topMostControllerNormal
+{
+    UIViewController *topViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
+    while (true)
+    {
+        if (topViewController.presentedViewController) {
+            topViewController = topViewController.presentedViewController;
+        } else if ([topViewController isKindOfClass:[UINavigationController class]]) {
+            UINavigationController *nav = (UINavigationController *)topViewController;
+            topViewController = nav.topViewController;
+        } else if ([topViewController isKindOfClass:[UITabBarController class]]) {
+            UITabBarController *tab = (UITabBarController *)topViewController;
+            topViewController = tab.selectedViewController;
+        } else {
+            break;
+        }
+    }
+    
+    
+    return topViewController;
+}
+
 
 @end

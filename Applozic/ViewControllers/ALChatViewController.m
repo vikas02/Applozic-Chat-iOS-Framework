@@ -189,6 +189,12 @@
     self.sendMessageTextView.text = self.placeHolderTxt;
     self.defaultMessageViewHeight = 56.0;
     self.sendMessageTextView.backgroundColor = [UIColor whiteColor];
+    
+    self.sendMessageTextView.layer.cornerRadius = 20;
+    self.sendMessageTextView.layer.masksToBounds = YES;
+    self.sendMessageTextView.layer.borderWidth = 0.5;
+    self.sendMessageTextView.layer.borderColor = [UIColor lightGrayColor].CGColor;
+    
     self.beakImageView.tintColor = [UIColor whiteColor];
     self.typingMessageView.backgroundColor = [UIColor whiteColor];
     self.attachmentOutlet.tintColor = [ALApplozicSettings getColorForNavigation];

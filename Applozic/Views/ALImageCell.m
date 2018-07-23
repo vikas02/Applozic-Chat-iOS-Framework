@@ -27,7 +27,7 @@
 #import "ALMessageClientService.h"
 #import "ALConnection.h"
 #import "ALConnectionQueueHandler.h"
-#import <IDMPhotoBrowser/IDMPhotoBrowser.h>
+//#import <IDMPhotoBrowser/IDMPhotoBrowser.h>
 
 // Constants
 #define MT_INBOX_CONSTANT "4"
@@ -569,7 +569,7 @@ UIViewController * modalCon;
      */
     
     
-    NSMutableArray *urlsArr = [NSMutableArray new];
+   /* NSMutableArray *urlsArr = [NSMutableArray new];
     
    
     IDMPhoto *photo = [IDMPhoto photoWithImage:self.mImageView.image];
@@ -581,7 +581,7 @@ UIViewController * modalCon;
     browser.autoHideInterface = NO;
     //  browser.selected_idx =selected_idx;
     [[self topMostControllerNormal] presentViewController:browser animated:YES completion:nil];
-    
+    */
     return;
 }
 

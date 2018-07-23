@@ -62,5 +62,7 @@
 +(void)setImageFromURL:(NSString *)urlString andImageView:(UIImageView *)imageView;
 +(NSString *)stringFromTimeInterval:(NSTimeInterval)interval;
 +(UIImage *)getVOIPMessageImage:(ALMessage *)alMessage;
++(void)showActionSheet:(NSString *)title optionsArray:(NSArray *)arrData completion:(void(^)(NSInteger index))completion;
+
 
 @end

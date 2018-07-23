@@ -31,11 +31,14 @@
 #import "ALContactService.h"
 #import "ALVOIPNotificationHandler.h"
 
+
 @interface ALGroupCreationViewController ()
 
 @property (nonatomic,strong) UIImagePickerController * mImagePicker;
 @property (nonatomic,strong) NSString * mainFilePath;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
+@property (weak, nonatomic) IBOutlet UIButton *btnGroupImage;
+@property (weak, nonatomic) IBOutlet UIView *viewBG;
 
 @end
 
@@ -52,6 +55,16 @@
     [nextContacts setTarget:self];
 
     self.navigationItem.rightBarButtonItem = nextContacts;
+    
+    _viewBG.backgroundColor = [UIColor whiteColor];
+    _viewBG.layer.shadowOffset = CGSizeMake(1, 2);
+    _viewBG.layer.shadowColor = [UIColor lightGrayColor].CGColor;
+    _btnGroupImage.layer.cornerRadius = 30;
+    _btnGroupImage.layer.masksToBounds = YES;
+    
+    self.groupNameInput.placeholder = NSLocalizedString(@"Type your group name", nil);
+    
+    
     
     if ([UIApplication sharedApplication].userInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionRightToLeft) {
         self.groupNameInput.textAlignment = NSTextAlignmentRight;
@@ -87,6 +100,42 @@
     [self.activityIndicator setHidesWhenStopped:YES];
 }
 
+#pragma mark - Amol Methods
+- (IBAction)dismissKeyOnClick:(id)sender {
+    
+    [self.view endEditing:YES];
+}
+- (IBAction)groupIconClicked:(id)sender {
+    
+    [ALUtilityClass showActionSheet:@"" optionsArray:@[NSLocalizedString(@"Take Photo", nil),NSLocalizedString(@"Browse Photos", nil)] completion:^(NSInteger index) {
+        if (index == 0) {
+            [self presentImagePickerController:UIImagePickerControllerSourceTypeCamera mediaTypes:nil];
+        }
+        else if (index == 1) {
+            [self presentImagePickerController:UIImagePickerControllerSourceTypePhotoLibrary mediaTypes:nil];
+        }
+       
+    }];
+}
+
+-(void)presentImagePickerController:(UIImagePickerControllerSourceType)sourceType mediaTypes:(NSString*)mediaTypes
+{
+    UIImagePickerController *pickerController = [UIImagePickerController new];
+    pickerController.allowsEditing = YES;
+    pickerController.sourceType = sourceType;
+    if (mediaTypes) {
+        pickerController.mediaTypes = @[mediaTypes];
+    }
+    
+    pickerController.delegate = self;
+    [self presentViewController:pickerController animated:YES completion:^{
+        pickerController.navigationBar.tintColor = [UIColor blackColor];
+    }];
+}
+
+
+
+
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
@@ -100,7 +149,7 @@
 -(void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-    self.navigationController.navigationBarHidden = YES;
+   // self.navigationController.navigationBarHidden = YES;
 }
 -(void)setProfileImage
 {
@@ -309,9 +358,16 @@
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
 {
+    [self.view endEditing:YES];
     UIImage * rawImage = [info valueForKey:UIImagePickerControllerEditedImage];
+    
+    if (!rawImage) {
+        rawImage = [info valueForKey:UIImagePickerControllerOriginalImage];
+
+    }
     UIImage * normalizedImage = [ALUtilityClass getNormalizedImage:rawImage];
-    [self.groupIconView setImage:normalizedImage];
+//    [self.groupIconView setImage:normalizedImage];
+    [_btnGroupImage setImage:normalizedImage forState:UIControlStateNormal];
     
     [picker dismissViewControllerAnimated:YES completion:nil];
     self.mainFilePath = [self getImageFilePath:normalizedImage];
@@ -366,6 +422,7 @@
 {
     [self.navigationItem.rightBarButtonItem setEnabled:NO];
     [self.activityIndicator startAnimating];
+   
     NSString *filePath = self.mainFilePath;
     NSMutableURLRequest * request = [ALRequestHandler createPOSTRequestWithUrlString:uploadURL paramString:nil];
     
