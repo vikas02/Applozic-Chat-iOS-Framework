@@ -28,6 +28,8 @@
 #import "ALConnection.h"
 #import "ALConnectionQueueHandler.h"
 //#import <IDMPhotoBrowser/IDMPhotoBrowser.h>
+#import "IDMPhotoBrowser.h"
+
 
 // Constants
 #define MT_INBOX_CONSTANT "4"
@@ -580,11 +582,39 @@ UIViewController * modalCon;
      */
     
     
-   /* NSMutableArray *urlsArr = [NSMutableArray new];
+    NSMutableArray *urlsArr = [NSMutableArray new];
+
+    if(self.mMessage.groupId){
+        [ALMessageService getMessageListForContactId:nil isGroup:true channelKey:self.mMessage.groupId conversationId:nil startIndex:0 withCompletion:^(NSMutableArray * messageArray) {
+            
+            for(ALMessage *message in messageArray){
+                
+                NSLog(@"Data os message objeyc %@",message.imageFilePath);
+                
+                if (message.imageFilePath && [message.fileMeta.contentType hasPrefix:@"image"]) {
+                    NSString * docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+                    NSString * filePath = [docDir stringByAppendingPathComponent:message.imageFilePath];
+                    IDMPhoto *photo = [IDMPhoto photoWithFilePath:filePath];
+                    [urlsArr addObject:photo];
+                }
+            }
+        }];
+    }else{
+        [ALMessageService getMessageListForContactId:self.mMessage.to isGroup:false channelKey:nil conversationId:nil startIndex:0 withCompletion:^(NSMutableArray * messageArray) {
+            
+            for(ALMessage *message in messageArray){
+                NSLog(@"Data os message objeyc %@",message.imageFilePath);
+                if (message.imageFilePath && [message.fileMeta.contentType hasPrefix:@"image"]) {
+                    NSString * docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+                    NSString * filePath = [docDir stringByAppendingPathComponent:message.imageFilePath];
+                    IDMPhoto *photo = [IDMPhoto photoWithFilePath:filePath];
+                    [urlsArr addObject:photo];
+                }
+                
+            }
+        }];
+    }
     
-   
-    IDMPhoto *photo = [IDMPhoto photoWithImage:self.mImageView.image];
-    [urlsArr addObject:photo];
     
     IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotos:urlsArr];
     browser.displayActionButton = NO;
@@ -592,7 +622,7 @@ UIViewController * modalCon;
     browser.autoHideInterface = NO;
     //  browser.selected_idx =selected_idx;
     [[self topMostControllerNormal] presentViewController:browser animated:YES completion:nil];
-    */
+    
     return;
 }
 

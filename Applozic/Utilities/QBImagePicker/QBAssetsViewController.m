@@ -231,6 +231,31 @@ static CGSize CGSizeScale(CGSize size, CGFloat scale) {
                 
             }];
         }
+        else
+        {
+            
+            
+            PHVideoRequestOptions *options = [PHVideoRequestOptions new];
+            options.version = PHVideoRequestOptionsVersionOriginal;
+            
+            [manager requestPlayerItemForVideo:asset options:options resultHandler:^(AVPlayerItem * _Nullable playerItem, NSDictionary * _Nullable info) {
+                
+                NSURL *videoURL = [(AVURLAsset *)playerItem.asset URL];
+                
+                UIImage * globalThumbnail = [UIImage new];
+                
+                ALMultipleAttachmentView * object = [ALMultipleAttachmentView new];
+                object.classVideoPath = nil;
+                object.classImage = nil;
+                
+                    object.classVideoPath = [videoURL path];
+                    globalThumbnail = [ALUtilityClass subProcessThumbnail:videoURL];
+               
+                [self.imageArray insertObject:globalThumbnail atIndex:0];
+                [self.mediaFileArray insertObject:object atIndex:0];
+            }];
+            
+        }
     }
     
     if ([self.imagePickerController.delegate respondsToSelector:@selector(multipleAttachmentProcessQB:attachmentPathArray:andText:)]) {

@@ -17,6 +17,7 @@
 @property (nonatomic, strong) NSNumber * lastSeenAtTime;
 @property (nonatomic, strong)  NSNumber * unreadCount;
 @property (nonatomic, strong) NSString * displayName;
+@property (nonatomic, strong) NSString * email;
 @property (nonatomic, copy) NSManagedObjectID * userDetailDBObjectId;
 @property (nonatomic, strong) NSString * imageLink;
 @property (nonatomic, strong) NSString * contactNumber;

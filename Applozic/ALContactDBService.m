@@ -404,6 +404,10 @@
         dbContact.deletedAtTime = userDetail.deletedAtTime;
         dbContact.metadata = userDetail.metadata.description;
         dbContact.roleType = userDetail.roleType;
+        
+        if (userDetail.email) {
+            dbContact.email = userDetail.email;
+        }
 
     }
     else
@@ -421,6 +425,9 @@
         contact.deletedAtTime = userDetail.deletedAtTime;
         contact.roleType = userDetail.roleType;
         contact.metadata = userDetail.metadata;
+        if (userDetail.email) {
+            contact.email = userDetail.email;
+        }
         [self addContact:contact];
     }
     
