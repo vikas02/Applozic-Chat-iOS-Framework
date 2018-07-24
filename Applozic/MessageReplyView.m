@@ -62,6 +62,7 @@
         [self buildDisplayNameView:frame];
         [self buildMessageTextView:frame];
         
+        self.contactName.textColor = [UIColor redColor];
         [superView  addSubview:self.contactName];
         [superView addSubview:self.replyMessageText];
         [self pouplateValues:replyMessage];

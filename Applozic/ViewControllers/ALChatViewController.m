@@ -510,6 +510,8 @@
     [[[self navigationController] interactivePopGestureRecognizer] setEnabled:YES];
     self.label.alpha = 0;
     [self unSubscrbingChannel];
+    
+    [soundRecording cancelAudioRecord];
 }
 
 -(void)dealloc
@@ -3058,7 +3060,7 @@
     QBImagePickerController *imagePickerController = [QBImagePickerController new];
     imagePickerController.delegate = self;
     imagePickerController.allowsMultipleSelection = isImagePicker;
-    imagePickerController.mediaType = QBImagePickerMediaTypeAny;//isImagePicker ? QBImagePickerMediaTypeImage : QBImagePickerMediaTypeVideo;
+    imagePickerController.mediaType = isImagePicker ? QBImagePickerMediaTypeImage : QBImagePickerMediaTypeVideo;
     imagePickerController.showsNumberOfSelectedAssets = isImagePicker;
     [self presentViewController:imagePickerController animated:YES completion:NULL];
 }

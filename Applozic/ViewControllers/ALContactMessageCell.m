@@ -113,8 +113,9 @@
         [self.contentView addSubview:self.contactPerson];
 
         self.addContactButton = [[UIButton alloc] init];
+        self.addContactButton.backgroundColor = [ALApplozicSettings getColorForNavigation];
      [self.addContactButton setTitle: NSLocalizedStringWithDefaultValue(@"addContactButtonText", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], NSLocalizedString(@"ADD CONTACT", nil), @"") forState:UIControlStateNormal];
-        [self.addContactButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [self.addContactButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [self.addContactButton.titleLabel setFont:[UIFont fontWithName:[ALApplozicSettings getFontFace] size:14]];
         [self.addContactButton addTarget:self action:@selector(addButtonAction) forControlEvents:UIControlEventTouchUpInside];
         [self.addContactButton setTitleColor:[UIColor whiteColor] forState:UIControlStateHighlighted];
@@ -263,7 +264,7 @@
         self.mMessageStatusImageView.frame = CGRectMake(self.mDateLabel.frame.origin.x + self.mDateLabel.frame.size.width,
                                                         self.mDateLabel.frame.origin.y, 20, 20);
 
-        [self.addContactButton setBackgroundColor:[UIColor grayColor]];
+      //  [self.addContactButton setBackgroundColor:[UIColor grayColor]];
 
 
 
@@ -334,7 +335,7 @@
                                                         self.mDateLabel.frame.origin.y,
                                                         MSG_STATUS_WIDTH, MSG_STATUS_HEIGHT);
 
-        [self.addContactButton setBackgroundColor:[UIColor whiteColor]];
+        //[self.addContactButton setBackgroundColor:[UIColor whiteColor]];
 
     }
 

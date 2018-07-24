@@ -70,10 +70,16 @@ import Foundation
     {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(singleTapAudioRecord))
         tapGesture.numberOfTapsRequired = 1
-        let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(startAudioRecordGesture(sender:)))
+        let swipeleft = UISwipeGestureRecognizer(target: self, action: #selector(startAudioRecordGesture(sender:)))
+        swipeleft.direction = .left
+        
+        let swiperight = UISwipeGestureRecognizer(target: self, action: #selector(startAudioRecordGesture(sender:)))
+        swiperight.direction = .right
 
         addGestureRecognizer(tapGesture)
-        addGestureRecognizer(longGesture)
+        addGestureRecognizer(swipeleft)
+        addGestureRecognizer(swiperight)
+
 
         layer.cornerRadius = 12
        // displayDefaultText()
@@ -162,36 +168,38 @@ import Foundation
         let width = self.frame.size.width
         let height = self.frame.size.height
 
-        stopAudioRecord()
-        /*
+       // stopAudioRecord()
+        
+         cancelAudioRecord()
+        
         if sender.state == .ended {
-            stopAudioRecord()
+          //  stopAudioRecord()
         }
         else if sender.state == .changed {
 
             if point.x < 0 || point.x > width || point.y < 0 || point.y > height {
-                cancelAudioRecord()
+               // cancelAudioRecord()
             }
         }
         else if sender.state == .began {
 
-            if delegate != nil {
-                delegate.startRecordingAudio()
-            }
-
-            if checkMicrophonePermission() == false {
-                if delegate != nil {
-                    delegate.permissionNotGrant()
-                }
-            } else {
-
-                if point.x > 0 || point.x < width || point.y > 0 || point.y < height {
-                    startAudioRecord()
-                }
-            }
+//            if delegate != nil {
+//                delegate.startRecordingAudio()
+//            }
+//
+//            if checkMicrophonePermission() == false {
+//                if delegate != nil {
+//                    delegate.permissionNotGrant()
+//                }
+//            } else {
+//
+//                if point.x > 0 || point.x < width || point.y > 0 || point.y < height {
+//                    startAudioRecord()
+//                }
+//            }
 
         }
-         */
+ 
     }
 
     @objc fileprivate func startAudioRecord()
@@ -244,7 +252,7 @@ import Foundation
 
     }
 
-    @objc func cancelAudioRecord() {
+    @objc public func cancelAudioRecord() {
         if isTimerStart == true
         {
             isTimerStart = false
@@ -253,7 +261,8 @@ import Foundation
             audioRecorder.stop()
             audioRecorder = nil
 
-            displayDefaultText()
+            //displayDefaultText()
+            hide()
         }
     }
 

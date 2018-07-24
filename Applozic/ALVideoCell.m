@@ -86,7 +86,7 @@
         
         UITapGestureRecognizer * menuTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(proccessTapForMenu:)];
         [self.contentView addGestureRecognizer:menuTapGesture];
-
+        
     }
     
     return self;
@@ -135,6 +135,8 @@
     [self.mUserProfileImageView setUserInteractionEnabled:YES];
     [self.mUserProfileImageView addGestureRecognizer:tapForOpenChat];
     
+    self.mImageView.contentMode = UIViewContentModeScaleAspectFill;
+
     
     if([alMessage.type isEqualToString:@MT_INBOX_CONSTANT])
     {
@@ -154,9 +156,9 @@
         
         
         CGFloat requiredHeight = viewSize.width - BUBBLE_PADDING_HEIGHT;
-        CGFloat imageViewHeight = requiredHeight -IMAGE_VIEW_HEIGHT;
+        CGFloat imageViewHeight = requiredHeight ;//-IMAGE_VIEW_HEIGHT;
         
-        CGFloat imageViewY = self.mBubleImageView.frame.origin.y + IMAGE_VIEW_PADDING_Y;
+        CGFloat imageViewY = self.mBubleImageView.frame.origin.y ;//+ IMAGE_VIEW_PADDING_Y;
         
         //initial buble reference
         [self.mBubleImageView setFrame:CGRectMake(self.mUserProfileImageView.frame.size.width + BUBBLE_PADDING_X,
@@ -186,15 +188,16 @@
             
         }
         
+        
         //resize according to view
         [self.mBubleImageView setFrame:CGRectMake(self.mUserProfileImageView.frame.size.width + BUBBLE_PADDING_X,
                                                   self.mUserProfileImageView.frame.origin.y,
                                                   viewSize.width - BUBBLE_PADDING_WIDTH,
                                                   requiredHeight)];
         
-        [self.mImageView setFrame:CGRectMake(self.mBubleImageView.frame.origin.x + IMAGE_VIEW_PADDING_X,
+        [self.mImageView setFrame:CGRectMake(self.mBubleImageView.frame.origin.x ,
                                              imageViewY,
-                                             self.mBubleImageView.frame.size.width - IMAGE_VIEW_WIDTH,
+                                             self.mBubleImageView.frame.size.width ,
                                              imageViewHeight)];        if(alMessage.message.length > 0)
                                                  
                                                  if(alMessage.message.length > 0)
@@ -257,9 +260,8 @@
         {
             self.progresLabel.alpha = 0;
         }
-    
         
-        
+ 
     }
     else
     {
@@ -270,9 +272,9 @@
         [self.mMessageStatusImageView setHidden:NO];
         
         CGFloat requiredHeight = viewSize.width - BUBBLE_PADDING_HEIGHT;
-        CGFloat imageViewHeight = requiredHeight -IMAGE_VIEW_HEIGHT;
+        CGFloat imageViewHeight = requiredHeight ;//-IMAGE_VIEW_HEIGHT;
         
-        CGFloat imageViewY = self.mBubleImageView.frame.origin.y + IMAGE_VIEW_PADDING_Y;
+        CGFloat imageViewY = self.mBubleImageView.frame.origin.y ;//+ IMAGE_VIEW_PADDING_Y;
         
         [self.mBubleImageView setFrame:CGRectMake((viewSize.width - self.mUserProfileImageView.frame.origin.x + 60),
                                                   0, viewSize.width - BUBBLE_PADDING_WIDTH, requiredHeight)];
@@ -290,9 +292,9 @@
                                                   0, viewSize.width - BUBBLE_PADDING_WIDTH, requiredHeight)];
         
         [self.contentView sendSubviewToBack:self.mBubleImageView];
-        [self.mImageView setFrame:CGRectMake(self.mBubleImageView.frame.origin.x + IMAGE_VIEW_PADDING_X,
+        [self.mImageView setFrame:CGRectMake(self.mBubleImageView.frame.origin.x ,
                                              imageViewY,
-                                             self.mBubleImageView.frame.size.width - IMAGE_VIEW_WIDTH,
+                                             self.mBubleImageView.frame.size.width ,
                                              imageViewHeight)];
         
         
@@ -350,7 +352,7 @@
             [self.mDowloadRetryButton setTitle:[alMessage.fileMeta getTheSize] forState:UIControlStateNormal];
             [self.mDowloadRetryButton setImage:[ALUtilityClass getImageFromFramworkBundle:@"uploadI1.png"] forState:UIControlStateNormal];
         }
-      msgFrameHeight = self.mBubleImageView.frame.size.height;
+        msgFrameHeight = self.mBubleImageView.frame.size.height;
     }
     
     [self.contentView bringSubviewToFront:self.videoPlayFrontView];
@@ -374,7 +376,7 @@
         
     }
     
-    [self.mImageView setContentMode:UIViewContentModeScaleAspectFit];
+   // [self.mImageView setContentMode:UIViewContentModeScaleAspectFit];
     [self.mImageView setBackgroundColor:[UIColor whiteColor]];
     
     [self addShadowEffects];
@@ -405,7 +407,7 @@
     }
     
     [self.contentView bringSubviewToFront:self.replyParentView];
-
+    
     return self;
 }
 
@@ -413,7 +415,7 @@
 -(void) proccessTapForMenu:(id)tap{
     
     [self processKeyBoardHideTap];
-
+    
     UIMenuItem * messageForward = [[UIMenuItem alloc] initWithTitle:NSLocalizedStringWithDefaultValue(@"forwardOptionTitle", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], NSLocalizedString(@"Forward", nil), @"") action:@selector(messageForward:)];
     UIMenuItem * messageReply = [[UIMenuItem alloc] initWithTitle:NSLocalizedStringWithDefaultValue(@"replyOptionTitle", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], NSLocalizedString(@"Reply", nil), @"") action:@selector(messageReply:)];
     
@@ -422,7 +424,7 @@
         [[UIMenuController sharedMenuController] setMenuItems: @[messageForward,messageReply]];
         
     }else if ([self.mMessage.type isEqualToString:@MT_OUTBOX_CONSTANT]){
-
+        
         
         UIMenuItem * msgInfo = [[UIMenuItem alloc] initWithTitle:NSLocalizedStringWithDefaultValue(@"infoOptionTitle", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle],  NSLocalizedString(@"Info", nil), @"") action:@selector(msgInfo:)];
         
@@ -568,7 +570,7 @@
 
 -(BOOL)isMessageReplyMenuEnabled:(SEL) action
 {
-
+    
     return ([ALApplozicSettings isReplyOptionEnabled] && action == @selector(messageReply:));
     
 }

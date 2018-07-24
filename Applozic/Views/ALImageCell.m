@@ -615,13 +615,15 @@ UIViewController * modalCon;
         }];
     }
     
-    
-    IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotos:urlsArr];
-    browser.displayActionButton = NO;
-    browser.displayCounterLabel = YES;
-    browser.autoHideInterface = NO;
-    //  browser.selected_idx =selected_idx;
-    [[self topMostControllerNormal] presentViewController:browser animated:YES completion:nil];
+    if ([urlsArr count]) {
+        IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotos:urlsArr];
+        browser.displayActionButton = NO;
+        browser.displayCounterLabel = YES;
+        browser.autoHideInterface = NO;
+        //  browser.selected_idx =selected_idx;
+        [[self topMostControllerNormal] presentViewController:browser animated:YES completion:nil];
+        
+    }
     
     return;
 }
