@@ -16,6 +16,6 @@
 
 -(UIImage *) getCompressedImageLessThanSize:(double ) sizeInMb;
 -(NSData *) getCompressedImageData;
-
+- (UIImage *)fixOrientation;
 
 @end

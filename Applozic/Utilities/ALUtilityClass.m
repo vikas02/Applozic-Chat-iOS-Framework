@@ -398,14 +398,35 @@
 {
     AVAsset *asset = [AVAsset assetWithURL:url];
     AVAssetImageGenerator *imageGenerator = [[AVAssetImageGenerator alloc] initWithAsset:asset];
+    imageGenerator.appliesPreferredTrackTransform = YES;
+
     CMTime time = [asset duration];
     time.value = 0;
     CGImageRef imageRef = [imageGenerator copyCGImageAtTime:time actualTime:NULL error:NULL];
     UIImage * thumbnail = [UIImage imageWithCGImage:imageRef];
+    thumbnail = [thumbnail fixOrientation];
+    
     CGImageRelease(imageRef);
     
     return thumbnail;
+    
+    
+    
+    
+//    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:videoURL options:nil];
+//    AVAssetImageGenerator *generateImg = [[AVAssetImageGenerator alloc] initWithAsset:asset];
+//    generateImg.appliesPreferredTrackTransform = YES;
+//    NSError *error = NULL;
+//    CMTime time = CMTimeMake(1, 1);
+//    CGImageRef refImg = [generateImg copyCGImageAtTime:time actualTime:NULL error:&error];
+//    NSLog(@"error==%@, Refimage==%@", error, refImg);
+//
+//    UIImage *FrameImage= [[UIImage alloc] initWithCGImage:refImg];
+//    return FrameImage;
 }
+
+
+
 
 
 +(void)subVideoImage:(NSURL *)url  withCompletion:(void (^)(UIImage *image)) completion{
