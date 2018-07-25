@@ -2909,7 +2909,7 @@
       
         
         UIAlertAction* video_ic = [UIAlertAction
-                                   actionWithTitle:NSLocalizedStringWithDefaultValue(@"sendVideoOption", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle],  NSLocalizedString(@"Send Video", nil), @"")
+                                   actionWithTitle:NSLocalizedStringWithDefaultValue(@"sendVideoOption", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle],  NSLocalizedString(@"Record Video", nil), @"")
                                    style:UIAlertActionStyleDefault
                                    handler:^(UIAlertAction * action)
                                    {
@@ -3057,12 +3057,32 @@
 
 -(void)presentImageVideoPicker:(BOOL)isImagePicker
 {
-    QBImagePickerController *imagePickerController = [QBImagePickerController new];
-    imagePickerController.delegate = self;
-    imagePickerController.allowsMultipleSelection = isImagePicker;
-    imagePickerController.mediaType = isImagePicker ? QBImagePickerMediaTypeImage : QBImagePickerMediaTypeVideo;
-    imagePickerController.showsNumberOfSelectedAssets = isImagePicker;
-    [self presentViewController:imagePickerController animated:YES completion:NULL];
+    
+    [ALUtilityClass showActionSheet:@"" optionsArray:@[NSLocalizedString(@"Browse Photos", nil),NSLocalizedString(@"Browse Video", nil)] completion:^(NSInteger index) {
+        if (index == 0) {
+            QBImagePickerController *imagePickerController = [QBImagePickerController new];
+            imagePickerController.delegate = self;
+            imagePickerController.allowsMultipleSelection = isImagePicker;
+            imagePickerController.mediaType = isImagePicker ? QBImagePickerMediaTypeImage : QBImagePickerMediaTypeVideo;
+            imagePickerController.showsNumberOfSelectedAssets = isImagePicker;
+            [self presentViewController:imagePickerController animated:YES completion:NULL];
+        }
+        else if (index == 1) {
+
+            UIImagePickerController *mediaUI = [[UIImagePickerController alloc] init];
+            mediaUI.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
+            mediaUI.mediaTypes = [[NSArray alloc] initWithObjects: (NSString *) kUTTypeMovie, nil];
+            //mediaUI.allowsEditing = YES;
+            mediaUI.delegate = self;
+            
+            [self presentViewController:mediaUI animated:YES completion:nil];
+        }
+        
+    }];
+    
+   
+    
+   
 }
 
 

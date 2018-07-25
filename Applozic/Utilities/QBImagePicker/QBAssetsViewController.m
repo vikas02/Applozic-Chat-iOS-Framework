@@ -242,6 +242,10 @@ static CGSize CGSizeScale(CGSize size, CGFloat scale) {
                 
                 NSURL *videoURL = [(AVURLAsset *)playerItem.asset URL];
                 
+//                NSString *pppp = [[[videoURL path] stringByDeletingPathExtension] stringByAppendingPathExtension:@"MOV"];
+//
+//                videoURL = [NSURL fileURLWithPath:pppp];
+                
                 UIImage * globalThumbnail = [UIImage new];
                 
                 ALMultipleAttachmentView * object = [ALMultipleAttachmentView new];
