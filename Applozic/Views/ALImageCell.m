@@ -581,12 +581,13 @@ UIViewController * modalCon;
     [self.delegate showFullScreen:alShowImageViewController];
      */
     
+    __block NSInteger indexOfImage = 0;
     
     NSMutableArray *urlsArr = [NSMutableArray new];
 
     if(self.mMessage.groupId){
         [ALMessageService getMessageListForContactId:nil isGroup:true channelKey:self.mMessage.groupId conversationId:nil startIndex:0 withCompletion:^(NSMutableArray * messageArray) {
-            
+            NSInteger counter = 0;
             for(ALMessage *message in messageArray){
                 
                 NSLog(@"Data os message objeyc %@",message.imageFilePath);
@@ -596,21 +597,35 @@ UIViewController * modalCon;
                     NSString * filePath = [docDir stringByAppendingPathComponent:message.imageFilePath];
                     IDMPhoto *photo = [IDMPhoto photoWithFilePath:filePath];
                     [urlsArr addObject:photo];
+                    
+                    if([self.mMessage.key isEqualToString:message.key])
+                    {
+                        indexOfImage = counter;
+                    }
                 }
+                 counter++;
             }
         }];
     }else{
         [ALMessageService getMessageListForContactId:self.mMessage.to isGroup:false channelKey:nil conversationId:nil startIndex:0 withCompletion:^(NSMutableArray * messageArray) {
             
+            NSInteger counter = 0;
             for(ALMessage *message in messageArray){
+                
                 NSLog(@"Data os message objeyc %@",message.imageFilePath);
+                
                 if (message.imageFilePath && [message.fileMeta.contentType hasPrefix:@"image"]) {
                     NSString * docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
                     NSString * filePath = [docDir stringByAppendingPathComponent:message.imageFilePath];
                     IDMPhoto *photo = [IDMPhoto photoWithFilePath:filePath];
                     [urlsArr addObject:photo];
+                    
+                    if([self.mMessage.key isEqualToString:message.key])
+                    {
+                        indexOfImage = counter;
+                    }
                 }
-                
+                counter++;
             }
         }];
     }
@@ -620,6 +635,7 @@ UIViewController * modalCon;
         browser.displayActionButton = NO;
         browser.displayCounterLabel = YES;
         browser.autoHideInterface = NO;
+        [browser setInitialPageIndex:indexOfImage];
         //  browser.selected_idx =selected_idx;
         [[self topMostControllerNormal] presentViewController:browser animated:YES completion:nil];
         
