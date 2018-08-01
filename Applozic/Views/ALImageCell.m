@@ -173,9 +173,9 @@ UIViewController * modalCon;
         //Shift for message reply and channel name..
         
         CGFloat requiredHeight = viewSize.width - BUBBLE_PADDING_HEIGHT;
-        CGFloat imageViewHeight = requiredHeight ;//-IMAGE_VIEW_PADDING_HEIGHT;
+        CGFloat imageViewHeight = requiredHeight - IMAGE_VIEW_PADDING_Y;//-IMAGE_VIEW_PADDING_HEIGHT;
         
-        CGFloat imageViewY = self.mBubleImageView.frame.origin.y ;//+ IMAGE_VIEW_PADDING_Y;
+        CGFloat imageViewY = self.mBubleImageView.frame.origin.y + IMAGE_VIEW_PADDING_Y;
         
         self.mBubleImageView.frame = CGRectMake(self.mUserProfileImageView.frame.size.width + BUBBLE_PADDING_X,
                                                 0, viewSize.width - BUBBLE_PADDING_WIDTH, requiredHeight);
@@ -581,7 +581,7 @@ UIViewController * modalCon;
     [self.delegate showFullScreen:alShowImageViewController];
      */
     
-    __block NSInteger indexOfImage = 0;
+    __block NSInteger indexOfImage = -1;
     
     NSMutableArray *urlsArr = [NSMutableArray new];
 
@@ -602,8 +602,10 @@ UIViewController * modalCon;
                     {
                         indexOfImage = counter;
                     }
+                    
+                    counter++;
                 }
-                 counter++;
+                
             }
         }];
     }else{
@@ -624,13 +626,15 @@ UIViewController * modalCon;
                     {
                         indexOfImage = counter;
                     }
+                    
+                     counter++;
                 }
-                counter++;
+               
             }
         }];
     }
     
-    if ([urlsArr count]) {
+    if (indexOfImage > -1 &&   indexOfImage < [urlsArr count] ) {
         IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotos:urlsArr];
         browser.displayActionButton = NO;
         browser.displayCounterLabel = YES;

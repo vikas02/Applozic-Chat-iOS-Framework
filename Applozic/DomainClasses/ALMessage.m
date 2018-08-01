@@ -8,7 +8,7 @@
 #import "ALMessage.h"
 #import "ALUtilityClass.h"
 #import "ALAudioVideoBaseVC.h"
-
+#import "NSDateFormatter+Additions.h"
 
 @implementation ALMessage
 
@@ -206,14 +206,90 @@
     return formattedDateStr;
 }
 
+
+-(void)isWithinWeek{
+    
+//    NSDate *today = [NSDate date];
+//    NSLog(@"Today date is %@",today);
+//    dateFormat = [[NSDateFormatter alloc] init];
+//    [dateFormat setDateFormat:@"yyyy-MM-dd"];// you can use your format.
+//
+//    //Week Start Date
+//
+//    NSCalendar *gregorian = [[NSCalendar alloc]        initWithCalendarIdentifier:NSGregorianCalendar];
+//
+//    NSDateComponents *components = [gregorian components:NSWeekdayCalendarUnit | NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit fromDate:today];
+//
+//    int dayofweek = [[[NSCalendar currentCalendar] components:NSWeekdayCalendarUnit fromDate:today] weekday];// this will give you current day of week
+//
+//    [components setDay:([components day] - ((dayofweek) - 2))];// for beginning of the week.
+//
+//    NSDate *beginningOfWeek = [gregorian dateFromComponents:components];
+//    NSDateFormatter *dateFormat_first = [[NSDateFormatter alloc] init];
+//    [dateFormat_first setDateFormat:@"yyyy-MM-dd"];
+//    dateString2Prev = [dateFormat stringFromDate:beginningOfWeek];
+//
+//    weekstartPrev = [[dateFormat_first dateFromString:dateString2Prev] retain];
+//
+//    NSLog(@"%@",weekstartPrev);
+    
+    
+//    //Week End Date
+//
+//    NSCalendar *gregorianEnd = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+//
+//    NSDateComponents *componentsEnd = [gregorianEnd components:NSWeekdayCalendarUnit | NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit fromDate:today];
+//
+//    int Enddayofweek = [[[NSCalendar currentCalendar] components:NSWeekdayCalendarUnit fromDate:today] weekday];// this will give you current day of week
+//
+//    [componentsEnd setDay:([componentsEnd day]+(7-Enddayofweek)+1)];// for end day of the week
+//
+//    NSDate *EndOfWeek = [gregorianEnd dateFromComponents:componentsEnd];
+//    NSDateFormatter *dateFormat_End = [[NSDateFormatter alloc] init];
+//    [dateFormat_End setDateFormat:@"yyyy-MM-dd"];
+//    dateEndPrev = [dateFormat stringFromDate:EndOfWeek];
+//
+//    weekEndPrev = [[dateFormat_End dateFromString:dateEndPrev] retain];
+//    NSLog(@"%@",weekEndPrev);
+}
 -(NSString *)getCreatedAtTimeChat:(BOOL)today {
     
-   // NSString *formattedStr = today?@"hh:mm a":@"dd MMM hh:mm a";
-    NSString *formattedStr = @"hh:mm a";
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:[self.createdAtTime doubleValue]/1000];
+
+    NSString *formattedStr = today?@"hh:mm a":@"dd/MM/yy, hh:mm a";
+    if (today) {
+        formattedStr = @"hh:mm a";
+    }
+    else if ([self getWeekDay:date] < 7)
+    {
+        formattedStr = @"EEEE, hh:mm a";
+    }
+    else{
+        formattedStr = @"dd/MM/yy, hh:mm a";
+    }
+    
+   // NSString *formattedStr = @"hh:mm a";
     NSString *formattedDateStr = [ALUtilityClass formatTimestamp:[self.createdAtTime doubleValue]/1000 toFormat:formattedStr];
+    
+    
+    
+   // formattedDateStr = [NSDateFormatter twitterStringFromDate:date];
+   // formattedDateStr = [formattedDateStr uppercaseString];
 
     return formattedDateStr;
+}
+
+-(int)getWeekDay:(NSDate *)date
+{
+    NSDate *date1 = date;
+    NSDate *date2 = [NSDate date];
     
+    NSTimeInterval secondsBetween = [date2 timeIntervalSinceDate:date1];
+    
+    int numberOfDays = secondsBetween / 86400;
+    
+    return numberOfDays;
+   // NSLog(@"There are %d days in between the two dates.", numberOfDays);
 }
 -(BOOL)isDownloadRequired{
     

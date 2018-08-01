@@ -28,7 +28,8 @@
 
 @property (nonatomic, retain) UIButton * playPauseStop;
 @property (nonatomic, retain) UIProgressView *mediaTrackProgress;
-@property (nonatomic, retain) UILabel *mediaTrackLength;
+@property (nonatomic, retain) UILabel *startTime;
+@property (nonatomic, retain) UILabel *endTime;
 @property (nonatomic, retain) UILabel *mediaName;
 @property (nonatomic, retain) NSTimer *timer;
 @property (nonatomic, retain) AVAudioPlayer *audioPlayer;

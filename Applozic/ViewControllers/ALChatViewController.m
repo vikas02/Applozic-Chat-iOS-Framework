@@ -186,7 +186,7 @@
 //    self.placeHolderTxt = NSLocalizedStringWithDefaultValue(@"placeHolderText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Write a Message...", nil), @"");
     
     [self updateMessagefield];
-    self.sendMessageTextView.text = self.placeHolderTxt;
+   // self.sendMessageTextView.text = self.placeHolderTxt;
     self.defaultMessageViewHeight = 56.0;
     self.sendMessageTextView.backgroundColor = [UIColor whiteColor];
     
@@ -2852,6 +2852,38 @@
     [ALUtilityClass setAlertControllerFrame:theController andViewController:self];
     
     [theController addAction:[UIAlertAction actionWithTitle: NSLocalizedStringWithDefaultValue(@"cancelOptionText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"message_dialog_cancel", nil), @"") style:UIAlertActionStyleCancel handler:nil]];
+  
+    
+    
+    if(![ALApplozicSettings isPhotoGalleryOptionHidden]){
+        
+        UIAlertAction* photo_video_ic = [UIAlertAction
+                                         actionWithTitle:NSLocalizedStringWithDefaultValue(@"photosOrVideoOption", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Photos/Videos", nil) , @"")
+                                         style:UIAlertActionStyleDefault
+                                         handler:^(UIAlertAction * action)
+                                         {
+                                             
+                                             //                                              UIStoryboard* storyboardM = [UIStoryboard storyboardWithName:@"Applozic" bundle:[NSBundle bundleForClass:ALChatViewController.class]];
+                                             //                                               ALMultipleAttachmentView *launchChat = (ALMultipleAttachmentView *)[storyboardM instantiateViewControllerWithIdentifier:@"collectionView"];
+                                             //                                               launchChat.multipleAttachmentDelegate = self;
+                                             //                                               [self.navigationController pushViewController:launchChat animated:YES];
+                                             
+                                             [self presentImageVideoPicker:YES];
+                                             
+                                             
+                                             
+                                         }];
+        [photo_video_ic setValue:[[UIImage imageNamed:@"ic_photo_video"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forKey:@"image"];
+        [photo_video_ic setValue:[NSNumber numberWithInt:NSTextAlignmentLeft]
+                          forKey:@"titleTextAlignment"];
+        
+        [theController addAction:photo_video_ic];
+        
+        
+        
+    }
+    
+    
     if(![ALApplozicSettings isCameraOptionHidden]){
         
         UIAlertAction* take_photo_ic = [UIAlertAction
@@ -2868,6 +2900,49 @@
 
         [theController addAction:take_photo_ic];
     }
+    
+    
+    
+    
+    if(![ALApplozicSettings isSendVideoOptionHidden]){
+        
+        
+        UIAlertAction* video_ic = [UIAlertAction
+                                   actionWithTitle:NSLocalizedStringWithDefaultValue(@"sendVideoOption", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle],  NSLocalizedString(@"Record Video", nil), @"")
+                                   style:UIAlertActionStyleDefault
+                                   handler:^(UIAlertAction * action)
+                                   {
+                                       //Do some thing here
+                                       [self openVideoCamera];
+                                   }];
+        [video_ic setValue:[[UIImage imageNamed:@"ic_video11"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forKey:@"image"];
+        [video_ic setValue:[NSNumber numberWithInt:NSTextAlignmentLeft]
+                    forKey:@"titleTextAlignment"];
+        
+        [theController addAction:video_ic];
+    }
+    
+    
+    if(![ALApplozicSettings isShareContactOptionHidden]){
+        
+        
+        UIAlertAction* share_contact_ic = [UIAlertAction
+                                           actionWithTitle:NSLocalizedStringWithDefaultValue(@"shareContact", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Share Contact", nil), @"")
+                                           style:UIAlertActionStyleDefault
+                                           handler:^(UIAlertAction * action)
+                                           {
+                                               //Do some thing here
+                                               [self openContactsView];
+                                           }];
+        [share_contact_ic setValue:[[UIImage imageNamed:@"ic_share_contact"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forKey:@"image"];
+        [share_contact_ic setValue:[NSNumber numberWithInt:NSTextAlignmentLeft]
+                            forKey:@"titleTextAlignment"];
+        
+        [theController addAction:share_contact_ic];
+    }
+    
+
+    
     if(![ALApplozicSettings isLocationOptionHidden]){
         
         UIAlertAction* curr_loc_ic = [UIAlertAction
@@ -2905,23 +2980,7 @@
 
     }
 
-    if(![ALApplozicSettings isSendVideoOptionHidden]){
-      
-        
-        UIAlertAction* video_ic = [UIAlertAction
-                                   actionWithTitle:NSLocalizedStringWithDefaultValue(@"sendVideoOption", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle],  NSLocalizedString(@"Record Video", nil), @"")
-                                   style:UIAlertActionStyleDefault
-                                   handler:^(UIAlertAction * action)
-                                   {
-                                       //Do some thing here
-                                       [self openVideoCamera];
-                                   }];
-        [video_ic setValue:[[UIImage imageNamed:@"ic_video11"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forKey:@"image"];
-        [video_ic setValue:[NSNumber numberWithInt:NSTextAlignmentLeft]
-                    forKey:@"titleTextAlignment"];
-
-        [theController addAction:video_ic];
-    }
+   
     
 /*    if(((!self.channelKey && !self.conversationId) || (self.alChannel.type == GROUP_OF_TWO)) && ![ALApplozicSettings isBlockUserOptionHidden])
     {
@@ -2946,51 +3005,7 @@
             }];
         }]];
     }*/
-    if(![ALApplozicSettings isShareContactOptionHidden]){
-       
-        
-        UIAlertAction* share_contact_ic = [UIAlertAction
-                                   actionWithTitle:NSLocalizedStringWithDefaultValue(@"shareContact", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Share Contact", nil), @"")
-                                   style:UIAlertActionStyleDefault
-                                   handler:^(UIAlertAction * action)
-                                   {
-                                       //Do some thing here
-                                       [self openContactsView];
-                                   }];
-        [share_contact_ic setValue:[[UIImage imageNamed:@"ic_share_contact"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forKey:@"image"];
-        [share_contact_ic setValue:[NSNumber numberWithInt:NSTextAlignmentLeft]
-                    forKey:@"titleTextAlignment"];
-
-        [theController addAction:share_contact_ic];
-    }
-
-    if(![ALApplozicSettings isPhotoGalleryOptionHidden]){
-        
-        UIAlertAction* photo_video_ic = [UIAlertAction
-                                           actionWithTitle:NSLocalizedStringWithDefaultValue(@"photosOrVideoOption", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Photos/Videos", nil) , @"")
-                                           style:UIAlertActionStyleDefault
-                                           handler:^(UIAlertAction * action)
-                                           {
-                                              
-//                                              UIStoryboard* storyboardM = [UIStoryboard storyboardWithName:@"Applozic" bundle:[NSBundle bundleForClass:ALChatViewController.class]];
-//                                               ALMultipleAttachmentView *launchChat = (ALMultipleAttachmentView *)[storyboardM instantiateViewControllerWithIdentifier:@"collectionView"];
-//                                               launchChat.multipleAttachmentDelegate = self;
-//                                               [self.navigationController pushViewController:launchChat animated:YES];
-                                               
-                                               [self presentImageVideoPicker:YES];
-                                               
-                                               
-                                               
-                                           }];
-        [photo_video_ic setValue:[[UIImage imageNamed:@"ic_photo_video"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forKey:@"image"];
-        [photo_video_ic setValue:[NSNumber numberWithInt:NSTextAlignmentLeft]
-                            forKey:@"titleTextAlignment"];
-
-        [theController addAction:photo_video_ic];
-        
-       
-        
-    }
+   
     
     if((self.channelKey ||  self.contactIds) && [ALApplozicSettings isDeleteConversationOptionEnabled]){
         
@@ -4008,7 +4023,7 @@
         self.alContact.applicationId = [ALUserDefaultsHandler getApplicationKey];
     }
     
-    if ([textView.text isEqualToString:self.placeHolderTxt])
+    if ([NSLocalizedString(textView.text, nil) isEqualToString:NSLocalizedString(self.placeHolderTxt, nil)])
     {
         [self placeHolder:@"" andTextColor:[UIColor blackColor]];
     }

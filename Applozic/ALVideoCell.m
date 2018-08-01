@@ -216,7 +216,7 @@
         
         [self.mDateLabel setFrame:CGRectMake(self.mBubleImageView.frame.origin.x,
                                              self.mBubleImageView.frame.origin.y + self.mBubleImageView.frame.size.height,
-                                             DATE_WIDTH, DATE_HEIGHT)];
+                                             DATE_WIDTH+10, DATE_HEIGHT)];
         
         self.mNameLabel.frame = self.mUserProfileImageView.frame;
         [self.mNameLabel setText:[ALColorUtility getAlphabetForProfileImage:receiverName]];

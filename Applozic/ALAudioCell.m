@@ -81,7 +81,7 @@
     {
         
         self.mediaName = [[UILabel alloc] init];
-        [self.mediaName setTextColor:[UIColor blackColor]];
+        [self.mediaName setTextColor:[UIColor whiteColor]];
         [self.mediaName setBackgroundColor:[UIColor clearColor]];
         [self.mediaName setFont:[UIFont fontWithName:[ALApplozicSettings getFontFace] size:DATE_LABEL_SIZE]];
         [self.contentView addSubview:self.mediaName];
@@ -92,16 +92,21 @@
         
         self.playPauseStop = [[UIButton alloc] init];
         [self.playPauseStop addTarget:self action:@selector(mediaButtonAction) forControlEvents:UIControlEventTouchDown];
-        self.playPauseStop.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
         [self.contentView addSubview:self.playPauseStop];
         
         self.mediaTrackProgress = [[UIProgressView alloc] init];
         [self.contentView addSubview:self.mediaTrackProgress];
         
-        self.mediaTrackLength = [[UILabel alloc] init];
-        [self.mediaTrackLength setTextColor:[UIColor blackColor]];
-        [self.mediaTrackLength setFont:[UIFont fontWithName:[ALApplozicSettings getFontFace] size:DATE_LABEL_SIZE]];
-        [self.contentView addSubview:self.mediaTrackLength];
+        self.startTime = [[UILabel alloc] init];
+        [self.startTime setTextColor:[UIColor blackColor]];
+        [self.startTime setFont:[UIFont fontWithName:[ALApplozicSettings getFontFace] size:DATE_LABEL_SIZE]];
+        [self.contentView addSubview:self.startTime];
+       
+        self.endTime = [[UILabel alloc] init];
+        [self.endTime setTextColor:[UIColor blackColor]];
+        [self.endTime setFont:[UIFont fontWithName:[ALApplozicSettings getFontFace] size:DATE_LABEL_SIZE]];
+        self.endTime.textAlignment = NSTextAlignmentRight;
+        [self.contentView addSubview:self.endTime];
         
         [self.playPauseStop setImage:[ALUtilityClass getImageFromFramworkBundle:@"PLAY.png"] forState: UIControlStateNormal];
         
@@ -112,7 +117,8 @@
             self.mediaName.transform = CGAffineTransformMakeScale(-1.0, 1.0);
             self.playPauseStop.transform = CGAffineTransformMakeScale(-1.0, 1.0);
             self.mediaTrackProgress.transform = CGAffineTransformMakeScale(-1.0, 1.0);
-            self.mediaTrackLength.transform = CGAffineTransformMakeScale(-1.0, 1.0);
+            self.startTime.transform = CGAffineTransformMakeScale(-1.0, 1.0);
+            self.endTime.transform = CGAffineTransformMakeScale(-1.0, 1.0);
             self.playPauseStop.transform = CGAffineTransformMakeScale(-1.0, 1.0);
             
         }
@@ -139,7 +145,9 @@
     NSString * theDate = [NSString stringWithFormat:@"%@",[alMessage getCreatedAtTimeChat:today]];
     
     [self.mediaName setText:alMessage.fileMeta.name];
-    self.mediaTrackLength.text = [self getAudioLength:alMessage.imageFilePath];
+    self.startTime.text = @"0:00";//[self getAudioLength:alMessage.imageFilePath];
+    self.endTime.text = [self getAudioLength:alMessage.imageFilePath];
+
     [self.contentView bringSubviewToFront:self.mDowloadRetryButton];
     
     self.mMessage = alMessage;
@@ -167,9 +175,6 @@
     
     if([alMessage.type isEqualToString:@MT_INBOX_CONSTANT])
     {
-        
-        [self.mediaTrackLength setTextColor:[ALApplozicSettings getReceiveMsgTextColor]];
-
         self.mBubleImageView.backgroundColor = [ALApplozicSettings getReceiveMsgColor];
         
         [self.mUserProfileImageView setFrame:CGRectMake(USER_PROFILE_PADDING_X, 0, USER_PROFILE_WIDTH, USER_PROFILE_HEIGHT)];
@@ -250,12 +255,13 @@
         CGFloat progressBarWidth = self.mBubleImageView.frame.size.width - self.playPauseStop.frame.size.width - 30;
         
         CGFloat progressX = self.playPauseStop.frame.origin.x + self.playPauseStop.frame.size.width + 10;
-        [self.mediaTrackProgress setFrame:CGRectMake(progressX, self.mediaName.frame.origin.y + self.mediaName.frame.size.height,
-                                                     progressBarWidth, PROGRESS_HEIGHT)];
-        
-        [self.mediaTrackLength setFrame:CGRectMake(self.mediaTrackProgress.frame.origin.x,
+       // [self.mediaTrackProgress setFrame:CGRectMake(progressX, self.mediaName.frame.origin.y + self.mediaName.frame.size.height,progressBarWidth, PROGRESS_HEIGHT)];
+        [self.mediaTrackProgress setFrame:CGRectMake(progressX, (BUTTON_PADDING_HEIGHT/2) + 5,progressBarWidth, PROGRESS_HEIGHT)];
+
+        [self.startTime setFrame:CGRectMake(self.mediaTrackProgress.frame.origin.x,
                                                    self.mediaTrackProgress.frame.origin.y + self.mediaTrackProgress.frame.size.height,
                                                    MEDIATRACKLENGTH_WIDTH, MEDIATRACKLENGTH_HEIGHT)];
+        [self.endTime setFrame:CGRectMake(CGRectGetMaxX(self.mBubleImageView.frame) - MEDIATRACKLENGTH_WIDTH - 15,self.mediaTrackProgress.frame.origin.y + self.mediaTrackProgress.frame.size.height,MEDIATRACKLENGTH_WIDTH, MEDIATRACKLENGTH_HEIGHT)];
         
         [self.mDateLabel setFrame:CGRectMake(self.mBubleImageView.frame.origin.x,
                                              self.mBubleImageView.frame.size.height + self.mBubleImageView.frame.origin.y,
@@ -284,9 +290,6 @@
     
     }else
     {
-        
-        [self.mediaTrackLength setTextColor:[ALApplozicSettings getSendMsgTextColor]];
-
 
         [self.mUserProfileImageView setFrame:CGRectMake(viewSize.width - USER_PROFILE_PADDING_X_OUTBOX, 0, 0, USER_PROFILE_HEIGHT)];
         
@@ -336,13 +339,17 @@
         
         [self.mediaName setFrame:CGRectMake(nameX, self.playPauseStop.frame.origin.y, nameWidth, MEDIA_NAME_HEIGHT)];
         
-        [self.mediaTrackProgress setFrame:CGRectMake(progressX,
-                                                     self.mediaName.frame.origin.y + self.mediaName.frame.size.height
-                                                     ,progressBarWidth, PROGRESS_HEIGHT)];
+//        [self.mediaTrackProgress setFrame:CGRectMake(progressX,
+//                                                     self.mediaName.frame.origin.y + self.mediaName.frame.size.height
+//                                                     ,progressBarWidth, PROGRESS_HEIGHT)];
+        [self.mediaTrackProgress setFrame:CGRectMake(progressX, (BUTTON_PADDING_HEIGHT/2) + 5,progressBarWidth, PROGRESS_HEIGHT)];
+
         
-        [self.mediaTrackLength setFrame:CGRectMake(self.mediaTrackProgress.frame.origin.x,
+        [self.startTime setFrame:CGRectMake(self.mediaTrackProgress.frame.origin.x,
                                                    self.mediaTrackProgress.frame.origin.y + self.mediaTrackProgress.frame.size.height,
                                                    MEDIATRACKLENGTH_WIDTH, MEDIATRACKLENGTH_HEIGHT)];
+        [self.endTime setFrame:CGRectMake(CGRectGetMaxX(self.mBubleImageView.frame) - MEDIATRACKLENGTH_WIDTH - 15,self.mediaTrackProgress.frame.origin.y + self.mediaTrackProgress.frame.size.height,MEDIATRACKLENGTH_WIDTH, MEDIATRACKLENGTH_HEIGHT)];
+        
         
         self.mDateLabel.frame = CGRectMake((self.mBubleImageView.frame.origin.x + self.mBubleImageView.frame.size.width) -
                                            theDateSize.width - DATE_PADDING_X,
@@ -573,7 +580,7 @@
 
     NSString * duration = [ALMediaPlayer getTotalDuration:path];
 
-    NSString *audioLength = [NSString stringWithFormat:@"0:00 / %@", duration];
+    NSString *audioLength = [NSString stringWithFormat:@"%@", duration];
 
     return audioLength;
 }
@@ -590,15 +597,21 @@
     
     NSString *progressString = [NSString stringWithFormat:@"%ld:%02ld / %ld:%02ld", (long)currentTimeMinutes, (long)currentTimeSeconds, (long)durationMinutes, (long)durationSeconds];
     
+    NSString *endTimeStr = [NSString stringWithFormat:@"%ld:%02ld",(long)currentTimeMinutes, (long)durationSeconds];
+
+    NSString *startTimeStr = [NSString stringWithFormat:@"%ld:%02ld",(long)durationMinutes, (long)currentTimeSeconds];
+
     [self.mediaTrackProgress setProgress: [mediaPlayer.audioPlayer currentTime] / [mediaPlayer.audioPlayer duration]];
-    [self.mediaTrackLength setText: progressString];
+    [self.startTime setText: startTimeStr];
+    [self.endTime setText: endTimeStr];
+    
     
 }
 
 -(void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
 {
     [self.playPauseStop setImage:[ALUtilityClass getImageFromFramworkBundle:@"PLAY.png"] forState: UIControlStateNormal];
-    self.mediaTrackLength.text = [self getAudioLength:self.mMessage.imageFilePath];
+    self.startTime.text = @"0:00";//[self getAudioLength:self.mMessage.imageFilePath];
     [self.mediaTrackProgress setProgress: 0.0];
     ALMediaPlayer * mediaPlayer =  [ALMediaPlayer sharedInstance];
     [mediaPlayer.audioPlayer stop];
