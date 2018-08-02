@@ -88,7 +88,7 @@
         
         self.mDowloadRetryButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [self.mDowloadRetryButton setContentMode:UIViewContentModeCenter];
-        [self.mDowloadRetryButton setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.6]];
+        //[self.mDowloadRetryButton setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.6]];
         self.mDowloadRetryButton.layer.cornerRadius = 4;
         [self.mDowloadRetryButton.titleLabel setFont:[UIFont fontWithName:[ALApplozicSettings getFontFace] size:14]];
         [self.contentView addSubview:self.mDowloadRetryButton];

@@ -37,7 +37,7 @@
 
     AVURLAsset *avAsset = [AVURLAsset URLAssetWithURL:[NSURL fileURLWithPath:videoPath1] options:nil];
     NSArray *compatiblePresets = [AVAssetExportSession exportPresetsCompatibleWithAsset:avAsset];
-    if ([compatiblePresets containsObject:AVAssetExportPresetLowQuality])
+    if ([compatiblePresets containsObject:AVAssetExportPresetHighestQuality])
     {
         AVAssetExportSession *exportSession = [[AVAssetExportSession alloc]initWithAsset:avAsset presetName:AVAssetExportPresetPassthrough];
         tempPath  = [docDir stringByAppendingString:[NSString stringWithFormat:@"/VID-%f.mp4",[[NSDate date] timeIntervalSince1970] * 1000]];

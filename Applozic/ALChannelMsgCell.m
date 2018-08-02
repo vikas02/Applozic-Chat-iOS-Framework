@@ -52,7 +52,7 @@
     CGRect frame = CGRectMake(theTextPoint.x, theTextPoint.y,
                               bubbleWidth, theTextSize.height + (2 * padding));
     
-    self.mBubleImageView.backgroundColor = [UIColor lightGrayColor];
+    self.mBubleImageView.backgroundColor = [UIColor whiteColor];
     [self.mBubleImageView setFrame:frame];
     [self.mBubleImageView setHidden:NO];
     

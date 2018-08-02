@@ -443,7 +443,7 @@
     
     [self processKeyBoardHideTap];
 
-    UIMenuItem * messageForward = [[UIMenuItem alloc] initWithTitle:NSLocalizedStringWithDefaultValue(@"forwardOptionTitle", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], NSLocalizedString(@"Forward", nil), @"") action:@selector(messageForward:)];
+    UIMenuItem *messageForward = [[UIMenuItem alloc] initWithTitle:NSLocalizedStringWithDefaultValue(@"forwardOptionTitle", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], NSLocalizedString(@"Forward", nil), @"") action:@selector(messageForward:)];
     UIMenuItem * messageReply = [[UIMenuItem alloc] initWithTitle:NSLocalizedStringWithDefaultValue(@"replyOptionTitle", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], NSLocalizedString(@"Reply", nil), @"") action:@selector(messageReply:)];
     
     if ([self.mMessage.type isEqualToString:@MT_INBOX_CONSTANT]){

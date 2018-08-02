@@ -3808,6 +3808,7 @@
         else
         {
             NSLog(@"some error");
+            self.loadEarlierAction.hidden = YES;
         }
     }];
 }
