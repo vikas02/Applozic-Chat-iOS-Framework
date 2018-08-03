@@ -30,7 +30,7 @@
 #import "UIImageView+WebCache.h"
 #import "ALContactService.h"
 #import "ALVOIPNotificationHandler.h"
-
+#import "ALMessageClientService.h"
 
 @interface ALGroupCreationViewController ()
 
@@ -156,7 +156,11 @@
     NSURL *imageURL = [NSURL URLWithString:self.groupImageURL];
     if(imageURL.path.length)
     {
-        [self.groupIconView sd_setImageWithURL:imageURL placeholderImage:nil options:SDWebImageRefreshCached];
+        
+        ALMessageClientService * messageClientService = [[ALMessageClientService alloc]init];
+        [messageClientService downloadImageUrlAndSet:self.groupImageURL imageView:self.groupIconView defaultImage:nil];
+        
+       // [self.groupIconView sd_setImageWithURL:imageURL placeholderImage:nil options:SDWebImageRefreshCached];
     }
     else
     {
