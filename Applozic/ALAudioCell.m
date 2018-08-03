@@ -250,7 +250,7 @@
                                                       self.playPauseStop.frame.origin.y,
                                                       DOWNLOAD_RETRY_WIDTH, DOWNLOAD_RETRY_HEIGHT)];
         
-        [self setupProgressValueX: (self.playPauseStop.frame.origin.x) andY: (self.playPauseStop.frame.origin.y+20)];
+        [self setupProgressValueX: (self.playPauseStop.frame.origin.x) andY: 30];
         
         CGFloat progressBarWidth = self.mBubleImageView.frame.size.width - self.playPauseStop.frame.size.width -25;
         
@@ -327,7 +327,7 @@
                                                       self.playPauseStop.frame.origin.y,
                                                       DOWNLOAD_RETRY_WIDTH, DOWNLOAD_RETRY_WIDTH)];
         
-        [self setupProgressValueX: (self.playPauseStop.frame.origin.x) andY: (self.playPauseStop.frame.origin.y+10)];
+        [self setupProgressValueX: (self.playPauseStop.frame.origin.x) andY: 10];
         
         msgFrameHeight = self.mBubleImageView.frame.size.height;
         
@@ -536,7 +536,7 @@
 {
     self.progresLabel = [[KAProgressLabel alloc] init];
     [self.progresLabel.cancelButton setBackgroundImage:[ALUtilityClass getImageFromFramworkBundle:@"DELETEIOSX.png"] forState:UIControlStateNormal];
-    [self.progresLabel setFrame:CGRectMake(cooridinateX, 10, 40, 40)];
+    [self.progresLabel setFrame:CGRectMake(cooridinateX, cooridinateY, 40, 40)];
     self.progresLabel.cancelButton.frame = CGRectMake(10, 10, 20, 20);
 
     self.progresLabel.delegate = self;

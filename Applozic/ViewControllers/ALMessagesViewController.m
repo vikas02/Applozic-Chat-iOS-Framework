@@ -714,7 +714,12 @@
                  
                  contactCell.mUserImageView.layer.cornerRadius = contactCell.mUserImageView.frame.size.width/2;
                  contactCell.mUserImageView.layer.masksToBounds = YES;
-                 contactCell.mUserImageView.contentMode = UIViewContentModeScaleAspectFit;
+                 contactCell.mUserImageView.contentMode = UIViewContentModeScaleAspectFill;
+                
+                //amol: add borders
+                contactCell.mUserImageView.layer.borderWidth = 2;
+                contactCell.mUserImageView.layer.borderColor = [ALApplozicSettings getColorForNavigation].CGColor;
+
              });
 
             [contactCell.onlineImageMarker setBackgroundColor:[UIColor clearColor]];

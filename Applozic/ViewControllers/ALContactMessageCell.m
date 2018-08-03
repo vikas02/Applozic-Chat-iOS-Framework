@@ -27,11 +27,14 @@
 #import "ALVCardClass.h"
 #import "ALMessageClientService.h"
 
+
+//#define IS_IPHONE_5 ( fabs( ( double )[ [ UIScreen mainScreen ] bounds ].size.height - ( double )568 ) < DBL_EPSILON )
+
 #define BUBBLE_PADDING_X 13
 #define BUBBLE_PADDING_X_OUTBOX 60
 #define BUBBLE_PADDING_WIDTH 120
-#define BUBBLE_PADDING_HEIGHT 280//160
-#define BUBBLE_PADDING_HEIGHT_OUTBOX 280//180
+#define BUBBLE_PADDING_HEIGHT IS_IPHONE_5?160:280
+#define BUBBLE_PADDING_HEIGHT_OUTBOX IS_IPHONE_5?160:280
 
 #define DATE_PADDING_X 20
 #define DATE_PADDING_WIDTH 20
@@ -85,8 +88,9 @@
     if(self)
     {
         self.selectionStyle = UITableViewCellSelectionStyleNone;
-//        self.backgroundColor = [UIColor colorWithRed:242/255.0 green:242/255.0  blue:242/255.0 alpha:1];
+        //self.backgroundColor = [UIColor colorWithRed:242/255.0 green:242/255.0  blue:242/255.0 alpha:1];
         self.contentView.userInteractionEnabled = YES;
+        
 
         self.contactProfileImage = [[UIImageView alloc] init];
         [self.contactProfileImage setBackgroundColor:[UIColor whiteColor]];
