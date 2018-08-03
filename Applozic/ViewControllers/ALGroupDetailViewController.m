@@ -344,6 +344,11 @@
                &&  [ALApplozicSettings getGroupMemberRemoveOption]){
                 [self removeMember:indexPath.row];
             }
+            else  if(alChannelUserX.role.intValue == MEMBER
+                     && ![self isThisChannelLeft:self.channelKeyID]
+                     &&  [ALApplozicSettings getGroupMemberRemoveOption]){
+                [self showMessageOptionForMember:indexPath.row];
+            }
         }break;
         case 2:{
             //Exit group
@@ -505,6 +510,38 @@
 }
 
 
+#pragma mark - For Member to chat
+-(void)showMessageOptionForMember:(NSInteger)row
+{
+    
+    NSString* removeMemberID = [NSString stringWithFormat:@"%@",memberIds[row]];
+   
+    if ([[ALUserDefaultsHandler getUserId] isEqualToString:removeMemberID]) {
+        return;
+    }
+
+    UIAlertController * theController = [UIAlertController alertControllerWithTitle:nil
+                                                                            message:nil
+                                                                     preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    [ALUtilityClass setAlertControllerFrame:theController andViewController:self];
+    
+    [theController addAction:[UIAlertAction actionWithTitle: NSLocalizedStringWithDefaultValue(@"cancelOptionText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"message_dialog_cancel", nil), @"") style:UIAlertActionStyleCancel handler:nil]];
+    
+    if ([ALApplozicSettings isChatOnTapUserProfile])
+    {
+        [theController addAction:[UIAlertAction actionWithTitle:[NSString stringWithFormat:[NSLocalizedStringWithDefaultValue(@"messageText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Message", nil), @"") stringByAppendingString: @" %@"], memberNames[row]]
+                                                          style:UIAlertActionStyleDefault
+                                                        handler:^(UIAlertAction *action) {
+                                                            
+                                                            [self openChatThreadFor:removeMemberID];
+                                                        }]];
+        
+    }
+    [self presentViewController:theController animated:YES completion:nil];
+
+    
+}
 #pragma mark - Remove Memember (for admin)
 //=======================================
 -(void)removeMember:(NSInteger)row
@@ -628,17 +665,34 @@
 }
 
 -(void)openChatThreadFor:(NSString*) contactId {
-    int index = 0;
+    int index = -1;
     if([self.navigationController.viewControllers.firstObject
         isKindOfClass: [ALMessagesViewController class]]) {
         index = 1;
     }
-    ALChatViewController *chatVC = (ALChatViewController *)[self.navigationController.viewControllers objectAtIndex:index];
-    chatVC.contactIds = contactId;
-
-    chatVC.channelKey = nil;
-    [self.navigationController popViewControllerAnimated:true];
-    chatVC.refresh = true;
+    
+    
+    NSArray * controllers = [self.navigationController viewControllers];
+    
+    for (int i = 0; i < [controllers count]; i++){
+        
+        UIViewController * controllerTest = [controllers objectAtIndex:i];
+        
+        if([controllerTest isKindOfClass:[ALChatViewController class]]){
+//            NSLog(@"Class is available");
+            index = i;
+        }
+    }
+    
+    if (index != -1 && index < [controllers count]) {
+        ALChatViewController *chatVC = (ALChatViewController *)[self.navigationController.viewControllers objectAtIndex:index];
+        chatVC.contactIds = contactId;
+        
+        chatVC.channelKey = nil;
+        [self.navigationController popViewControllerAnimated:true];
+        chatVC.refresh = true;
+    }
+    
 }
 
 #pragma mark - Table View Data Source

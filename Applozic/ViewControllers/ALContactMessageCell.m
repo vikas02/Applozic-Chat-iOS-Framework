@@ -30,8 +30,8 @@
 #define BUBBLE_PADDING_X 13
 #define BUBBLE_PADDING_X_OUTBOX 60
 #define BUBBLE_PADDING_WIDTH 120
-#define BUBBLE_PADDING_HEIGHT 160
-#define BUBBLE_PADDING_HEIGHT_OUTBOX 180
+#define BUBBLE_PADDING_HEIGHT 280//160
+#define BUBBLE_PADDING_HEIGHT_OUTBOX 280//180
 
 #define DATE_PADDING_X 20
 #define DATE_PADDING_WIDTH 20
@@ -50,10 +50,10 @@
 #define CNT_PERSON_HEIGHT 20
 
 #define USER_CNT_Y 5
-#define USER_CNT_HEIGHT 50
+#define USER_CNT_HEIGHT 20//50
 
 #define EMAIL_Y 5
-#define EMAIL_HEIGHT 50
+#define EMAIL_HEIGHT 20//50
 
 #define BUTTON_Y 50
 #define BUTTON_WIDTH 20
@@ -137,6 +137,8 @@
 
 -(instancetype)populateCell:(ALMessage *) alMessage viewSize:(CGSize)viewSize
 {
+    
+    float extraYPadding = 0;
     self.mUserProfileImageView.alpha = 1;
     self.progresLabel.alpha = 0;
     self.mDowloadRetryButton.alpha = 0;
@@ -216,8 +218,13 @@
                                                        self.mBubleImageView.frame.origin.y + CHANNEL_PADDING_Y,
                                                        self.mBubleImageView.frame.size.width + CHANNEL_PADDING_WIDTH, CHANNEL_PADDING_HEIGHT);
 
+            //amol: commented
             requiredHeight = requiredHeight + self.mChannelMemberName.frame.size.height;
-            imageViewY = imageViewY +  self.mChannelMemberName.frame.size.height;
+
+            
+            imageViewY = imageViewY +  self.mChannelMemberName.frame.size.height  ;
+            
+            extraYPadding = 15;
         }
 
 
@@ -235,7 +242,7 @@
                                                   viewSize.width - BUBBLE_PADDING_WIDTH, requiredHeight)];
 
         [self.contactProfileImage setFrame:CGRectMake(self.mBubleImageView.frame.origin.x + CNT_PROFILE_X,
-                                                      self.mBubleImageView.frame.origin.y + CNT_PROFILE_Y,
+                                                      self.mBubleImageView.frame.origin.y + CNT_PROFILE_Y + extraYPadding,
                                                       CNT_PROFILE_WIDTH, CNT_PROFILE_HEIGHT)];
 
         CGFloat widthName = self.mBubleImageView.frame.size.width - (self.contactProfileImage.frame.size.width + 25);

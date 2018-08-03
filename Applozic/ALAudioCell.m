@@ -21,8 +21,8 @@
 
 #define DOWNLOAD_RETRY_PADDING_X 45
 #define DOWNLOAD_RETRY_PADDING_Y 20
-#define DOWNLOAD_RETRY_WIDTH 60
-#define DOWNLOAD_RETRY_HEIGHT 60
+#define DOWNLOAD_RETRY_WIDTH 40
+#define DOWNLOAD_RETRY_HEIGHT 40
 
 #define MAX_WIDTH 150
 #define MAX_WIDTH2 130
@@ -44,7 +44,7 @@
 
 #define BUBBLE_PADDING_X 13
 #define BUBBLE_PADDING_WIDTH 50
-#define BUBBLE_PADDING_HEIGHT 70
+#define BUBBLE_PADDING_HEIGHT 60
 
 
 #define CHANNEL_PADDING_X 5
@@ -53,9 +53,9 @@
 #define CHANNEL_HEIGHT 20
 
 #define BUTTON_PADDING_X 5
-#define BUTTON_PADDING_Y 5
-#define BUTTON_PADDING_WIDTH 60
-#define BUTTON_PADDING_HEIGHT 60
+#define BUTTON_PADDING_Y 10
+#define BUTTON_PADDING_WIDTH 40
+#define BUTTON_PADDING_HEIGHT 40
 
 #define MEDIA_NAME_HEIGHT 40
 
@@ -242,7 +242,7 @@
                                                 BUTTON_PADDING_WIDTH, BUTTON_PADDING_HEIGHT)];
         
         
-        CGFloat nameWidth = self.mBubleImageView.frame.size.width - self.playPauseStop.frame.size.width - 20;
+        CGFloat nameWidth = self.mBubleImageView.frame.size.width - self.playPauseStop.frame.size.width - 10;
         CGFloat nameX = self.playPauseStop.frame.origin.x + self.playPauseStop.frame.size.width + 10;
         [self.mediaName setFrame:CGRectMake(nameX, self.playPauseStop.frame.origin.y, nameWidth, MEDIA_NAME_HEIGHT)];
         
@@ -250,13 +250,13 @@
                                                       self.playPauseStop.frame.origin.y,
                                                       DOWNLOAD_RETRY_WIDTH, DOWNLOAD_RETRY_HEIGHT)];
         
-        [self setupProgressValueX: (self.playPauseStop.frame.origin.x) andY: (self.playPauseStop.frame.origin.y)];
+        [self setupProgressValueX: (self.playPauseStop.frame.origin.x) andY: (self.playPauseStop.frame.origin.y+20)];
         
-        CGFloat progressBarWidth = self.mBubleImageView.frame.size.width - self.playPauseStop.frame.size.width - 30;
+        CGFloat progressBarWidth = self.mBubleImageView.frame.size.width - self.playPauseStop.frame.size.width -25;
         
-        CGFloat progressX = self.playPauseStop.frame.origin.x + self.playPauseStop.frame.size.width + 10;
+        CGFloat progressX = self.playPauseStop.frame.origin.x + self.playPauseStop.frame.size.width+5;
        // [self.mediaTrackProgress setFrame:CGRectMake(progressX, self.mediaName.frame.origin.y + self.mediaName.frame.size.height,progressBarWidth, PROGRESS_HEIGHT)];
-        [self.mediaTrackProgress setFrame:CGRectMake(progressX, (BUTTON_PADDING_HEIGHT/2) + 5,progressBarWidth, PROGRESS_HEIGHT)];
+        [self.mediaTrackProgress setFrame:CGRectMake(progressX, CGRectGetMidY(self.playPauseStop.frame),progressBarWidth, PROGRESS_HEIGHT)];
 
         [self.startTime setFrame:CGRectMake(self.mediaTrackProgress.frame.origin.x,
                                                    self.mediaTrackProgress.frame.origin.y + self.mediaTrackProgress.frame.size.height,
@@ -269,6 +269,7 @@
         
         if (alMessage.imageFilePath == nil)
         {
+            self.mDowloadRetryButton.alpha = 1;
             [self.mDowloadRetryButton setHidden:NO];
             [self.mDowloadRetryButton setImage:[ALUtilityClass getImageFromFramworkBundle:@"DownloadiOS.png"] forState:UIControlStateNormal];
         }
@@ -326,13 +327,13 @@
                                                       self.playPauseStop.frame.origin.y,
                                                       DOWNLOAD_RETRY_WIDTH, DOWNLOAD_RETRY_WIDTH)];
         
-        [self setupProgressValueX: (self.playPauseStop.frame.origin.x) andY: (self.playPauseStop.frame.origin.y)];
+        [self setupProgressValueX: (self.playPauseStop.frame.origin.x) andY: (self.playPauseStop.frame.origin.y+10)];
         
         msgFrameHeight = self.mBubleImageView.frame.size.height;
         
-        CGFloat progressBarWidth = self.mBubleImageView.frame.size.width - self.playPauseStop.frame.size.width - 30;
+        CGFloat progressBarWidth = self.mBubleImageView.frame.size.width - self.playPauseStop.frame.size.width - 25;
         
-        CGFloat progressX = self.playPauseStop.frame.origin.x + self.playPauseStop.frame.size.width + 10;
+        CGFloat progressX = self.playPauseStop.frame.origin.x + self.playPauseStop.frame.size.width+5;
         
         CGFloat nameWidth = self.mBubleImageView.frame.size.width - self.playPauseStop.frame.size.width - 20;
         CGFloat nameX = self.playPauseStop.frame.origin.x + self.playPauseStop.frame.size.width + 10;
@@ -342,7 +343,7 @@
 //        [self.mediaTrackProgress setFrame:CGRectMake(progressX,
 //                                                     self.mediaName.frame.origin.y + self.mediaName.frame.size.height
 //                                                     ,progressBarWidth, PROGRESS_HEIGHT)];
-        [self.mediaTrackProgress setFrame:CGRectMake(progressX, (BUTTON_PADDING_HEIGHT/2) + 5,progressBarWidth, PROGRESS_HEIGHT)];
+        [self.mediaTrackProgress setFrame:CGRectMake(progressX, CGRectGetMidY(self.playPauseStop.frame),progressBarWidth, PROGRESS_HEIGHT)];
 
         
         [self.startTime setFrame:CGRectMake(self.mediaTrackProgress.frame.origin.x,
@@ -429,7 +430,11 @@
     
     
     [self.contentView bringSubviewToFront:self.replyUIView];
+   
     
+    CGRect temp = self.mDateLabel.frame;
+    temp.size.width = self.mBubleImageView.frame.size.width;
+    self.mDateLabel.frame = temp;
     
     
     return self;
@@ -530,16 +535,17 @@
 -(void) setupProgressValueX:(CGFloat)cooridinateX andY:(CGFloat)cooridinateY
 {
     self.progresLabel = [[KAProgressLabel alloc] init];
-    self.progresLabel.cancelButton.frame = CGRectMake(10, 10, 40, 40);
     [self.progresLabel.cancelButton setBackgroundImage:[ALUtilityClass getImageFromFramworkBundle:@"DELETEIOSX.png"] forState:UIControlStateNormal];
-    [self.progresLabel setFrame:CGRectMake(cooridinateX, cooridinateY, 60, 60)];
+    [self.progresLabel setFrame:CGRectMake(cooridinateX, 10, 40, 40)];
+    self.progresLabel.cancelButton.frame = CGRectMake(10, 10, 20, 20);
+
     self.progresLabel.delegate = self;
     [self.progresLabel setTrackWidth: 4.0];
     [self.progresLabel setProgressWidth: 4];
     [self.progresLabel setStartDegree:0];
     [self.progresLabel setEndDegree:0];
     [self.progresLabel setRoundedCornersWidth:1];
-    self.progresLabel.fillColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0];
+    self.progresLabel.fillColor = [UIColor clearColor];
     self.progresLabel.trackColor = [UIColor colorWithRed:104.0/255 green:95.0/255 blue:250.0/255 alpha:1];
     self.progresLabel.progressColor = [UIColor whiteColor];
     [self.contentView addSubview: self.progresLabel];

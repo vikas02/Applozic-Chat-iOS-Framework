@@ -113,6 +113,8 @@ UIViewController * modalCon;
 {
     [super populateCell:alMessage viewSize:viewSize];
     
+   
+    
     self.mUserProfileImageView.alpha = 1;
     self.progresLabel.alpha = 0;
     [self.replyParentView setHidden:YES];
@@ -268,7 +270,7 @@ UIViewController * modalCon;
             NSLog(@" file path not found making download button visible ....ALImageCell");
             self.mDowloadRetryButton.alpha = 1;
             [self.mDowloadRetryButton setTitle:[alMessage.fileMeta getTheSize] forState:UIControlStateNormal];
-            [self.mDowloadRetryButton setImage:[ALUtilityClass getImageFromFramworkBundle:@"downloadI6.png"] forState:UIControlStateNormal];
+            [self.mDowloadRetryButton setImage:[ALUtilityClass getImageFromFramworkBundle:@"download_whatsapp"] forState:UIControlStateNormal];
             
         }
         else
@@ -404,7 +406,7 @@ UIViewController * modalCon;
         {
             self.mDowloadRetryButton.alpha = 1;
             [self.mDowloadRetryButton setTitle:[alMessage.fileMeta getTheSize] forState:UIControlStateNormal];
-            [self.mDowloadRetryButton setImage:[ALUtilityClass getImageFromFramworkBundle:@"downloadI6.png"] forState:UIControlStateNormal];
+            [self.mDowloadRetryButton setImage:[ALUtilityClass getImageFromFramworkBundle:@"download_whatsapp"] forState:UIControlStateNormal];
             
         }
         else if (alMessage.imageFilePath && !alMessage.fileMeta.blobKey)
@@ -475,6 +477,18 @@ UIViewController * modalCon;
         }
         
     }
+    
+    //amol: customization to download button
+    self.mDowloadRetryButton.backgroundColor = [UIColor redColor];
+    [self.mDowloadRetryButton setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.6]];
+    self.mDowloadRetryButton.layer.cornerRadius = self.mDowloadRetryButton.frame.size.height/2;
+    self.mDowloadRetryButton.layer.masksToBounds = YES;
+    
+    
+    CGRect temp = self.mDateLabel.frame;
+    temp.size.width = self.mBubleImageView.frame.size.width;
+    self.mDateLabel.frame = temp;
+    
     
     return self;
     
