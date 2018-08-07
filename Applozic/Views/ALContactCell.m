@@ -13,6 +13,12 @@
     [[self mUserNameLabel] setTextAlignment:NSTextAlignmentNatural];
     [[self mMessageLabel] setTextAlignment:NSTextAlignmentNatural];
     [[self imageNameLabel] setTextAlignment:NSTextAlignmentNatural];
+    
+    self.mUserNameLabel.textColor = [UIColor blackColor];
+    self.mMessageLabel.textColor = [UIColor blackColor];
+    self.mTimeLabel.textColor = [UIColor blackColor];
+  
+    
     [super awakeFromNib];
 }
 
