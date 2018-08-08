@@ -30,6 +30,9 @@
         self.mUserProfileImageView.contentMode = UIViewContentModeScaleAspectFill;
         self.mUserProfileImageView.clipsToBounds = YES;
         self.mUserProfileImageView.layer.cornerRadius = self.mUserProfileImageView.frame.size.width/2;
+        self.mUserProfileImageView.layer.borderWidth = 1;
+
+        self.mUserProfileImageView.layer.borderColor = [ALApplozicSettings getColorForNavigation].CGColor;
         [self.contentView addSubview:self.mUserProfileImageView];
         
         self.mNameLabel = [[UILabel alloc] init];

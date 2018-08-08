@@ -717,7 +717,7 @@
                  contactCell.mUserImageView.contentMode = UIViewContentModeScaleAspectFill;
                 
                 //amol: add borders
-                contactCell.mUserImageView.layer.borderWidth = 2;
+                contactCell.mUserImageView.layer.borderWidth = 1;
                 contactCell.mUserImageView.layer.borderColor = [ALApplozicSettings getColorForNavigation].CGColor;
 
              });

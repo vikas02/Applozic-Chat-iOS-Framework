@@ -102,7 +102,7 @@ import Foundation
         
         backgroundColor = UIColor.init(19, green: 66, blue: 142)
         
-        let swipeUpToCancelMessage = NSLocalizedString("swipeUpToCancel", value: "Swipe up to cancel",comment: "")
+        let swipeUpToCancelMessage = NSLocalizedString("Swipe up to cancel", value: "Swipe up to cancel",comment: "")
         let recordingMessage = NSLocalizedString("initialRecordingMessage", value: "00:00:00)", comment: "")
         setTitle("\(recordingMessage)   \(swipeUpToCancelMessage)", for: .normal)
         setTitle("\(recordingMessage)   \(swipeUpToCancelMessage)", for: .highlighted)
@@ -320,7 +320,7 @@ import Foundation
         if sec < 10 {secStr = "0\(secStr)"}
         if min < 10 {minStr = "0\(minStr)"}
         let recordingMessage = NSLocalizedString("recordingMessage", value: "00:", comment: "")
-        let swipeUpToCancelMessage = NSLocalizedString("swipeUpToCancel", value: "Swipe up to cancel",comment: "")
+        let swipeUpToCancelMessage = NSLocalizedString("Swipe up to cancel", value: "Swipe up to cancel",comment: "")
         setTitle("\(recordingMessage)\(minStr):\(secStr)   \(swipeUpToCancelMessage)", for: .normal)
         setTitle("\(recordingMessage)\(minStr):\(secStr)   \(swipeUpToCancelMessage)", for: .highlighted)
     }

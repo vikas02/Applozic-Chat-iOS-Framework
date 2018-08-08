@@ -465,6 +465,11 @@
         [self setHyperLinkAttribute];
     }
     
+    self.mUserProfileImageView.layer.borderWidth = 1;
+    
+    self.mUserProfileImageView.layer.borderColor = [ALApplozicSettings getColorForNavigation].CGColor;
+    
+    
    
     
     return self;
