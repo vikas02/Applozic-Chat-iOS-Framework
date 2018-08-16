@@ -25,6 +25,24 @@
     //@"SHARE_IMAGE"
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(backToMessageViewController) name:@"SHARE_IMAGE" object:nil];
     [self setupBarItems];
+    
+    [self addCustomBack];
+}
+
+#pragma mark - back button code
+-(void)addCustomBack
+{
+    
+    
+    UIButton *backButton = [[UIButton alloc] initWithFrame: CGRectMake(0, 0, 44.0f, 30.0f)];
+    [backButton setImage:[ALUtilityClass getImageFromFramworkBundle:@"ic_back1"]  forState:UIControlStateNormal];
+    [backButton addTarget:self action:@selector(backClicked) forControlEvents:UIControlEventTouchUpInside];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
+    
+}
+-(void)backClicked
+{
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 -(void)setupBarItems

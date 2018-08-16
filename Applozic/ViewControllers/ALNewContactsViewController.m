@@ -139,13 +139,30 @@
    
 
     
-    barButtonItem = [[UIBarButtonItem alloc] initWithCustomView:[self setCustomBackButton: NSLocalizedStringWithDefaultValue(@"back", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Back", nil) , @"")]];
+    barButtonItem = [[UIBarButtonItem alloc] initWithCustomView:[self setCustomBackButton: NSLocalizedStringWithDefaultValue(@"back", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"    ", nil) , @"")]];
     
     self.colors = [[NSArray alloc] initWithObjects:@"#617D8A",@"#628B70",@"#8C8863",@"8B627D",@"8B6F62", nil];
     
     self.groupMembers=[[NSMutableSet alloc] init];
     
     [self emptyConversationAlertLabel];
+   // [self addCustomBack];
+}
+
+#pragma mark - back button code
+-(void)addCustomBack
+{
+    
+    
+    UIButton *backButton = [[UIButton alloc] initWithFrame: CGRectMake(0, 0, 44.0f, 30.0f)];
+    [backButton setImage:[ALUtilityClass getImageFromFramworkBundle:@"ic_back1"]  forState:UIControlStateNormal];
+    [backButton addTarget:self action:@selector(backClicked) forControlEvents:UIControlEventTouchUpInside];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
+    
+}
+-(void)backClicked
+{
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 -(void)subProcessContactFetch
@@ -999,7 +1016,12 @@
     UIImageView *imageView = [[UIImageView alloc] initWithImage: [ALUtilityClass getImageFromFramworkBundle:@"bbb.png"]];
     [imageView setFrame:CGRectMake(-10, 0, 30, 30)];
     [imageView setTintColor:[UIColor whiteColor]];
-    UILabel *label=[[UILabel alloc] initWithFrame:CGRectMake(imageView.frame.origin.x + imageView.frame.size.width - 5, imageView.frame.origin.y + 5 , NSLocalizedString(@"Back", nil).length, 15)];
+//    UILabel *label=[[UILabel alloc] initWithFrame:CGRectMake(imageView.frame.origin.x + imageView.frame.size.width - 5, imageView.frame.origin.y + 5 , NSLocalizedString(@"Back", nil).length, 15)];
+//    [label setTextColor: [ALApplozicSettings getColorForNavigationItem]];
+//    [label setText:text];
+//    [label sizeToFit];
+    
+    UILabel *label=[[UILabel alloc] initWithFrame:CGRectMake(imageView.frame.origin.x + imageView.frame.size.width - 5, imageView.frame.origin.y + 5 , NSLocalizedString(@"    ", nil).length, 15)];
     [label setTextColor: [ALApplozicSettings getColorForNavigationItem]];
     [label setText:text];
     [label sizeToFit];
