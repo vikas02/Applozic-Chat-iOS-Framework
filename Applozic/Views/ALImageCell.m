@@ -650,7 +650,7 @@ UIViewController * modalCon;
     
     if (indexOfImage > -1 &&   indexOfImage < [urlsArr count] ) {
         IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotos:urlsArr];
-        browser.displayActionButton = NO;
+        browser.displayActionButton = YES;
         browser.displayCounterLabel = YES;
         browser.autoHideInterface = NO;
         [browser setInitialPageIndex:indexOfImage];

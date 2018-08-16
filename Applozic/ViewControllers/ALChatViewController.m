@@ -217,6 +217,8 @@
     [backButton setImage:[ALUtilityClass getImageFromFramworkBundle:@"ic_back1"]  forState:UIControlStateNormal];
     [backButton addTarget:self action:@selector(backClicked) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
+    
+    
 
 }
 -(void)backClicked
