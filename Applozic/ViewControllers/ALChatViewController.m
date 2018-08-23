@@ -204,6 +204,10 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateMessagefield)
                                                  name:@"updateMessagefield" object:nil];
+    
+    //amol: add keyboard dismissal
+    self.mTableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
+
 
     [self addCustomBack];
 }

@@ -351,10 +351,19 @@ static CGSize CGSizeScale(CGSize size, CGFloat scale) {
 - (BOOL)isMaximumSelectionLimitReached
 {
     NSUInteger minimumNumberOfSelection = MAX(1, self.imagePickerController.minimumNumberOfSelection);
+    
+    
+    if (self.imagePickerController.selectedAssets.count >= 9) {
+        [ALUtilityClass showAlertMessage:NSLocalizedString(@"Max 9 Images Allowed", nil) andTitle:@""];
+        
+    }
    
     if (minimumNumberOfSelection <= self.imagePickerController.maximumNumberOfSelection) {
         return (self.imagePickerController.maximumNumberOfSelection <= self.imagePickerController.selectedAssets.count);
     }
+    
+    
+   
    
     return NO;
 }
@@ -666,6 +675,8 @@ static CGSize CGSizeScale(CGSize size, CGFloat scale) {
             }
         }
         
+        
+       
         // Add asset to set
         [selectedAssets addObject:asset];
         

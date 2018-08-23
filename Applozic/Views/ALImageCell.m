@@ -653,9 +653,10 @@ UIViewController * modalCon;
         browser.displayActionButton = YES;
         browser.displayCounterLabel = YES;
         browser.autoHideInterface = NO;
-        [browser setInitialPageIndex:indexOfImage];
+       
         //  browser.selected_idx =selected_idx;
         [[self topMostControllerNormal] presentViewController:browser animated:YES completion:nil];
+         [browser setInitialPageIndex:indexOfImage];
         
     }
     
