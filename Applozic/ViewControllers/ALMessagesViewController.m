@@ -992,7 +992,33 @@
     self.detailChatViewController.contactIds = contactIds;
     self.detailChatViewController.chatViewDelegate = self;
     self.detailChatViewController.channelKey = self.channelKey;
-    [self.navigationController pushViewController:self.detailChatViewController animated:YES];
+    
+    //amol added if block
+    
+   
+    if (![self containController:[ALChatViewController class]])
+    {
+        [self.navigationController pushViewController:self.detailChatViewController animated:YES];
+
+    }
+}
+
+- (BOOL ) containController:(Class)controllerClass
+{
+    BOOL isFound = NO;
+    NSArray * controllers = [self.navigationController viewControllers];
+    
+    for (int i = 0; i < [controllers count]; i++){
+        
+        UIViewController * controllerTest = [controllers objectAtIndex:i];
+        
+        if([controllerTest isKindOfClass:controllerClass]){
+            NSLog(@"Class is available");
+            isFound = YES; break;
+        }
+        
+    }
+    return isFound;
 }
 
 -(void)createDetailChatViewControllerWithMessage:(ALMessage *)message
@@ -1416,8 +1442,9 @@
     else if([updateUI isEqualToNumber:[NSNumber numberWithInt:APP_STATE_INACTIVE]])
     {
         NSLog(@"######## IT SHOULD NEVER COME HERE #########");
-        [self createDetailChatViewController: contactId];
+      //  [self createDetailChatViewController: contactId]; amol ommented this line..crashing on push click
 //      [self.detailChatViewController fetchAndRefresh];
+        self.detailChatViewController.contactIds = contactId;
         [self.detailChatViewController setRefresh: YES];
     }
     else if([NSNumber numberWithInt:APP_STATE_BACKGROUND])

@@ -227,11 +227,13 @@
 }
 -(void)backClicked
 {
-    [self.navigationController popViewControllerAnimated:YES];
     
     [self dismissViewControllerAnimated:YES completion:^{
         
     }];
+    [self.navigationController popViewControllerAnimated:YES];
+    
+  
 }
 -(void)updateMessagefield
 {
@@ -2283,7 +2285,7 @@
     for (DB_Message * theEntity in theArray)
     {
         ALMessage * theMessage = [messageDBService createMessageEntity:theEntity];
-        NSLog(@"Path = %@",theMessage.imageFilePath);
+        //NSLog(@"Path = %@",theMessage.imageFilePath);
         [tempArray insertObject:theMessage atIndex:0];
         //[self.mMessageListArrayKeyStrings insertObject:theMessage.key atIndex:0];
     }
@@ -2329,7 +2331,7 @@
     for (DB_Message * theEntity in theArray)
     {
         ALMessage * theMessage = [messageDBService createMessageEntity:theEntity];
-        NSLog(@"Path = %@",theMessage.imageFilePath);
+        //NSLog(@"Path = %@",theMessage.imageFilePath);
         [tempArray insertObject:theMessage atIndex:0];
         //[self.mMessageListArrayKeyStrings insertObject:theMessage.key atIndex:0];
     }
