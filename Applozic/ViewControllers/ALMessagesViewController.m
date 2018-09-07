@@ -44,6 +44,7 @@
 #import "ALPushAssist.h"
 #import "ALGroupCreationViewController.h"
 #import "ALMessageClientService.h"
+#import "ALGroupDetailViewController.h"
 
 // Constants
 #define DEFAULT_TOP_LANDSCAPE_CONSTANT -34
@@ -724,6 +725,18 @@
             
             contactCell.unreadCountLabel.backgroundColor = [ALApplozicSettings getUnreadCountLabelBGColor];
             
+            
+            
+            //add gesture for tap
+            if (contactCell.mUserImageView.gestureRecognizers.count == 0) {
+                UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(profileIconClicked:)];
+                tap.numberOfTapsRequired = 1;
+                [contactCell.mUserImageView addGestureRecognizer:tap];
+            }
+            contactCell.mUserImageView.userInteractionEnabled = YES;
+            contactCell.mUserImageView.tag = indexPath.row;
+           
+            
             dispatch_async(dispatch_get_main_queue(), ^{
                  
                  contactCell.unreadCountLabel.layer.cornerRadius = contactCell.unreadCountLabel.frame.size.width/2;
@@ -787,6 +800,42 @@
     return contactCell;
 }
 
+
+-(void)profileIconClicked:(UIGestureRecognizer*)gesture
+{
+    UIView *tappedView  = gesture.view;
+    
+    if (tappedView.tag < self.mContactsMessageListArray.count) {
+        ALMessage * message = self.mContactsMessageListArray[tappedView.tag];
+        
+        if (!message.groupId) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"chat_open_profile" object:message.contactIds];
+        }
+        else
+        {
+           /* ALChannelService *channelService = [[ALChannelService alloc] init];
+
+            ALChannel * channel = [channelService getChannelByKey:message.groupId];
+
+            if (![ALApplozicSettings isGroupInfoDisabled] && (channel.type != GROUP_OF_TWO) && ![ALChannelService isChannelDeleted:channel.key] && ![ALChannelService isConversationClosed:channel.key])
+            {
+                UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"Applozic" bundle:[NSBundle bundleForClass:[self class]]];
+                ALGroupDetailViewController * groupDetailViewController = (ALGroupDetailViewController*)[storyboard instantiateViewControllerWithIdentifier:@"ALGroupDetailViewController"];
+                groupDetailViewController.channelKeyID = channel.key;
+               // groupDetailViewController.alChatViewController = self;
+                
+                if([ALApplozicSettings isContactsGroupEnabled] && _contactsGroupId){
+                    [ALApplozicSettings setContactsGroupId:_contactsGroupId];
+                }
+                
+                [[ALUtilityClass topMostControllerNormal].navigationController pushViewController:groupDetailViewController animated:YES];
+            }
+            */
+        }
+        
+    }
+
+}
 
 //==============================================================================================================================================
 #pragma mark - update profile user image
@@ -971,7 +1020,10 @@
         {
             self.detailChatViewController.refresh = YES;
         }
+        
     }
+    
+    
 }
 
 -(void)createDetailChatViewController:(NSString *)contactIds

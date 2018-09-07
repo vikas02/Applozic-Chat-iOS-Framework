@@ -418,8 +418,11 @@
 
 +(NSString *)getEmptyConversationText
 {
-    NSString * text = [[NSUserDefaults standardUserDefaults] valueForKey:EMPTY_CONVERSATION_TEXT];
-    return text ? text : NSLocalizedStringWithDefaultValue(@"noConversationTitle", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle],  NSLocalizedString(@"You have no conversations yet", nil), @"");
+//    NSString * text = [[NSUserDefaults standardUserDefaults] valueForKey:EMPTY_CONVERSATION_TEXT];
+//    return text ? text : NSLocalizedString(@"You have no conversations yet", nil);
+    
+    
+    return  NSLocalizedString(@"You have no conversations yet", nil);
 }
 
 +(void)setVisibilityNoConversationLabelChatVC:(BOOL)flag

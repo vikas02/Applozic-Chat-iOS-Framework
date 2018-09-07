@@ -442,7 +442,15 @@
         lastSeen = @" ";
     }
     else{
-        lastSeen = [(ALChatViewController*)self.alChatViewController formatDateTime:userDetails andValue:value];
+        if (self.alChatViewController) {
+            lastSeen = [(ALChatViewController*)self.alChatViewController formatDateTime:userDetails andValue:value];
+
+        }
+        else
+        {
+            lastSeen = @" ";
+
+        }
     }
     return lastSeen;
 }

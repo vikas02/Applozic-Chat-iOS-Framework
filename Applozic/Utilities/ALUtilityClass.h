@@ -63,6 +63,7 @@
 +(NSString *)stringFromTimeInterval:(NSTimeInterval)interval;
 +(UIImage *)getVOIPMessageImage:(ALMessage *)alMessage;
 +(void)showActionSheet:(NSString *)title optionsArray:(NSArray *)arrData completion:(void(^)(NSInteger index))completion;
++(UIViewController *) topMostControllerNormal;
 
 
 @end

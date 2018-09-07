@@ -4791,7 +4791,8 @@
         return;
     }
     
-    [self.mActivityIndicator startAnimating];
+    //amol: commented to show ower profile
+   /* [self.mActivityIndicator startAnimating];
 
     UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"Applozic"
                                                           bundle:[NSBundle bundleForClass:[self class]]];
@@ -4802,6 +4803,10 @@
     receiverUserProfileVC.alContact = self.alContact;
     [self.mActivityIndicator stopAnimating];
     [self.navigationController pushViewController:receiverUserProfileVC animated:YES];
+    
+    */
+    
+     [[NSNotificationCenter defaultCenter] postNotificationName:@"chat_open_profile" object:self.alContact.userId];
 }
 
 //==============================================================================================================================================
