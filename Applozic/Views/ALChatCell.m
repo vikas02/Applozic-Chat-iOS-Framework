@@ -20,6 +20,7 @@
 #import "ALMessageInfoViewController.h"
 #import "ALChatViewController.h"
 #import "ALMessageClientService.h"
+#import <Applozic/Applozic-Swift.h>
 
 // Constants
 #define MT_INBOX_CONSTANT "4"
@@ -180,6 +181,12 @@
     self.mMessage = alMessage;
     [self processHyperLink];
     
+    
+   // self.mMessage.message = @"😊";
+  
+    
+    CGFloat fontSize = self.mMessageLabel.font.pointSize;
+    
     ALContactDBService *theContactDBService = [[ALContactDBService alloc] init];
     ALContact *alContact = [theContactDBService loadContactByKey:@"userId" value: alMessage.to];
     
@@ -187,7 +194,7 @@
     
     CGSize theTextSize = [ALUtilityClass getSizeForText:alMessage.message maxWidth:viewSize.width-115
                                                    font:self.mMessageLabel.font.fontName
-                                               fontSize:self.mMessageLabel.font.pointSize];
+                                               fontSize:fontSize];
     
     CGSize theDateSize = [ALUtilityClass getSizeForText:theDate maxWidth:150
                                                    font:self.mDateLabel.font.fontName
@@ -378,7 +385,7 @@
         
         msgFrameHeight = self.mBubleImageView.frame.size.height;
         
-        self.mMessageLabel.textColor = [ALApplozicSettings getSendMsgTextColor];
+        self.mMessageLabel.textColor = [UIColor redColor];
         
         self.mMessageLabel.frame = CGRectMake(self.mBubleImageView.frame.origin.x + MESSAGE_PADDING_X,
                                               mMessageLabelY, theTextSize.width, theTextSize.height);
@@ -438,6 +445,7 @@
     /*    ====================================== END =================================  */
     
     self.mMessageLabel.font = [UIFont fontWithName:[ALApplozicSettings getFontFace] size:MESSAGE_TEXT_SIZE];
+    
     if(alMessage.contentType == ALMESSAGE_CONTENT_TEXT_HTML)
     {
         
@@ -465,15 +473,53 @@
         [self setHyperLinkAttribute];
     }
     
-    self.mUserProfileImageView.layer.borderWidth = 1;
+   // self.mUserProfileImageView.layer.borderWidth = 1;
     
-    self.mUserProfileImageView.layer.borderColor = [ALApplozicSettings getColorForNavigation].CGColor;
+    //self.mUserProfileImageView.layer.borderColor = [ALApplozicSettings getColorForNavigation].CGColor;
     
     
-   
+//    self.mMessageLabel.font = [UIFont fontWithName:[ALApplozicSettings getFontFace] size:50];
+//    self.mMessageLabel.attributedText = [self getAttributedEmojiString:@"🙁"];
+    
+//    NSDictionary *attrs = @{
+//                            NSFontAttributeName : [UIFont systemFontOfSize:40],
+//                            NSForegroundColorAttributeName : self.mMessageLabel.textColor
+//                            };
+//
+//    if (self.mMessage.message && ([self.mMessage.type isEqualToString:@"4"] || [self.mMessage.type isEqualToString:@"5"])){
+//        self.mMessageLabel.attributedText = [[NSAttributedString alloc] initWithString:@"😊" attributes:attrs];
+//    }
+//    else
+//    {
+//        //self.mMessageLabel.text = self.mMessage.message;
+//
+//    }
     
     return self;
     
+}
+
+-(NSMutableAttributedString *)getAttributedEmojiString:(NSString *)inputString{
+    
+    NSMutableArray *__block emojiRange=[[NSMutableArray alloc] init];
+    [inputString enumerateSubstringsInRange:NSMakeRange(0, [inputString length])
+                                    options:NSStringEnumerationByComposedCharacterSequences
+                                 usingBlock: ^(NSString* substring, NSRange substringRange, NSRange enclosingRange, BOOL* stop) {
+                                     //if([substring isEmoji]){
+                                         [emojiRange addObject:@{@"startrange":@(substringRange.location),@"endrange":@(enclosingRange.length)}];
+                                     //}
+                                 }];
+    
+    NSMutableAttributedString *mutString = [[NSMutableAttributedString alloc] initWithString:inputString];
+    
+    
+    [mutString addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:16.0] range:NSMakeRange(0, mutString.length)];
+    
+    [emojiRange enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [mutString addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:35.0] range:NSMakeRange([obj[@"startrange"] floatValue], [obj[@"endrange"] floatValue])];
+    }];
+    
+    return mutString;
 }
 
 -(void) proccessTapForMenu:(id)tap{
