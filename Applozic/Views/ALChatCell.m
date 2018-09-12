@@ -187,6 +187,13 @@
     
     CGFloat fontSize = self.mMessageLabel.font.pointSize;
     
+    BOOL isEmojiPresent = NO;
+    if (self.mMessage.message && [self stringContainsSingleEmoji:self.mMessage.message]) {
+        
+        fontSize = 40;
+        isEmojiPresent = YES;
+    }
+    
     ALContactDBService *theContactDBService = [[ALContactDBService alloc] init];
     ALContact *alContact = [theContactDBService loadContactByKey:@"userId" value: alMessage.to];
     
@@ -481,13 +488,16 @@
 //    self.mMessageLabel.font = [UIFont fontWithName:[ALApplozicSettings getFontFace] size:50];
 //    self.mMessageLabel.attributedText = [self getAttributedEmojiString:@"🙁"];
     
-//    NSDictionary *attrs = @{
-//                            NSFontAttributeName : [UIFont systemFontOfSize:40],
-//                            NSForegroundColorAttributeName : self.mMessageLabel.textColor
-//                            };
-//
+    if(isEmojiPresent){
+    NSDictionary *attrs = @{
+                            NSFontAttributeName : [UIFont systemFontOfSize:fontSize],
+                            NSForegroundColorAttributeName : self.mMessageLabel.textColor
+                            };
+
+    self.mMessageLabel.attributedText = [[NSAttributedString alloc] initWithString:@"😊" attributes:attrs];
+    }
 //    if (self.mMessage.message && ([self.mMessage.type isEqualToString:@"4"] || [self.mMessage.type isEqualToString:@"5"])){
-//        self.mMessageLabel.attributedText = [[NSAttributedString alloc] initWithString:@"😊" attributes:attrs];
+    
 //    }
 //    else
 //    {
@@ -499,28 +509,52 @@
     
 }
 
--(NSMutableAttributedString *)getAttributedEmojiString:(NSString *)inputString{
+- (BOOL)stringContainsSingleEmoji:(NSString *)string {
+   // __block BOOL returnValue = NO;
+    __block int count = 0;
+    [string enumerateSubstringsInRange:NSMakeRange(0, [string length]) options:NSStringEnumerationByComposedCharacterSequences usingBlock:
+     ^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
+         BOOL returnValue = NO;
+         const unichar hs = [substring characterAtIndex:0];
+         // surrogate pair
+         if (0xd800 <= hs && hs <= 0xdbff) {
+             if (substring.length > 1) {
+                 const unichar ls = [substring characterAtIndex:1];
+                 const int uc = ((hs - 0xd800) * 0x400) + (ls - 0xdc00) + 0x10000;
+                 if (0x1d000 <= uc && uc <= 0x1f77f) {
+                     returnValue = YES;
+                 }
+             }
+         } else if (substring.length > 1) {
+             const unichar ls = [substring characterAtIndex:1];
+             if (ls == 0x20e3) {
+                 returnValue = YES;
+             }
+             
+         } else {
+             // non surrogate
+             if (0x2100 <= hs && hs <= 0x27ff) {
+                 returnValue = YES;
+             } else if (0x2B05 <= hs && hs <= 0x2b07) {
+                 returnValue = YES;
+             } else if (0x2934 <= hs && hs <= 0x2935) {
+                 returnValue = YES;
+             } else if (0x3297 <= hs && hs <= 0x3299) {
+                 returnValue = YES;
+             } else if (hs == 0xa9 || hs == 0xae || hs == 0x303d || hs == 0x3030 || hs == 0x2b55 || hs == 0x2b1c || hs == 0x2b1b || hs == 0x2b50) {
+                 returnValue = YES;
+             }
+         }
+         
+         if (returnValue) {
+             count++;
+         }
+     }];
     
-    NSMutableArray *__block emojiRange=[[NSMutableArray alloc] init];
-    [inputString enumerateSubstringsInRange:NSMakeRange(0, [inputString length])
-                                    options:NSStringEnumerationByComposedCharacterSequences
-                                 usingBlock: ^(NSString* substring, NSRange substringRange, NSRange enclosingRange, BOOL* stop) {
-                                     //if([substring isEmoji]){
-                                         [emojiRange addObject:@{@"startrange":@(substringRange.location),@"endrange":@(enclosingRange.length)}];
-                                     //}
-                                 }];
-    
-    NSMutableAttributedString *mutString = [[NSMutableAttributedString alloc] initWithString:inputString];
-    
-    
-    [mutString addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:16.0] range:NSMakeRange(0, mutString.length)];
-    
-    [emojiRange enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        [mutString addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:35.0] range:NSMakeRange([obj[@"startrange"] floatValue], [obj[@"endrange"] floatValue])];
-    }];
-    
-    return mutString;
+    return count == 1? YES : NO ;
 }
+
+
 
 -(void) proccessTapForMenu:(id)tap{
 

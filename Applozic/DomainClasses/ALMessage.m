@@ -165,8 +165,9 @@
 
 -(NSString *)getCreatedAtTime:(BOOL)today {
     
-    NSString *formattedStr = today?@"hh:mm a":@"dd MMM";
-    
+//    NSString *formattedStr = today?@"hh:mm a":@"dd MMM";
+    NSString *formattedStr = today?@"hh:mm a":@"M/d/yyyy";
+
     NSString *formattedDateStr;
     
     NSDate *currentTime = [[NSDate alloc] init];
