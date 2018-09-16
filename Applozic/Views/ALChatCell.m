@@ -494,7 +494,7 @@
                             NSForegroundColorAttributeName : self.mMessageLabel.textColor
                             };
 
-    self.mMessageLabel.attributedText = [[NSAttributedString alloc] initWithString:@"😊" attributes:attrs];
+    self.mMessageLabel.attributedText = [[NSAttributedString alloc] initWithString:self.mMessage.message attributes:attrs];
     }
 //    if (self.mMessage.message && ([self.mMessage.type isEqualToString:@"4"] || [self.mMessage.type isEqualToString:@"5"])){
     
