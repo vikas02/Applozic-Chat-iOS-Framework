@@ -167,6 +167,11 @@
     
 //    NSString *formattedStr = today?@"hh:mm a":@"dd MMM";
     NSString *formattedStr = today?@"hh:mm a":@"M/d/yyyy";
+    
+    
+    if ( [[[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages1"] isEqualToString:@"zh-Hant"]) {
+        formattedStr = today?@"hh:mm a":@"yyyy/M/d";
+    }
 
     NSString *formattedDateStr;
     

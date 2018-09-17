@@ -392,7 +392,7 @@
         
         msgFrameHeight = self.mBubleImageView.frame.size.height;
         
-        self.mMessageLabel.textColor = [UIColor redColor];
+     //   self.mMessageLabel.textColor = [UIColor redColor];
         
         self.mMessageLabel.frame = CGRectMake(self.mBubleImageView.frame.origin.x + MESSAGE_PADDING_X,
                                               mMessageLabelY, theTextSize.width, theTextSize.height);

@@ -207,6 +207,10 @@
     }
 }
 
+-(void)updateLocalization{
+    
+    [self.mTableView reloadData];
+}
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
@@ -216,6 +220,8 @@
         [self dropShadowInNavigationBar];
     }
 
+    
+     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateLocalization) name:@"Update_messages_screen_control" object:nil];
     
     //amolchat
      self.tabBarController.navigationController.navigationBarHidden = YES;
@@ -342,7 +348,13 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"pushNotification" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NEW_MESSAGE_NOTIFICATION object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"BROADCAST_MSG_UPDATE" object:nil];
+    
+     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"Update_messages_screen_control" object:nil];
+    
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    
+    
 }
 
 //==============================================================================================================================================

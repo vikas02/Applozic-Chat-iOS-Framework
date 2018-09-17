@@ -237,7 +237,10 @@
 }
 -(void)updateMessagefield
 {
-    self.placeHolderTxt = NSLocalizedStringWithDefaultValue(@"placeHolderText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Write a Message...", nil), @"");
+    NSString *dumy = NSLocalizedString(@"Write a Message...", nil);
+    self.placeHolderTxt = NSLocalizedString(@"Write a Message...", nil);//NSLocalizedStringWithDefaultValue(@"placeHolderText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Write a Message...", nil), @"");
+    
+    [self.mTableView reloadData];
 
 }
 -(void)viewDidAppear:(BOOL)animated
@@ -1150,11 +1153,11 @@
     }
     
     titleLabelButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    titleLabelButton.frame = CGRectMake(0, 0, 70, 44);
+    titleLabelButton.frame = CGRectMake(0, 0, 70, 30);
     [titleLabelButton addTarget:self action:@selector(didTapTitleView:) forControlEvents:UIControlEventTouchUpInside];
     titleLabelButton.userInteractionEnabled = YES;
     [titleLabelButton setTitleColor:[ALApplozicSettings getColorForNavigationItem] forState:UIControlStateNormal];
-    
+    //titleLabelButton.backgroundColor = [UIColor redColor];
 //    if(!(self.individualLaunch) || [ALUserDefaultsHandler isServerCallDoneForUserInfoForContact:[self.alContact userId]])
 //    {
         [titleLabelButton setTitle:[self.alContact getDisplayName] forState:UIControlStateNormal];
@@ -1165,9 +1168,11 @@
         [self setButtonTitle];
     }
     
+    
+    [titleLabelButton sizeToFit];
     self.navigationItem.titleView = titleLabelButton;
     
-    CGFloat COORDINATE_POINT_Y = titleLabelButton.frame.size.height - 17;
+    CGFloat COORDINATE_POINT_Y = titleLabelButton.frame.size.height - 7;
     [self.label setFrame: CGRectMake(0, COORDINATE_POINT_Y ,self.navigationController.navigationBar.frame.size.width, 20)];
 
     ALUserDetail *userDetail = [[ALUserDetail alloc] init];
