@@ -1153,10 +1153,17 @@
     }
     
     titleLabelButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    titleLabelButton.frame = CGRectMake(0, 0, 70, 30);
+    titleLabelButton.frame = CGRectMake(0, 0, 70, 44);
     [titleLabelButton addTarget:self action:@selector(didTapTitleView:) forControlEvents:UIControlEventTouchUpInside];
     titleLabelButton.userInteractionEnabled = YES;
     [titleLabelButton setTitleColor:[ALApplozicSettings getColorForNavigationItem] forState:UIControlStateNormal];
+    
+    titleLabelButton.contentVerticalAlignment = UIControlContentVerticalAlignmentTop;
+
+    titleLabelButton.contentEdgeInsets = UIEdgeInsetsMake(5, 2, 0, 0);
+//    titleLabelButton.backgroundColor = [UIColor redColor];
+    
+    
     //titleLabelButton.backgroundColor = [UIColor redColor];
 //    if(!(self.individualLaunch) || [ALUserDefaultsHandler isServerCallDoneForUserInfoForContact:[self.alContact userId]])
 //    {
@@ -1169,10 +1176,10 @@
     }
     
     
-    [titleLabelButton sizeToFit];
+   
     self.navigationItem.titleView = titleLabelButton;
     
-    CGFloat COORDINATE_POINT_Y = titleLabelButton.frame.size.height - 7;
+    CGFloat COORDINATE_POINT_Y = titleLabelButton.frame.size.height - 20;
     [self.label setFrame: CGRectMake(0, COORDINATE_POINT_Y ,self.navigationController.navigationBar.frame.size.width, 20)];
 
     ALUserDetail *userDetail = [[ALUserDetail alloc] init];
@@ -4000,7 +4007,7 @@
     {
         NSString *str = NSLocalizedStringWithDefaultValue(@"lastSeenJustNowLabelText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Last seen yesterday", nil), @"");
         [format setDateFormat:@"hh:mm a"];
-        str = [str stringByAppendingString:[format stringFromDate:date]];
+        str = [[str stringByAppendingString:@" "] stringByAppendingString:[format stringFromDate:date]];
         if([str hasPrefix:@"0"])
         {
             str = [str substringFromIndex:[@"0" length]];
@@ -4011,7 +4018,7 @@
     {
         [format setDateFormat:@"EE, MMM dd, yyy"];
         NSString *str = NSLocalizedStringWithDefaultValue(@"lastSeenLabelText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Last seen", nil), @"");
-        str = [str stringByAppendingString:[format stringFromDate:date]];
+        str = [[str stringByAppendingString:@" "] stringByAppendingString:[format stringFromDate:date]];
         [self.label setText:str];
     }
     
