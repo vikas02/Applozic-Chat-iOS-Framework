@@ -238,7 +238,7 @@
 -(void)updateMessagefield
 {
     NSString *dumy = NSLocalizedString(@"Write a Message...", nil);
-    self.placeHolderTxt = NSLocalizedString(@"Write a Message...", nil);//NSLocalizedStringWithDefaultValue(@"placeHolderText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Write a Message...", nil), @"");
+   self.placeHolderTxt = NSLocalizedString(@"Write a Message...", nil);//NSLocalizedStringWithDefaultValue(@"placeHolderText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Write a Message...", nil), @"");
     
     [self.mTableView reloadData];
 
@@ -364,6 +364,9 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateCallForUser:)
                                                  name:@"USER_DETAILS_UPDATE_CALL" object:nil];
+    
+    
+    [self updateMessagefield];
 
     self.mqttObject = [ALMQTTConversationService sharedInstance];
     
@@ -408,6 +411,10 @@
     }
     else if ([self.sendMessageTextView.text isEqualToString:@""])
     {
+        [self placeHolder:self.placeHolderTxt andTextColor:self.placeHolderColor];
+        [self subProcessSetHeightOfTextViewDynamically];
+    }
+    else{
         [self placeHolder:self.placeHolderTxt andTextColor:self.placeHolderColor];
         [self subProcessSetHeightOfTextViewDynamically];
     }
@@ -3960,6 +3967,8 @@
         
         NSString *str = NSLocalizedStringWithDefaultValue(@"lastSeenLabelText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Last seen", nil), @"");
         
+       str = [str stringByAppendingString:@" "];
+        
         double minutes = 2 * 60.00;
         if(alUserDetail.connected)
         {
@@ -3985,7 +3994,7 @@
                     theTime = [theTime substringFromIndex:[@"0" length]];
                 }
                 str = [str stringByAppendingString:theTime];
-                str = [str stringByAppendingString:NSLocalizedStringWithDefaultValue(@"hrsAgo", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"hrs ago", nil), @"")];
+                str = [[str stringByAppendingString:@" "] stringByAppendingString:NSLocalizedStringWithDefaultValue(@"hrsAgo", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"hrs ago", nil), @"")];
             }
             else
             {
@@ -3995,7 +4004,7 @@
                     theTime = [theTime substringFromIndex:[@"0" length]];
                 }
                 str = [str stringByAppendingString:theTime];
-                str = [str stringByAppendingString:NSLocalizedStringWithDefaultValue(@"mins", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"mins ago", nil), @"")];
+                str = [[str stringByAppendingString:@" "] stringByAppendingString:NSLocalizedStringWithDefaultValue(@"mins", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"mins ago", nil), @"")];
                 
                 
             }

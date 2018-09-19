@@ -262,17 +262,30 @@
     
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:[self.createdAtTime doubleValue]/1000];
 
-    NSString *formattedStr = today?@"hh:mm a":@"dd/MM/yy, hh:mm a";
+    NSString *formattedStr = today?@"hh:mm a":@"M/d/yyyy, hh:mm a";
     if (today) {
         formattedStr = @"hh:mm a";
     }
     else if ([self getWeekDay:date] < 7)
     {
-        formattedStr = @"EEEE, hh:mm a";
+//        formattedStr = @"EEEE, hh:mm a";
+         formattedStr = @"M/d/yyyy, hh:mm a";
+        
+        if ( [[[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages1"] isEqualToString:@"zh-Hant"]) {
+            formattedStr = today?@"hh:mm a":@"yyyy/M/d";
+        }
+
     }
     else{
-        formattedStr = @"dd/MM/yy, hh:mm a";
+        formattedStr = @"M/d/yyyy, hh:mm a";
+        
+        if ( [[[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages1"] isEqualToString:@"zh-Hant"]) {
+            formattedStr = today?@"hh:mm a":@"yyyy/M/d";
+        }
     }
+    
+    
+    
     
    // NSString *formattedStr = @"hh:mm a";
     NSString *formattedDateStr = [ALUtilityClass formatTimestamp:[self.createdAtTime doubleValue]/1000 toFormat:formattedStr];

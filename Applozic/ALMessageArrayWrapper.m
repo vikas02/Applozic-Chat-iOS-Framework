@@ -234,7 +234,8 @@
         }
         else
         {
-            [format setDateFormat:@"EEEE MMM dd,yyyy"];
+//            [format setDateFormat:@"EEEE MMM dd,yyyy"];
+                [format setDateFormat:@"EEE, MMM dd yyyy"];
             self.dateCellText = [format stringFromDate:newerDate];
         }
         return YES;
@@ -271,7 +272,9 @@
         actualDate = NSLocalizedStringWithDefaultValue(@"yesterday", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Yesterday", nil), @"");    }
     else
     {
-        [format setDateFormat:@"EEEE MMM dd,yyyy"];
+        //[format setDateFormat:@"EEEE MMM dd,yyyy"];
+        [format setDateFormat:@"EEE, MMM dd yyyy"];
+ 
         actualDate = [format stringFromDate:olderDate];
     }
     
