@@ -160,6 +160,8 @@
        }
     }
     
+    
+    
     UITapGestureRecognizer * menuTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(proccessTapForMenu:)];
     menuTapGesture.cancelsTouchesInView = NO;
     [self.contentView setUserInteractionEnabled:YES];
@@ -167,6 +169,7 @@
     return self;
     
 }
+
 
 
 -(instancetype)populateCell:(ALMessage*) alMessage viewSize:(CGSize)viewSize
@@ -181,7 +184,7 @@
     self.mMessage = alMessage;
     [self processHyperLink];
     
-    
+
    // self.mMessage.message = @"😊";
   
     
@@ -190,7 +193,7 @@
     BOOL isEmojiPresent = NO;
     if (self.mMessage.message && [self stringContainsSingleEmoji:self.mMessage.message]) {
         
-        fontSize = 40;
+      //fontSize = 40;
         isEmojiPresent = YES;
     }
     

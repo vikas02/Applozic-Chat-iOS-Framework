@@ -237,9 +237,12 @@
 }
 -(void)updateMessagefield
 {
-    NSString *dumy = NSLocalizedString(@"Write a Message...", nil);
-   self.placeHolderTxt = NSLocalizedString(@"Write a Message...", nil);//NSLocalizedStringWithDefaultValue(@"placeHolderText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Write a Message...", nil), @"");
+   // NSString *dumy = NSLocalizedString(@"Write a Message...", nil);
+  // self.placeHolderTxt = NSLocalizedString(@"Write a Message...", nil);//NSLocalizedStringWithDefaultValue(@"placeHolderText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Write a Message...", nil), @"");
     
+    
+    //remove on client request
+    self.placeHolderTxt = @"";
     [self.mTableView reloadData];
 
 }
@@ -4586,7 +4589,14 @@
 
 -(void)openUserChat:(ALMessage *)alMessage
 {
-    [self openUserChatOnTap:alMessage.to];
+    //[self openUserChatOnTap:alMessage.to];
+    
+    //amol: commented and added our own logic
+    if (alMessage.to) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"chat_open_profile" object:alMessage.to];
+
+    }
+    
 }
 
 -(void) processUserChatView:(ALMessage *)alMessage

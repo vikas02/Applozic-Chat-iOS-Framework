@@ -95,7 +95,8 @@
         
         UINavigationController *conversationViewNavController = [self createNavigationControllerForVC:chatView];;
         conversationViewNavController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve ;
-        [viewController presentViewController:conversationViewNavController animated:YES completion:nil];
+    [viewController presentViewController:conversationViewNavController animated:YES completion:nil];
+        //[ [ALUtilityClass topMostControllerNormal].navigationController pushViewController:chatView animated:YES];
     }
 }
 
