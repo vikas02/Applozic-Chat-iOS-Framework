@@ -115,6 +115,8 @@ typedef enum {
 
 
 -(NSString *)getCreatedAtTimeChat:(BOOL)today;
+-(NSString *)getCreatedAtTimeChatOnlyTime:(BOOL)today;
+
 -(NSNumber *)getGroupId;
 -(NSString *)getNotificationText;
 -(NSMutableDictionary *)getMetaDataDictionary:(NSString *)string;

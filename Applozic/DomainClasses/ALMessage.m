@@ -262,27 +262,29 @@
     
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:[self.createdAtTime doubleValue]/1000];
 
-    NSString *formattedStr = today?@"hh:mm a":@"M/d/yyyy, hh:mm a";
+    NSString *formattedStr = today?@"h:mm a":@"M/d/yyyy, h:mm a";
     if (today) {
-        formattedStr = @"hh:mm a";
+        formattedStr = @"h:mm a";
     }
     else if ([self getWeekDay:date] < 7)
     {
 //        formattedStr = @"EEEE, hh:mm a";
-         formattedStr = @"M/d/yyyy, hh:mm a";
+         formattedStr = @"M/d/yyyy, h:mm a";
         
         if ( [[[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages1"] isEqualToString:@"zh-Hant"]) {
-            formattedStr = today?@"hh:mm a":@"yyyy/M/d";
+            formattedStr = today?@"h:mm a":@"yyyy/M/d";
         }
 
     }
     else{
-        formattedStr = @"M/d/yyyy, hh:mm a";
+        formattedStr = @"M/d/yyyy, h:mm a";
         
         if ( [[[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages1"] isEqualToString:@"zh-Hant"]) {
-            formattedStr = today?@"hh:mm a":@"yyyy/M/d";
+            formattedStr = today?@"h:mm a":@"yyyy/M/d";
         }
     }
+    
+   
     
     
     
@@ -295,6 +297,48 @@
    // formattedDateStr = [NSDateFormatter twitterStringFromDate:date];
    // formattedDateStr = [formattedDateStr uppercaseString];
 
+    return formattedDateStr;
+}
+
+-(NSString *)getCreatedAtTimeChatOnlyTime:(BOOL)today {
+    
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:[self.createdAtTime doubleValue]/1000];
+    
+    NSString *formattedStr = today?@"h:mm a":@"h:mm a";
+    if (today) {
+        formattedStr = @"h:mm a";
+    }
+    else if ([self getWeekDay:date] < 7)
+    {
+        //        formattedStr = @"EEEE, hh:mm a";
+        formattedStr = @"h:mm a";
+        
+        if ( [[[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages1"] isEqualToString:@"zh-Hant"]) {
+            formattedStr = today?@"h:mm a":@"h:mm a";
+        }
+        
+    }
+    else{
+        formattedStr = @"h:mm a";
+        
+        if ( [[[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages1"] isEqualToString:@"zh-Hant"]) {
+            formattedStr = today?@"h:mm a":@"h:mm a";
+        }
+    }
+    
+    
+    
+    
+    
+    
+    // NSString *formattedStr = @"hh:mm a";
+    NSString *formattedDateStr = [ALUtilityClass formatTimestamp:[self.createdAtTime doubleValue]/1000 toFormat:formattedStr];
+    
+    
+    
+    // formattedDateStr = [NSDateFormatter twitterStringFromDate:date];
+    // formattedDateStr = [formattedDateStr uppercaseString];
+    
     return formattedDateStr;
 }
 

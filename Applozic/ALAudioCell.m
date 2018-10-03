@@ -142,7 +142,7 @@
 -(instancetype) populateCell:(ALMessage *) alMessage viewSize:(CGSize)viewSize
 {
     BOOL today = [[NSCalendar currentCalendar] isDateInToday:[NSDate dateWithTimeIntervalSince1970:[alMessage.createdAtTime doubleValue]/1000]];
-    NSString * theDate = [NSString stringWithFormat:@"%@",[alMessage getCreatedAtTimeChat:today]];
+    NSString * theDate = [NSString stringWithFormat:@"%@",[alMessage getCreatedAtTimeChatOnlyTime:today]];
     
     [self.mediaName setText:alMessage.fileMeta.name];
     self.startTime.text = @"0:00";//[self getAudioLength:alMessage.imageFilePath];

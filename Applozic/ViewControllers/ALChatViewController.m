@@ -3985,12 +3985,28 @@
         }
         else
         {
-            NSString *theTime;
+            
+            
+            //amol: new logic for todays date
+            NSDateFormatter * formatter =  [[NSDateFormatter alloc] init];
+            [formatter setAMSymbol:@"AM"];
+            [formatter setPMSymbol:@"PM"];
+            [formatter setDateFormat:@"h:mm a"];
+            formatter.timeZone = [NSTimeZone localTimeZone];
+            
+            NSString *dateStr = [formatter stringFromDate:date];
+            
+            str = [[NSLocalizedString(@"hrs ago", nil) stringByAppendingString:@" "] stringByAppendingString:dateStr];
+            
+           /* NSString *theTime;
             int hours =  difference / 3600;
             int minutes = (difference - hours * 3600 ) / 60;
             
             if(hours > 0)
             {
+               
+                
+                
                 theTime = [NSString stringWithFormat:@"%.2d:%.2d", hours, minutes];
                 if([theTime hasPrefix:@"0"])
                 {
@@ -3998,6 +4014,9 @@
                 }
                 str = [str stringByAppendingString:theTime];
                 str = [[str stringByAppendingString:@" "] stringByAppendingString:NSLocalizedStringWithDefaultValue(@"hrsAgo", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"hrs ago", nil), @"")];
+            
+                
+            
             }
             else
             {
@@ -4010,7 +4029,7 @@
                 str = [[str stringByAppendingString:@" "] stringByAppendingString:NSLocalizedStringWithDefaultValue(@"mins", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"mins ago", nil), @"")];
                 
                 
-            }
+            }*/
             [self.label setText:str];
         }
         

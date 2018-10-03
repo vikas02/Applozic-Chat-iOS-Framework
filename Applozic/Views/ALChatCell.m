@@ -179,13 +179,13 @@
     self.mUserProfileImageView.alpha = 1;
     
     BOOL today = [[NSCalendar currentCalendar] isDateInToday:[NSDate dateWithTimeIntervalSince1970:[alMessage.createdAtTime doubleValue]/1000]];
-    NSString * theDate = [NSString stringWithFormat:@"%@",[alMessage getCreatedAtTimeChat:today]];
+    NSString * theDate = [NSString stringWithFormat:@"%@",[alMessage getCreatedAtTimeChatOnlyTime:today]];
     
     self.mMessage = alMessage;
     [self processHyperLink];
     
 
-   // self.mMessage.message = @"😊";
+   //self.mMessage.message = @"😊";
   
     
     CGFloat fontSize = self.mMessageLabel.font.pointSize;
@@ -441,6 +441,7 @@
     }
     
     self.mDateLabel.text = theDate;
+//    self.mDateLabel.text = @"";
     
     /*    =========================== FOR PUSH VC ON TAP =============================  */
     

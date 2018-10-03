@@ -105,7 +105,7 @@
     
     BOOL today = [[NSCalendar currentCalendar] isDateInToday:[NSDate dateWithTimeIntervalSince1970:[alMessage.createdAtTime doubleValue]/1000]];
     
-    NSString * theDate = [NSString stringWithFormat:@"%@",[alMessage getCreatedAtTimeChat:today]];
+    NSString * theDate = [NSString stringWithFormat:@"%@",[alMessage getCreatedAtTimeChatOnlyTime:today]];
     
     //    [self.mDowloadRetryButton setHidden:NO];
     self.mDowloadRetryButton.alpha = 1;
@@ -383,6 +383,8 @@
     [self addShadowEffects];
     
     self.imageWithText.text = alMessage.message;
+    
+    
     self.mDateLabel.text = theDate;
     
     if ([alMessage.type isEqualToString:@MT_OUTBOX_CONSTANT]) {

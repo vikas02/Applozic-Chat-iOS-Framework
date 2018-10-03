@@ -76,7 +76,7 @@
     self.mUserProfileImageView.alpha = 1;
     
     BOOL today = [[NSCalendar currentCalendar] isDateInToday:[NSDate dateWithTimeIntervalSince1970:[alMessage.createdAtTime doubleValue]/1000]];
-    NSString * theDate = [NSString stringWithFormat:@"%@",[alMessage getCreatedAtTimeChat:today]];
+    NSString * theDate = [NSString stringWithFormat:@"%@",[alMessage getCreatedAtTimeChatOnlyTime:today]];
     
     ALContactDBService *theContactDBService = [[ALContactDBService alloc] init];
     ALContact *alContact = [theContactDBService loadContactByKey:@"userId" value: alMessage.to];
@@ -244,6 +244,7 @@
     }
 
     self.mDateLabel.text = theDate;
+    
     theUrl = nil;
     NSString *latLongArgument = [self formatLocationJson:alMessage];
     
