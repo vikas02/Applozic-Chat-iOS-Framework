@@ -22,9 +22,9 @@
     return self;
 }
 
--(instancetype)populateCell:(ALMessage*) alMessage viewSize:(CGSize)viewSize
+-(instancetype)populateCell:(ALMessage*) alMessage viewSize:(CGSize)viewSize index:(NSIndexPath *)index tableview:(UITableView *)tblView withController:(UIViewController*)controller
 {
-    [super populateCell:alMessage viewSize:viewSize];
+    [super populateCell:alMessage viewSize:viewSize index:index tableview:tblView withController:controller];
     
     [self.mMessageLabel setFont:[UIFont fontWithName:@"Helvetica" size:CH_MESSAGE_TEXT_SIZE]];
     

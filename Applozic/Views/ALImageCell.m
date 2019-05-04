@@ -73,6 +73,26 @@
 {
     CGFloat msgFrameHeight;
     NSURL * theUrl;
+    
+    //Modified by chetu
+    NSMutableAttributedString *answerAttributed;
+    NSString *trimmedMessage;
+    
+    BOOL readStatus;
+    
+    ALMessage *alMessageRecieved;
+    
+    CGSize viewSizeReceived;
+    NSIndexPath *indexReceived;
+    
+    UITableView *chatTblView;
+    
+    NSRange linkRangeString;
+    
+    NSLayoutManager *layoutManager;
+    NSTextContainer *textContainer;
+    NSTextStorage *textStorage;
+    //
 }
 
 UIViewController * modalCon;
@@ -109,11 +129,39 @@ UIViewController * modalCon;
     return self;
 }
 
--(instancetype)populateCell:(ALMessage *)alMessage viewSize:(CGSize)viewSize
+//Modified by chetu
+-(instancetype)populateCell:(ALMessage *)alMessage viewSize:(CGSize)viewSize index:(NSIndexPath *)index tableview:(UITableView*)tblView
 {
-    [super populateCell:alMessage viewSize:viewSize];
     
-   
+    [super populateCell:alMessage viewSize:viewSize index:index tableview:tblView];
+    //[super populateCell:alMessage viewSize:viewSize];
+    
+    textContainer.size = self.imageWithText.bounds.size;
+    
+    if (readStatus == NO) {
+        
+        alMessageRecieved = alMessage;
+        viewSizeReceived = viewSize;
+        //indexReceived = index;
+        chatTblView = tblView;
+    }
+    
+    NSString *trimmedText;
+    if(alMessage.message.length > 100){
+        
+        if ( alMessageRecieved.isExpand == YES) {
+            
+            alMessage = alMessageRecieved;
+            trimmedText = alMessage.message;
+            readStatus = FALSE;
+            
+        }else{
+            
+            trimmedText = [self trimRecievedMessage:alMessage.message ];
+        }
+        
+        
+    }
     
     self.mUserProfileImageView.alpha = 1;
     self.progresLabel.alpha = 0;
@@ -136,10 +184,26 @@ UIViewController * modalCon;
                                                    font:self.mDateLabel.font.fontName
                                                fontSize:self.mDateLabel.font.pointSize];
     
-    CGSize theTextSize = [ALUtilityClass getSizeForText:alMessage.message
-                                               maxWidth:viewSize.width - MAX_WIDTH_DATE
-                                                   font:self.imageWithText.font.fontName
-                                               fontSize:self.imageWithText.font.pointSize];
+    
+    
+    CGSize theTextSize;
+    
+    if(alMessage.message.length > 100){
+        
+    theTextSize = [ALUtilityClass getSizeForText:trimmedText
+                                                   maxWidth:viewSize.width - MAX_WIDTH_DATE
+                                                       font:self.imageWithText.font.fontName
+                                                   fontSize:self.imageWithText.font.pointSize];
+    }else{
+        
+    theTextSize = [ALUtilityClass getSizeForText:alMessage.message
+                                                   maxWidth:viewSize.width - MAX_WIDTH_DATE
+                                                       font:self.imageWithText.font.fontName
+                                                   fontSize:self.imageWithText.font.pointSize];
+    }
+    
+    
+   
     
     [self.mChannelMemberName setHidden:YES];
     [self.mNameLabel setHidden:YES];
@@ -446,7 +510,16 @@ UIViewController * modalCon;
         
     }
     
+    
+    if (self.mMessage.message.length > 100 && alMessage.isExpand == NO)
+    {
+     self.imageWithText.attributedText = answerAttributed;
+    }else{
+        
+        self.imageWithText.attributedText = nil;
     self.imageWithText.text = alMessage.message;
+    }
+   
     self.mDateLabel.text = theDate;
     
     theUrl = nil;
@@ -493,6 +566,8 @@ UIViewController * modalCon;
     return self;
     
 }
+
+//
 
 -(void) setInImageView:(NSURL*)url{
     
@@ -805,5 +880,101 @@ UIViewController * modalCon;
     [self processKeyBoardHideTap];
     [self.delegate openUserChat:self.mMessage];
 }
+
+
+//Modified by chetu
+
+
+/**
+ This is method used to handle tap gesture on read more button
+ - Parameters:
+ - tapGesture: UITapGestureRecognizer
+ - Returns: nil
+ */
+- (void)readMoreDidClickedGesture:(UITapGestureRecognizer *)tapGesture {
+    
+    
+    CGPoint locationOfTouchInLabel = [tapGesture locationInView:tapGesture.view];
+    CGSize labelSize = tapGesture.view.bounds.size;
+    CGRect textBoundingBox = [layoutManager usedRectForTextContainer:textContainer];
+    CGPoint textContainerOffset = CGPointMake((labelSize.width - textBoundingBox.size.width) * 0.5 - textBoundingBox.origin.x,
+                                              (labelSize.height - textBoundingBox.size.height) * 0.5 - textBoundingBox.origin.y);
+    CGPoint locationOfTouchInTextContainer = CGPointMake(locationOfTouchInLabel.x - textContainerOffset.x,
+                                                         locationOfTouchInLabel.y - textContainerOffset.y);
+    NSInteger indexOfCharacter = [layoutManager characterIndexForPoint:locationOfTouchInTextContainer
+                                                       inTextContainer:textContainer
+                              fractionOfDistanceBetweenInsertionPoints:nil];
+    
+    if (NSLocationInRange(indexOfCharacter, linkRangeString)) {
+        // Open an URL, or handle the tap on the link in any other way
+        readStatus = TRUE;
+        
+        alMessageRecieved.isExpand = YES;
+        chatTblView.reloadData;
+        
+    }
+    
+    
+    
+    
+    NSLog(@"read more button action'...");
+}
+
+
+/**
+ This is method used to trim long message
+ - Parameters:
+ - msg: NSString
+ - Returns: NSString
+ */
+-(NSString*)trimRecievedMessage:(NSString*)msg{
+    
+    NSString *trimmedMsg = [msg substringToIndex:300];
+    
+    
+    NSString *readMoreText = @"....Read More";
+    
+    NSString *str = [NSString stringWithFormat: @"%@ %@", trimmedMsg,readMoreText];
+    
+    
+    UITapGestureRecognizer *readMoreGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(readMoreDidClickedGesture:)];
+    
+    readMoreGesture.numberOfTapsRequired = 1;
+    [self.imageWithText addGestureRecognizer:readMoreGesture];
+    
+    self.self.imageWithText.userInteractionEnabled = YES;
+    
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:str attributes:nil];
+    NSRange linkRange = NSMakeRange((str.length-readMoreText.length), readMoreText.length); // for the word "link" in the string above
+    
+    linkRangeString = linkRange;
+    
+    NSDictionary *linkAttributes = @{ NSForegroundColorAttributeName : [UIColor colorWithRed:0.05 green:0.4 blue:0.65 alpha:1.0],
+                                      NSUnderlineStyleAttributeName : @(NSUnderlineStyleSingle) };
+    [attributedString setAttributes:linkAttributes range:linkRange];
+    
+    
+    answerAttributed = attributedString;
+    
+    
+    // Create instances of NSLayoutManager, NSTextContainer and NSTextStorage
+    layoutManager = [[NSLayoutManager alloc] init];
+    textContainer = [[NSTextContainer alloc] initWithSize:CGSizeZero];
+    textStorage = [[NSTextStorage alloc] initWithAttributedString:attributedString];
+    
+    // Configure layoutManager and textStorage
+    [layoutManager addTextContainer:textContainer];
+    [textStorage addLayoutManager:layoutManager];
+    
+    // Configure textContainer
+    textContainer.lineFragmentPadding = 0.0;
+    //textContainer.lineBreakMode = self.mMessageLabel.lineBreakMode;
+    //textContainer.maximumNumberOfLines = self.mMessageLabel.numberOfLines;
+    
+    return str;
+    
+}
+
+//
 
 @end

@@ -28,7 +28,7 @@
 
 @end
 
-@interface ALChatViewController : ALBaseViewController<UITableViewDataSource,UITableViewDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,ALMapViewControllerDelegate,ALChatCellDelegate,CNContactPickerDelegate>
+@interface ALChatViewController : ALBaseViewController<UITableViewDataSource,UITableViewDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,ALMapViewControllerDelegate,ALChatCellDelegate,CNContactPickerDelegate,UIDocumentInteractionControllerDelegate>
 
 @property (strong, nonatomic) ALContact * alContact;
 @property (nonatomic, strong) ALChannel * alChannel;
@@ -51,6 +51,7 @@
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableViewBottomToAttachment;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableViewTop2Constraint;
 
+@property (nonatomic,assign) BOOL IS_USER_BLOCKED;
 @property (strong, nonatomic) id <ALChatViewControllerDelegate> chatViewDelegate;
 
 -(void)fetchAndRefresh;

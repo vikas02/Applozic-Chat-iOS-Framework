@@ -54,11 +54,35 @@
 #define MSG_STATUS_WIDTH 20
 #define MSG_STATUS_HEIGHT 20
 
+
+
 @implementation ALChatCell
 {
     CGFloat msgFrameHeight;
     UITapGestureRecognizer * tapForCustomView, *tapGestureRecognizerForCell;
     
+    
+    //Modified by chetu
+    NSMutableAttributedString *answerAttributed;
+    
+    NSString *trimmedMessage;
+    
+    BOOL readStatus;
+    
+    BOOL isTrimmed;;
+    
+    ALMessage *alMessageRecieved;
+    
+    CGSize viewSizeReceived;
+    NSIndexPath *indexReceived;
+    
+    UITableView *chatTblView;
+    
+    NSRange linkRangeString;
+    
+    NSUInteger count;
+    ALChatViewController * chatController;
+    //
 }
 
 -(instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
@@ -66,6 +90,11 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     
     if (self) {
+        
+        //
+        readStatus = FALSE;
+        
+        isTrimmed = FALSE;
         
         self.backgroundColor = [UIColor clearColor];
         
@@ -105,7 +134,7 @@
         
         self.mMessageLabel = [[ALHyperLabel alloc] init];
         self.mMessageLabel.numberOfLines = 0;
-
+        
         NSString *fontName = [ALUtilityClass parsedALChatCostomizationPlistForKey:APPLOZIC_CHAT_FONTNAME];
         
         if (!fontName) {
@@ -148,16 +177,16 @@
         
         self.hyperLinkArray = [NSMutableArray new];
         
-       if ([UIApplication sharedApplication].userInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionRightToLeft) {
-           
-           self.transform = CGAffineTransformMakeScale(-1.0, 1.0);
-           self.replyParentView.transform = CGAffineTransformMakeScale(-1.0, 1.0);
-           self.mNameLabel.transform = CGAffineTransformMakeScale(-1.0, 1.0);
-           self.mChannelMemberName.transform = CGAffineTransformMakeScale(-1.0, 1.0);
-           self.mMessageLabel.transform = CGAffineTransformMakeScale(-1.0, 1.0);
-           self.mDateLabel.transform = CGAffineTransformMakeScale(-1.0, 1.0);
-           self.mMessageStatusImageView.transform = CGAffineTransformMakeScale(-1.0, 1.0);
-       }
+        if ([UIApplication sharedApplication].userInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionRightToLeft) {
+            
+            self.transform = CGAffineTransformMakeScale(-1.0, 1.0);
+            self.replyParentView.transform = CGAffineTransformMakeScale(-1.0, 1.0);
+            self.mNameLabel.transform = CGAffineTransformMakeScale(-1.0, 1.0);
+            self.mChannelMemberName.transform = CGAffineTransformMakeScale(-1.0, 1.0);
+            self.mMessageLabel.transform = CGAffineTransformMakeScale(-1.0, 1.0);
+            self.mDateLabel.transform = CGAffineTransformMakeScale(-1.0, 1.0);
+            self.mMessageStatusImageView.transform = CGAffineTransformMakeScale(-1.0, 1.0);
+        }
     }
     
     
@@ -171,9 +200,38 @@
 }
 
 
-
--(instancetype)populateCell:(ALMessage*) alMessage viewSize:(CGSize)viewSize
+//Modified by chetu
+-(instancetype)populateCell:(ALMessage*) alMessage viewSize:(CGSize)viewSize index:(NSIndexPath*)index tableview:(UITableView*)tblView withController:(UIViewController*)controller
 {
+    chatController = (ALChatViewController*)controller;
+    //textContainer.size = self.mMessageLabel.bounds.size;
+    indexReceived = index;
+    
+    chatTblView = tblView;
+
+    NSString *trimmedText;
+    
+    if(alMessage.message.length > 300){
+        
+        if ( alMessageRecieved.isTrimmedFinish == YES) {
+            
+            alMessage = alMessageRecieved;
+            trimmedText = alMessage.message;
+            readStatus = FALSE;
+            
+        }else{
+            
+            if (alMessage.trimmedMessage == nil) {
+                isTrimmed = true;
+                trimmedText = [self trimRecievedMessage:alMessage];
+                
+            }else{
+                isTrimmed = false;
+                trimmedText = [self trimRecievedMessage:alMessage];
+            }
+       
+        }
+    }
     
     [self.hyperLinkArray removeAllObjects];
     self.mUserProfileImageView.alpha = 1;
@@ -181,19 +239,20 @@
     BOOL today = [[NSCalendar currentCalendar] isDateInToday:[NSDate dateWithTimeIntervalSince1970:[alMessage.createdAtTime doubleValue]/1000]];
     NSString * theDate = [NSString stringWithFormat:@"%@",[alMessage getCreatedAtTimeChatOnlyTime:today]];
     
+    alMessage = [[chatController.alMessageWrapper getUpdatedMessageArray] objectAtIndex:index.row];
     self.mMessage = alMessage;
     [self processHyperLink];
     
-
-   //self.mMessage.message = @"😊";
-  
+    
+    //self.mMessage.message = @"😊";
+    
     
     CGFloat fontSize = self.mMessageLabel.font.pointSize;
     
     BOOL isEmojiPresent = NO;
     if (self.mMessage.message && [self stringContainsSingleEmoji:self.mMessage.message]) {
         
-      //fontSize = 40;
+        //fontSize = 40;
         isEmojiPresent = YES;
     }
     
@@ -202,9 +261,20 @@
     
     NSString * receiverName = [alContact getDisplayName];
     
-    CGSize theTextSize = [ALUtilityClass getSizeForText:alMessage.message maxWidth:viewSize.width-115
-                                                   font:self.mMessageLabel.font.fontName
-                                               fontSize:fontSize];
+    CGSize theTextSize;
+    
+    if(alMessage.message.length > 300){
+        
+        theTextSize = [ALUtilityClass getSizeForText:trimmedText maxWidth:viewSize.width-115
+                                                font:self.mMessageLabel.font.fontName
+                                            fontSize:fontSize];
+    }else{
+        
+        theTextSize = [ALUtilityClass getSizeForText:alMessage.message maxWidth:viewSize.width-115
+                                                font:self.mMessageLabel.font.fontName
+                                            fontSize:fontSize];
+    }
+    
     
     CGSize theDateSize = [ALUtilityClass getSizeForText:theDate maxWidth:150
                                                    font:self.mDateLabel.font.fontName
@@ -225,6 +295,7 @@
     [self.contentView bringSubviewToFront:self.mMessageStatusImageView];
     self.mUserProfileImageView.backgroundColor = [UIColor whiteColor];
     self.mMessageLabel.backgroundColor = [UIColor clearColor];
+    
     
     if([alMessage.type isEqualToString:@"100"])
     {
@@ -259,9 +330,12 @@
         //  ===== Intial bubble View image =========//
         
         CGFloat requiredBubbleWidth = theTextSize.width + BUBBLE_PADDING_WIDTH;
-        CGFloat requiredBubbleHeight =  theTextSize.height + BUBBLE_PADDING_HEIGHT;
+        CGFloat requiredBubbleHeight;
         
-
+        
+        requiredBubbleHeight =  theTextSize.height + BUBBLE_PADDING_HEIGHT;
+        
+        
         self.mBubleImageView.frame = CGRectMake(self.mUserProfileImageView.frame.size.width + 13,
                                                 0, requiredBubbleWidth,
                                                 requiredBubbleHeight);
@@ -270,7 +344,7 @@
         self.mBubleImageView.layer.shadowOffset = CGSizeMake(0, 2);
         self.mBubleImageView.layer.shadowRadius = 1;
         self.mBubleImageView.layer.masksToBounds = NO;
-
+        
         CGFloat mMessageLabelY = self.mBubleImageView.frame.origin.y + MESSAGE_PADDING_Y;
         
         if([alMessage getGroupId])
@@ -284,7 +358,7 @@
                 theTextSize.width = receiverNameSize.width+5;
                 requiredBubbleWidth = theTextSize.width + CHANNEL_PADDING_X;
             }
-        
+            
             
             self.mChannelMemberName.frame = CGRectMake(self.mBubleImageView.frame.origin.x + CHANNEL_PADDING_X,
                                                        self.mBubleImageView.frame.origin.y + CHANNEL_PADDING_Y,
@@ -313,10 +387,11 @@
                                                 0, requiredBubbleWidth,
                                                 requiredBubbleHeight);
         
+        
         self.mMessageLabel.frame = CGRectMake(self.mChannelMemberName.frame.origin.x,
                                               self.mChannelMemberName.frame.origin.y + self.mChannelMemberName.frame.size.height + MESSAGE_PADDING_Y_GRP,
                                               theTextSize.width, theTextSize.height);
-
+        
         
         self.mMessageLabel.frame = CGRectMake(self.mBubleImageView.frame.origin.x + MESSAGE_PADDING_X ,
                                               mMessageLabelY,
@@ -361,9 +436,11 @@
         
         
         CGFloat requiredBubbleWidth = theTextSize.width + BUBBLE_PADDING_X_OUTBOX;
-        CGFloat requiredBubbleHeight =  theTextSize.height + BUBBLE_PADDING_HEIGHT;
+        CGFloat requiredBubbleHeight;
         
-
+        requiredBubbleHeight =  theTextSize.height + BUBBLE_PADDING_HEIGHT;
+        
+        
         
         self.mBubleImageView.frame = CGRectMake((viewSize.width - theTextSize.width - BUBBLE_PADDING_X_OUTBOX) , 0,
                                                 requiredBubbleWidth+10,
@@ -374,14 +451,14 @@
         self.mBubleImageView.layer.shadowRadius = 1;
         self.mBubleImageView.layer.masksToBounds = NO;
         CGFloat mMessageLabelY = self.mBubleImageView.frame.origin.y + MESSAGE_PADDING_Y;
-
+        
         if(alMessage.isAReplyMessage)
         {
             [self processReplyOfChat:alMessage andViewSize:viewSize];
             mMessageLabelY = mMessageLabelY + self.replyParentView.frame.size.height ;
             requiredBubbleHeight = requiredBubbleHeight + self.replyParentView.frame.size.height;
             requiredBubbleWidth = self.replyParentView.frame.size.width + 10;
-
+            
         }
         
         //resize bubble
@@ -395,10 +472,12 @@
         
         msgFrameHeight = self.mBubleImageView.frame.size.height;
         
-     //   self.mMessageLabel.textColor = [UIColor redColor];
         
         self.mMessageLabel.frame = CGRectMake(self.mBubleImageView.frame.origin.x + MESSAGE_PADDING_X,
                                               mMessageLabelY, theTextSize.width, theTextSize.height);
+        
+        
+        
         
         self.mDateLabel.frame = CGRectMake((self.mBubleImageView.frame.origin.x + self.mBubleImageView.frame.size.width)
                                            - theDateSize.width - DATE_PADDING_X,
@@ -411,9 +490,9 @@
         self.mMessageStatusImageView.frame = CGRectMake(self.mDateLabel.frame.origin.x + self.mDateLabel.frame.size.width,
                                                         self.mDateLabel.frame.origin.y,
                                                         MSG_STATUS_WIDTH, MSG_STATUS_HEIGHT);
-
         
- 
+        
+        
         
         
     }
@@ -441,7 +520,9 @@
     }
     
     self.mDateLabel.text = theDate;
-//    self.mDateLabel.text = @"";
+    
+    
+    //    self.mDateLabel.text = @"";
     
     /*    =========================== FOR PUSH VC ON TAP =============================  */
     
@@ -456,6 +537,9 @@
     /*    ====================================== END =================================  */
     
     self.mMessageLabel.font = [UIFont fontWithName:[ALApplozicSettings getFontFace] size:MESSAGE_TEXT_SIZE];
+    
+    
+    
     
     if(alMessage.contentType == ALMESSAGE_CONTENT_TEXT_HTML)
     {
@@ -477,44 +561,59 @@
                                                     NSForegroundColorAttributeName :[UIColor blueColor],
                                                     NSUnderlineStyleAttributeName : [NSNumber numberWithInt:NSUnderlineStyleThick]
                                                     };
-    
+        
         if (self.mMessage.message){
-            self.mMessageLabel.attributedText = [[NSAttributedString alloc] initWithString:self.mMessage.message attributes:attrs];
+            
+            //Modified by chetu
+            
+            /*Implement a  check to identify long message*/
+            if (alMessage.isTrimmedFinish == NO && alMessage.message.length > 300)
+            {
+                
+                self.mMessageLabel.attributedText = answerAttributed;
+                
+                
+            }else{
+                
+                self.mMessageLabel.attributedText = [[NSAttributedString alloc] initWithString:self.mMessage.message attributes:attrs];
+            }
+            //
+            
+            
         }
         [self setHyperLinkAttribute];
     }
     
-   // self.mUserProfileImageView.layer.borderWidth = 1;
-    
-    //self.mUserProfileImageView.layer.borderColor = [ALApplozicSettings getColorForNavigation].CGColor;
-    
-    
-//    self.mMessageLabel.font = [UIFont fontWithName:[ALApplozicSettings getFontFace] size:50];
-//    self.mMessageLabel.attributedText = [self getAttributedEmojiString:@"🙁"];
     
     if(isEmojiPresent){
-    NSDictionary *attrs = @{
-                            NSFontAttributeName : [UIFont systemFontOfSize:fontSize],
-                            NSForegroundColorAttributeName : self.mMessageLabel.textColor
-                            };
-
-    self.mMessageLabel.attributedText = [[NSAttributedString alloc] initWithString:self.mMessage.message attributes:attrs];
+        NSDictionary *attrs = @{
+                                NSFontAttributeName : [UIFont systemFontOfSize:fontSize],
+                                NSForegroundColorAttributeName : self.mMessageLabel.textColor
+                                };
+        
+        self.mMessageLabel.attributedText = [[NSAttributedString alloc] initWithString:self.mMessage.message attributes:attrs];
     }
-//    if (self.mMessage.message && ([self.mMessage.type isEqualToString:@"4"] || [self.mMessage.type isEqualToString:@"5"])){
     
-//    }
-//    else
-//    {
-//        //self.mMessageLabel.text = self.mMessage.message;
-//
-//    }
+    
+    
+    //    if (self.mMessage.message && ([self.mMessage.type isEqualToString:@"4"] || [self.mMessage.type isEqualToString:@"5"])){
+    
+    //    }
+    //    else
+    //    {
+    //        //self.mMessageLabel.text = self.mMessage.message;
+    //
+    //    }
+    
     
     return self;
     
 }
 
+//
+
 - (BOOL)stringContainsSingleEmoji:(NSString *)string {
-   // __block BOOL returnValue = NO;
+    // __block BOOL returnValue = NO;
     __block int count = 0;
     [string enumerateSubstringsInRange:NSMakeRange(0, [string length]) options:NSStringEnumerationByComposedCharacterSequences usingBlock:
      ^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
@@ -561,23 +660,23 @@
 
 
 -(void) proccessTapForMenu:(id)tap{
-
+    
     [self processKeyBoardHideTap];
     
-     UIMenuItem * messageForward = [[UIMenuItem alloc] initWithTitle:NSLocalizedStringWithDefaultValue(@"forwardOptionTitle", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], NSLocalizedString(@"Forward", nil), @"") action:@selector(messageForward:)];
-       UIMenuItem * messageReply = [[UIMenuItem alloc] initWithTitle:NSLocalizedStringWithDefaultValue(@"replyOptionTitle", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], NSLocalizedString(@"Reply", nil), @"") action:@selector(messageReply:)];
+    UIMenuItem * messageForward = [[UIMenuItem alloc] initWithTitle:NSLocalizedStringWithDefaultValue(@"forwardOptionTitle", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], NSLocalizedString(@"Forward", nil), @"") action:@selector(messageForward:)];
+    UIMenuItem * messageReply = [[UIMenuItem alloc] initWithTitle:NSLocalizedStringWithDefaultValue(@"replyOptionTitle", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], NSLocalizedString(@"Reply", nil), @"") action:@selector(messageReply:)];
     
     if ([self.mMessage.type isEqualToString:@MT_INBOX_CONSTANT]){
-       
+        
         [[UIMenuController sharedMenuController] setMenuItems: @[messageForward,messageReply]];
-
+        
     }else if ([self.mMessage.type isEqualToString:@MT_OUTBOX_CONSTANT]){
-       
+        
         UIMenuItem * msgInfo = [[UIMenuItem alloc] initWithTitle:NSLocalizedStringWithDefaultValue(@"infoOptionTitle", [ALApplozicSettings getLocalizableName],[NSBundle mainBundle], NSLocalizedString(@"Info", nil), @"") action:@selector(msgInfo:)];
         
         [[UIMenuController sharedMenuController] setMenuItems: @[msgInfo,messageReply,messageForward]];
     }
-       [[UIMenuController sharedMenuController] update];
+    [[UIMenuController sharedMenuController] update];
     
 }
 
@@ -853,9 +952,9 @@
     else
     {
         [self.replyParentView setBackgroundColor:[UIColor whiteColor]];
-
+        
     }
-
+    
     [self.replyUIView populateUI:almessage withSuperView:self.replyParentView];
     [self.replyParentView addSubview:self.replyUIView];
     
@@ -879,4 +978,156 @@
     return ([ALApplozicSettings isForwardOptionEnabled] && action == @selector(messageForward:));
 }
 
+
+//Modified by chetu
+
+/**
+ This is method used to add attributed text in label
+ - Parameters:
+ - msgLbl: UILabel
+ - range: NSRange
+ - tapGesture: UITapGestureRecognizer
+ - Returns: NSRange
+ */
+-(BOOL)didTapAttributedTextInLabel:(UILabel*)msgLbl inRange:(NSRange)range withGesture:(UITapGestureRecognizer *)tapGesture {
+    
+    NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
+    NSTextContainer  *textContainer = [[NSTextContainer alloc] initWithSize:CGSizeZero];
+    NSTextStorage *textStorage = [[NSTextStorage alloc] initWithString:msgLbl.attributedText.string];
+    
+    // Configure layoutManager and textStorage
+    
+    [layoutManager addTextContainer:textContainer];
+    [textStorage addLayoutManager:layoutManager];
+
+    
+    // Configure textContainer
+    textContainer.lineFragmentPadding = 0.0;
+    textContainer.lineBreakMode = msgLbl.lineBreakMode;
+    textContainer.maximumNumberOfLines = msgLbl.numberOfLines;
+    CGSize labelSize = msgLbl.bounds.size;
+    textContainer.size = labelSize;
+    
+    
+    CGPoint locationOfTouchInLabel = [tapGesture locationInView:msgLbl];
+   // CGSize labelSize = tapGesture.view.bounds.size;
+    CGRect textBoundingBox = [layoutManager usedRectForTextContainer:textContainer];
+    CGPoint textContainerOffset = CGPointMake((labelSize.width - textBoundingBox.size.width) * 0.5 - textBoundingBox.origin.x,
+                                              (labelSize.height - textBoundingBox.size.height) * 0.5 - textBoundingBox.origin.y);
+    CGPoint locationOfTouchInTextContainer = CGPointMake(locationOfTouchInLabel.x - textContainerOffset.x,
+                                                         locationOfTouchInLabel.y - textContainerOffset.y);
+    NSInteger indexOfCharacter = [layoutManager characterIndexForPoint:locationOfTouchInTextContainer
+                                                       inTextContainer:textContainer
+                              fractionOfDistanceBetweenInsertionPoints:nil];
+
+    
+    return NSLocationInRange(indexOfCharacter, range);
+}
+
+
+
+/**
+ This is method used to handle tap gesture on read more button
+ - Parameters:
+ - tapGesture: UITapGestureRecognizer
+ - Returns: nil
+ */
+- (void)readMoreDidClickedGesture:(UITapGestureRecognizer *)tapGesture {
+    
+    UILabel * msgLbl = (UILabel*)tapGesture.view;
+    NSString * messageLblString = msgLbl.text;
+    NSRange  readMoreRange = [messageLblString rangeOfString:@"....Read More"];
+    
+    
+    
+    if ([self didTapAttributedTextInLabel:msgLbl inRange:readMoreRange withGesture:tapGesture]) {
+        ALMessage * msg = [[chatController.alMessageWrapper getUpdatedMessageArray] objectAtIndex:tapGesture.view.tag];
+        isTrimmed = true;
+        [self trimRecievedMessage:msg];
+        isTrimmed = false;
+        chatTblView.reloadData;
+    }
+    
+    NSLog(@"read more button action'...");
+}
+
+
+/**
+ This is method used to trimm long message
+ - Parameters:
+ - trimRecievedMessage: NSString
+ - Returns: NSString
+ */
+-(NSString*)trimRecievedMessage:(ALMessage*)msg{
+    
+    //textContainer.size = self.mMessageLabel.bounds.size;
+    NSString *trimmedMsg;
+    
+    if (isTrimmed == true) {
+        
+        if (msg.trimmedMessage.length == 0) {
+            trimmedMsg = [msg.message substringToIndex:300];
+        }else{
+            if (msg.message.length >= msg.trimmedMessage.length+300) {
+                trimmedMsg = [msg.message substringToIndex:msg.trimmedMessage.length+300];
+            }else{
+                NSString * remainingString = [msg.message substringFromIndex:msg.trimmedMessage.length];
+                trimmedMsg = [NSString stringWithFormat:@"%@%@",msg.trimmedMessage,remainingString];
+            }
+            
+        }
+        
+    }else{
+        trimmedMsg = msg.trimmedMessage;
+    }
+    
+   
+    msg.trimmedMessage = trimmedMsg;
+    
+    NSString *finalString = @"";
+    if (trimmedMsg.length != msg.message.length) {
+        
+        NSString *readMoreText = @"....Read More";
+        
+        finalString = [NSString stringWithFormat: @"%@ %@", trimmedMsg,readMoreText];
+        
+        UITapGestureRecognizer *readMoreGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(readMoreDidClickedGesture:)];
+        
+        readMoreGesture.numberOfTapsRequired = 1;
+        
+        [self.mMessageLabel addGestureRecognizer:readMoreGesture];
+       
+        self.mMessageLabel.tag = indexReceived.row;
+        
+        self.mMessageLabel.userInteractionEnabled = YES;
+        
+        NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:finalString attributes:nil];
+        NSRange linkRange = NSMakeRange((finalString.length-readMoreText.length), readMoreText.length); // for the word "link" in the string above
+        
+       // linkRangeString = linkRange;
+        
+        NSDictionary *linkAttributes = @{ NSForegroundColorAttributeName : [UIColor colorWithRed:0.05 green:0.4 blue:0.65 alpha:1.0],
+                                          NSUnderlineStyleAttributeName : @(NSUnderlineStyleSingle) };
+        [attributedString setAttributes:linkAttributes range:linkRange];
+        
+        
+        answerAttributed = attributedString;
+        // Assign attributedText to UILabel
+        self.mMessageLabel.attributedText = attributedString;
+        
+        msg.isTrimmedFinish = false;
+        
+    }else{
+        msg.isTrimmedFinish = YES;
+        finalString = trimmedMsg;
+        
+    }
+    
+    [[chatController.alMessageWrapper getUpdatedMessageArray] replaceObjectAtIndex:indexReceived.row withObject:msg];
+    NSLog(@"%@", [[[chatController.alMessageWrapper getUpdatedMessageArray] objectAtIndex:indexReceived.row] trimmedMessage]);
+    
+    return finalString;
+}
+
+//
 @end

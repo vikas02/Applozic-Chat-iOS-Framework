@@ -46,6 +46,10 @@
 @property (nonatomic, strong) NSString *msgdate;
 @property (nonatomic, strong) NSString *msgtime;
 
+
+//Modified by chetu
+@property(nonatomic,strong) NSMutableDictionary *lastMessageDict;
+
 -(void)getExactDate:(NSNumber *)dateValue;
 +(UIImage *)setVideoThumbnail:(NSString *)videoFilePATH;
 +(UIImage *)subProcessThumbnail:(NSURL *)url;

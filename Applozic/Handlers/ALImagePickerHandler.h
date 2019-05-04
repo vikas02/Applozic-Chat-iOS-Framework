@@ -13,5 +13,5 @@
 
 +(NSString *) saveImageToDocDirectory:(UIImage *) image;
 +(void) saveVideoToDocDirectory:(NSURL *)videoURL handler:(void (^)(NSString *))handler;
-
++(NSString *) saveFileToDocDirectory:(NSString *) fileUrl;
 @end

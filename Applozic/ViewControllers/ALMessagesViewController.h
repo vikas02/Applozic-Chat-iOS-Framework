@@ -17,6 +17,13 @@
 
 -(void)handleCustomActionFromMsgVC:(UIViewController *)chatView andWithMessage:(ALMessage *)alMessage;
 
+//Modified by Chetu
+/*
+ Implement delagate method to pass data to chat view controller
+ */
+-(void)handleTableCelldataByIndex:(NSIndexPath*)index andWithMessage:(ALMessage*)alMessage;
+//
+
 @end
 
 @interface ALMessagesViewController : UIViewController <ALChatViewControllerDelegate>

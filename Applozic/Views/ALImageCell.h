@@ -17,7 +17,9 @@
 
 @interface ALImageCell : ALMediaBaseCell
 
--(instancetype)populateCell:(ALMessage*) alMessage viewSize:(CGSize)viewSize;
+//Modified by chetu
+-(instancetype)populateCell:(ALMessage *)alMessage viewSize:(CGSize)viewSize index:(NSIndexPath *)index tableview:(UITableView*)tblView;
+//
 
 @property(strong,nonatomic) UITapGestureRecognizer *tapperForLocationMap;
 

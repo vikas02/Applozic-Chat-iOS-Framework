@@ -104,6 +104,14 @@ typedef enum {
 @property (nonatomic,copy)NSNumber* messageReplyType;
 
 
+//Modified by chetu
+@property(nonatomic,assign)BOOL isExpand;
+@property(nonatomic,assign)BOOL isTrimmedFinish;
+@property(nonatomic,copy)NSString *trimmedMessage;
+@property(nonatomic,assign)BOOL isTrimmed;
+
+//
+
 -(NSString *)getCreatedAtTime:(BOOL)today;
 
 -(id)initWithDictonary:(NSDictionary*)messageDictonary;

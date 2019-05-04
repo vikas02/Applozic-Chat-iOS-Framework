@@ -71,14 +71,20 @@
 #import "ALChannelService.h"
 #import <Applozic/Applozic-Swift.h>
 
+
+//#import <Utils.h>
+
 #define MQTT_MAX_RETRY 3
 #define NEW_MESSAGE_NOTIFICATION @"newMessageNotification"
 
+//Modified by chetu
+#define USER_DEFAULTS  [NSUserDefaults standardUserDefaults]
+#define MESSAGE_DICT   @"last_msg_dict"
 
 @interface ALChatViewController ()<ALMediaBaseCellDelegate, NSURLConnectionDataDelegate, NSURLConnectionDelegate, ALLocationDelegate,
                                     ALMQTTConversationDelegate, ALAudioAttachmentDelegate, UIPickerViewDelegate, UIPickerViewDataSource,
-                                    UIAlertViewDelegate, ALMUltipleAttachmentDelegate, UIDocumentInteractionControllerDelegate,
-                                    ABPeoplePickerNavigationControllerDelegate, ALSoundRecorderProtocol,QBImagePickerControllerDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate>
+                                    UIAlertViewDelegate, ALMUltipleAttachmentDelegate,
+                                    ABPeoplePickerNavigationControllerDelegate, ALSoundRecorderProtocol,QBImagePickerControllerDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate,UIDocumentMenuDelegate,UIDocumentPickerDelegate>
 
 @property (nonatomic, assign) NSInteger startIndex;
 @property (nonatomic, assign) int rp;
@@ -124,7 +130,10 @@
 @property (weak, nonatomic) IBOutlet UIPickerView *pickerView;
 @property (nonatomic) BOOL isUserBlocked;
 @property (nonatomic) BOOL isUserBlockedBy;
+
+
 @property (weak, nonatomic) IBOutlet UIButton *attachmentButton;
+
 
 -(void)processAttachment:(NSString *)filePath andMessageText:(NSString *)textwithimage andContentType:(short)contentype;
 
@@ -140,6 +149,8 @@
     ALSoundRecorderButton * soundRecording;
     ALTemplateMessagesView *templateMessageView;
     BOOL isMicButtonVisible;
+    
+    UIWebView *myWebView;
 
     UIDocumentInteractionController * interaction;
     
@@ -170,23 +181,27 @@
 -(void)viewDidLoad
 {
     [super viewDidLoad];
+}
 
+-(void)setData{
+    
+    
     // Setup quick recording if it's enabled in the settings
     if([ALApplozicSettings isQuickAudioRecordingEnabled]) {
         [self setUpSoundRecordingView];
         [self showMicButton];
     }
     
-
+    
     [self loadAllImages];
     
     [self initialSetUp];
     [self fetchMessageFromDB];
     [self loadChatView];
-//    self.placeHolderTxt = NSLocalizedStringWithDefaultValue(@"placeHolderText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Write a Message...", nil), @"");
+    //    self.placeHolderTxt = NSLocalizedStringWithDefaultValue(@"placeHolderText", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle], NSLocalizedString(@"Write a Message...", nil), @"");
     
     [self updateMessagefield];
-   // self.sendMessageTextView.text = self.placeHolderTxt;
+    // self.sendMessageTextView.text = self.placeHolderTxt;
     self.defaultMessageViewHeight = 56.0;
     self.sendMessageTextView.backgroundColor = [UIColor whiteColor];
     
@@ -207,9 +222,10 @@
     
     //amol: add keyboard dismissal
     self.mTableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
-
-
+    
+    
     [self addCustomBack];
+    
 }
 
 #pragma mark - back button code
@@ -228,12 +244,51 @@
 -(void)backClicked
 {
     
-    [self dismissViewControllerAnimated:YES completion:^{
+    //Modified by chetu
+    /*Implement check to store typed messages before going back*/
+    if ([self.sendMessageTextView.text isEqualToString:@""]){
         
-    }];
-    [self.navigationController popViewControllerAnimated:YES];
+    }else{
     
-  
+        NSMutableDictionary *msgDict = [[USER_DEFAULTS objectForKey:MESSAGE_DICT] mutableCopy];
+        
+        NSString *contactId;
+        
+        if (self.contactIds != nil) {
+        
+        contactId = self.contactIds;
+
+        }else{
+            
+            contactId = [NSString stringWithFormat:@"%@", self.channelKey];
+        }
+        
+        if (msgDict == nil) {
+          
+            NSMutableDictionary *textdict = [[NSMutableDictionary alloc]initWithCapacity:10];
+            
+            [textdict setObject:self.sendMessageTextView.text forKey:contactId];
+            [USER_DEFAULTS setObject:textdict forKey:MESSAGE_DICT];
+            
+        }else{
+            
+            
+            [msgDict setObject:self.sendMessageTextView.text forKey:contactId];
+            [USER_DEFAULTS setObject:msgDict forKey:MESSAGE_DICT];
+            
+            
+        }
+      
+        [USER_DEFAULTS synchronize];
+    }
+    //
+    
+        [self dismissViewControllerAnimated:YES completion:^{
+            
+        }];
+        [self.navigationController popViewControllerAnimated:YES];
+        
+    //}
 }
 -(void)updateMessagefield
 {
@@ -270,9 +325,11 @@
 {
     [super viewWillAppear:animated];
     
+    [self setData];
+    
+    
     //amolchat
     self.navigationController.navigationBarHidden = NO;
-
 
     
     [[NSNotificationCenter defaultCenter]
@@ -447,6 +504,65 @@
     [self subscrbingChannel];
     
     [self loadMessagesForOpenChannel];
+    
+   //Modified by chetu
+    NSMutableDictionary *retriveLastMessage = [[USER_DEFAULTS objectForKey:MESSAGE_DICT] mutableCopy];
+    
+    NSString *contactId;
+    
+    if (self.contactIds != nil) {
+        
+        contactId = self.contactIds;
+        
+    }else{
+        
+    contactId =  [NSString stringWithFormat:@"%@", self.channelKey];
+        
+    }
+    
+    for (NSString *key in retriveLastMessage) {
+        NSString *value = [retriveLastMessage objectForKey:key];
+      
+        if (contactId == key) {
+            
+            NSString *msg = value;
+            
+            self.sendMessageTextView.text = msg;
+            
+            [self showSendButton];
+            
+            return;
+            
+        }else{
+            
+            if([ALApplozicSettings isQuickAudioRecordingEnabled]) {
+                [self setUpSoundRecordingView];
+                [self showMicButton];
+            }
+            
+        }
+        
+    }
+    //
+    
+//    if (retriveLastMessage != nil && self.contactIds == contactId) {
+//
+//        NSString *msg = [retriveLastMessage objectForKey:@"message"];
+//
+//        self.sendMessageTextView.text = msg;
+//
+//        [self showSendButton];
+//
+//    }else{
+//
+//        // Setup quick recording if it's enabled in the settings
+//        if([ALApplozicSettings isQuickAudioRecordingEnabled]) {
+//            [self setUpSoundRecordingView];
+//            [self showMicButton];
+//        }
+//
+//
+//    }
 }
 
 -(void)setFreezeForAddingRemovingUser:(NSNotification *)notifyObject
@@ -553,6 +669,8 @@
     [self unSubscrbingChannel];
     
     [soundRecording cancelAudioRecord];
+    
+    
 }
 
 -(void)dealloc
@@ -1610,11 +1728,92 @@
 
 - (IBAction)sendAction:(id)sender
 {
-    if(isMicButtonVisible) {
-        [soundRecording show];
+    
+     //Modified by Chetu
+     /*
+     Implement a check for blocked user before sending messgae
+     */
+    
+    NSString *isUserBlock = [USER_DEFAULTS stringForKey:@"IS_USER_BLOCK"];
+
+    if([isUserBlock isEqualToString:@"True"]){
+        
+    [self showCustomAleret:NSLocalizedString(@"You have been blocked or not following each other", nil)];
+        return;
+        
+    }else{
+
+ //     if(isMicButtonVisible) {
+//
+//      [soundRecording show];
+//       }
+        
+        NSMutableDictionary *msgDict = [[USER_DEFAULTS objectForKey:MESSAGE_DICT] mutableCopy];
+        
+        NSString *contactId;
+        
+        if (self.contactIds != nil) {
+            
+            contactId = self.contactIds;
+            
+        }else{
+            
+            contactId =  [NSString stringWithFormat:@"%@", self.channelKey];//self.channelKey;
+            
+        }
+        
+        if (msgDict != nil) {
+        
+        for (NSString *key in msgDict) {
+            
+            if (contactId == key) {
+
+                [msgDict removeObjectForKey:key];
+                
+                 [USER_DEFAULTS setObject:msgDict forKey:MESSAGE_DICT];
+                
+                [[NSUserDefaults standardUserDefaults] synchronize];
+                
+                return;
+                
+            }
+            
+        }
     }
-    [super sendAction:sender];
+        
+        [super sendAction:sender];
+        
+    }
+    
+   //
 }
+
+
+
+//Modified by Chetu
+
+/**
+ This is  method used to show custom alert with message
+ - Parameters:
+ - message: NSString
+ - Returns: N/A
+ */
+
+-(void)showCustomAleret:(NSString*)message{
+    
+    
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle: NSLocalizedString(@"Alert", nil)
+                                                                   message:message
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Ok", nil) style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {}];
+    
+    [alert addAction:defaultAction];
+    [self presentViewController:alert animated:YES completion:nil];
+    
+}
+//
 
 -(void)setUpSoundRecordingView
 {
@@ -1670,8 +1869,62 @@
 {
     UIImage* micImage = [ALUtilityClass getImageFromFramworkBundle:@"mic_icon.png"];
     [self.sendButton setImage:micImage forState:UIControlStateNormal];
+
     isMicButtonVisible = YES;
+    
+    
+    //Modified by Chetu
+    
+    if (isMicButtonVisible == YES){
+        
+    /*
+     Implement long press method for audio recording button on chat screen
+     */
+
+        UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPress:)];
+        longPress.cancelsTouchesInView = NO;
+        [self.sendButton addGestureRecognizer:longPress];
+
+    }
 }
+
+
+/**
+ This is  method used to implement longPress audio record feature
+ - Parameters:
+ - gesture:UILongPressGestureRecognizer
+ - Returns: N/A
+ */
+
+- (void)longPress:(UILongPressGestureRecognizer*)gesture {
+    
+
+    if (gesture.state == UIGestureRecognizerStateEnded) {
+        
+       
+       [soundRecording stopAudioRecord];
+       
+    }
+    else if (gesture.state == UIGestureRecognizerStateBegan){
+        
+
+        NSString *isUerBlock = [USER_DEFAULTS stringForKey:@"IS_USER_BLOCK"];
+        
+        if([isUerBlock isEqualToString:@"True"]){
+        return;
+            
+        }else{
+         
+            if(isMicButtonVisible) {
+                
+            [soundRecording show];
+            }
+        }
+    }
+}
+
+//
+
 
 -(void)showSendButton
 {
@@ -1707,7 +1960,7 @@
         ALLocationCell *theCell = (ALLocationCell *)[tableView dequeueReusableCellWithIdentifier:@"LocationCell"];
         theCell.tag = indexPath.row;
         theCell.delegate = self;
-        [theCell populateCell:theMessage viewSize:self.view.frame.size];
+        [theCell populateCell:theMessage viewSize:self.view.frame.size index:indexPath tableview:self.mTableView];
         [self.view layoutIfNeeded];
         return theCell;
     }
@@ -1716,7 +1969,10 @@
         ALImageCell *theCell = (ALImageCell *)[tableView dequeueReusableCellWithIdentifier:@"ImageCell"];
         theCell.tag = indexPath.row;
         theCell.delegate = self;
-        [theCell populateCell:theMessage viewSize:self.view.frame.size];
+        
+        //Modified by chetu
+        [theCell populateCell:theMessage viewSize:self.view.frame.size index:indexPath tableview:self.mTableView];
+        //
         [self.view layoutIfNeeded];
         return theCell;
     }
@@ -1743,7 +1999,10 @@
         ALCustomCell * theCell = (ALCustomCell *)[tableView dequeueReusableCellWithIdentifier:@"CustomCell"];
         theCell.tag = indexPath.row;
         theCell.delegate = self;
-        [theCell populateCell:theMessage viewSize:self.view.frame.size];
+        
+        //Modified by chetu
+        [theCell populateCell:theMessage viewSize:self.view.frame.size index:indexPath tableview:self.mTableView withController:self];
+        //
         [self.view layoutIfNeeded];
         return theCell;
     }
@@ -1751,7 +2010,7 @@
     else if (theMessage.contentType == AV_CALL_CONTENT_THREE)
     {
         ALVOIPCell * theCell = (ALVOIPCell *)[tableView dequeueReusableCellWithIdentifier:@"VOIPCell"];
-        [theCell populateCell:theMessage viewSize:self.view.frame.size];
+        [theCell populateCell:theMessage viewSize:self.view.frame.size index:indexPath tableview:self.mTableView withController:self];
         return theCell;
     }
     else if(theMessage.contentType == ALMESSAGE_CHANNEL_NOTIFICATION)
@@ -1764,7 +2023,10 @@
         
         theCell.tag = indexPath.row;
         theCell.delegate = self;
-        [theCell populateCell:theMessage viewSize:self.view.frame.size];
+        
+        //Modified by chetu
+        [theCell populateCell:theMessage viewSize:self.view.frame.size index:indexPath tableview:self.mTableView withController:self];
+        //
         [self.view layoutIfNeeded];
         return theCell;
     }
@@ -1773,7 +2035,11 @@
         ALChatCell *theCell = (ALChatCell *)[tableView dequeueReusableCellWithIdentifier:@"ChatCell"];
         theCell.tag = indexPath.row;
         theCell.delegate = self;
-        [theCell populateCell:theMessage viewSize:self.view.frame.size];
+        //[theCell populateCell:theMessage viewSize:self.view.frame.size];
+        
+        //Modified by chetu
+        [theCell populateCell:theMessage viewSize:self.view.frame.size index:indexPath tableview:self.mTableView withController:self];
+        //
         [self.view layoutIfNeeded];
         return theCell;
         
@@ -1824,8 +2090,10 @@
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     ALMessage * theMessage = [self.alMessageWrapper getUpdatedMessageArray][indexPath.row];
+    
     CGFloat cellHeight = [ALUIConstant getCellHeight:theMessage andCellFrame:self.view.frame];
     return cellHeight;
+   
 }
 
 -(BOOL)tableView:(UITableView *)tableView shouldShowMenuForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -2599,9 +2867,9 @@
         [connection.mData writeToFile:filePath atomically:YES];
         
         // If 'save video to gallery' is enabled then save to gallery
-        if([ALApplozicSettings isSaveVideoToGalleryEnabled]) {
+        //if([ALApplozicSettings isSaveVideoToGalleryEnabled]) {
             [self saveVideoToGallery:filePath];
-        }
+       // }
         // UPDATE DB
         messageEntity.inProgress = [NSNumber numberWithBool:NO];
         messageEntity.isUploadFailed=[NSNumber numberWithBool:NO];
@@ -2799,6 +3067,7 @@
         
         // post image
         ALMessageClientService * clientService  = [[ALMessageClientService alloc]init];
+        
         [clientService sendPhotoForUserInfo:userInfo withCompletion:^(NSString *message, NSError *error) {
             
             if (error)
@@ -2812,7 +3081,6 @@
                 return;
             }
             [ALMessageService proessUploadImageForMessage:theMessage databaseObj:dbMessage.fileMetaInfo uploadURL:message  withdelegate:self];
-            
         }];
     }
 }
@@ -2858,6 +3126,23 @@
 
 -(void)attachmentAction
 {
+    
+    //Modified by Chetu
+    
+    /*
+     Implement a check for blocked user before attachment
+     */
+    
+    NSString *isUserBlock = [USER_DEFAULTS stringForKey:@"IS_USER_BLOCK"];
+    
+    if([isUserBlock isEqualToString:@"True"]){
+        
+    [self showCustomAleret:NSLocalizedString(@"You have been blocked or not following each other", nil)];
+        return;
+        
+    }
+    //
+    
     if(self.isUserBlocked)
     {
         [self showBlockedAlert];
@@ -2950,8 +3235,6 @@
 
         [theController addAction:take_photo_ic];
     }
-    
-    
     
     
     if(![ALApplozicSettings isSendVideoOptionHidden]){
@@ -3056,6 +3339,35 @@
         }]];
     }*/
    
+    
+    //Modified by chetu
+    /*Action for handling file attachment option*/
+    if(![ALApplozicSettings isFileOptionHidden]){
+        
+        UIAlertAction* file_ic = [UIAlertAction
+                                         actionWithTitle:NSLocalizedStringWithDefaultValue(@"fileAttachment", [ALApplozicSettings getLocalizableName], [NSBundle mainBundle],NSLocalizedString(@"File" , nil), @"")
+                                         style:UIAlertActionStyleDefault
+                                         handler:^(UIAlertAction * action)
+                                         {
+                                             
+                    
+                                             
+                                             [self openDocumentPicker];
+                                             
+                                             
+                                             
+                                         }];
+        [file_ic setValue:[[UIImage imageNamed:@"ic_attachment"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forKey:@"image"];
+        [file_ic setValue:[NSNumber numberWithInt:NSTextAlignmentLeft]
+                          forKey:@"titleTextAlignment"];
+        
+        [theController addAction:file_ic];
+        
+        
+        
+    }
+  //
+    
     
     if((self.channelKey ||  self.contactIds) && [ALApplozicSettings isDeleteConversationOptionEnabled]){
         
@@ -3202,6 +3514,36 @@
 //==============================================================================================================================================
 #pragma mark - ATTACHMENT HANDLERS FOR IMAGE/CONTACT/AUDIO/VIDEO && A/V CALL
 //==============================================================================================================================================
+
+//modifed by chetu
+/*Method to open document picker on attachment option tap*/
+-(void)openDocumentPicker{
+    
+    NSArray *types = @[(NSString*)kUTTypeCompositeContent];
+    
+    UIDocumentPickerViewController *documentProviderMenu =
+    [[UIDocumentPickerViewController alloc] initWithDocumentTypes:types/*@[@"public.composite-content"]*/
+                                                         inMode:UIDocumentPickerModeImport];
+    
+    documentProviderMenu.delegate = self;
+    [self presentViewController:documentProviderMenu animated:YES completion:nil];
+  
+}
+
+- (void)documentMenu:(UIDocumentMenuViewController *)documentMenu didPickDocumentPicker:(UIDocumentPickerViewController *)documentPicker{
+    
+}
+
+- (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentAtURL:(NSURL *)url
+{
+    NSLog(@"url",url);
+    
+     NSString *filePath = url.absoluteString;
+     NSString * fileurl = [ALImagePickerHandler saveFileToDocDirectory:filePath];
+    
+    [self processAttachment:fileurl andMessageText:@"" andContentType:ALMESSAGE_CONTENT_ATTACHMENT];
+}
+//
 
 -(void)openCamera
 {
@@ -4180,6 +4522,7 @@
         [soundRecording hide];
     }
     
+    
     [self subProcessTextViewDidChange:textView];
 }
 
@@ -4502,15 +4845,35 @@
 
 -(void)showSuggestionView:(NSURL *)fileURL andFrame:(CGRect)frame
 {
+    
+    
 //    NSLog(@"CALL_GESTURE_SELECTOR_TO_DELEGATE_&_FILE_URL : %@", fileURL);
-    interaction = [UIDocumentInteractionController interactionControllerWithURL:fileURL];
-    interaction.delegate = self;
+   // interaction = [UIDocumentInteractionController interactionControllerWithURL:fileURL];
+   // interaction.delegate = self;
     
     // IF OPENING IN SAME VIEW
 //   BOOL selfFlag = [interaction presentPreviewAnimated:YES];
 
     //IF NEED SUGGESTION MENU : IT WILL RUN ON DEVICE ONLY
-   [interaction presentOpenInMenuFromRect:frame inView:self.view animated:YES];
+     //[interaction presentPreviewAnimated:YES];
+     //[interaction presentOpenInMenuFromRect:frame inView:self.view animated:YES];
+    
+    
+    //NSURL *targetURL = [NSURL fileURLWithPath:path];
+    
+    
+    //Modified by Chetu
+    
+    /*
+     call UIDocumentInteractionController delegate method to open doc files from chat screen directly
+    */
+
+    UIDocumentInteractionController *dcVC = [UIDocumentInteractionController interactionControllerWithURL:fileURL];
+    dcVC.delegate = self;
+    
+    [dcVC presentPreviewAnimated:YES];
+    
+    //
 
 }
 
@@ -4523,6 +4886,7 @@
 {
     interaction = nil;
 }
+
 
 //==============================================================================================================================================
 #pragma mark - HANDLING ACTIVITY INDICATOR && PUSH VIEW CONTROLLER VIA DELEGATES
@@ -4929,4 +5293,6 @@
         [templateMessageView setHidden:NO];
     }
 }
+
+
 @end

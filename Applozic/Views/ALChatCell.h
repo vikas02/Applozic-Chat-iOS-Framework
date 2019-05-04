@@ -47,7 +47,9 @@
 
 @property (nonatomic, retain) UIImageView *mMessageStatusImageView;
 
--(instancetype)populateCell:(ALMessage*) alMessage viewSize:(CGSize)viewSize;
+//Modified by chetu
+-(instancetype)populateCell:(ALMessage*) alMessage viewSize:(CGSize)viewSize index:(NSIndexPath*)index tableview:(UITableView*)tblView withController:(UIViewController*)controller;
+//
 
 @property (nonatomic, assign) id<ALChatCellDelegate> delegate;
 

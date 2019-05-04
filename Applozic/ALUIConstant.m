@@ -24,12 +24,42 @@
 
 +(CGSize)textSize:(ALMessage *)theMessage andCellFrame:(CGRect)cellFrame
 {
+    //Modified by chetu
+    /*Set cell height according to text length*/
+    if(theMessage.message.length > 300){
+        
+        if (theMessage.trimmedMessage == nil) {
+            NSString * trimmedText = [theMessage.message substringToIndex:300];
+            CGSize theTextSize = [ALUtilityClass getSizeForText:trimmedText
+                                                       maxWidth:cellFrame.size.width - 115
+                                                           font:[ALApplozicSettings getFontFace]
+                                                       fontSize:MESSAGE_TEXT_SIZE];
+            
+            return theTextSize;
+            
+        }else{
+                CGSize theTextSize = [ALUtilityClass getSizeForText:theMessage.trimmedMessage
+                                                           maxWidth:cellFrame.size.width - 115
+                                                               font:[ALApplozicSettings getFontFace]
+                                                           fontSize:MESSAGE_TEXT_SIZE];
+                
+                return theTextSize;
+            
+        }
+       
+       
+    }else{
+    
     CGSize theTextSize = [ALUtilityClass getSizeForText:theMessage.message
                                                maxWidth:cellFrame.size.width - 115
                                                    font:[ALApplozicSettings getFontFace]
                                                fontSize:MESSAGE_TEXT_SIZE];
     
     return theTextSize;
+        
+    }
+    
+    //
 }
 
 //=========================================================================================================
@@ -176,7 +206,7 @@
     }
     else if (alMessage.contentType == ALMESSAGE_CONTENT_DEFAULT)
     {
-        heightOfCell =[self getChatCellHeight:alMessage andCellFrame:cellFrame];
+        heightOfCell = [self getChatCellHeight:alMessage andCellFrame:cellFrame];
     }
     else if (alMessage.contentType == (short)ALMESSAGE_CONTENT_VCARD)
     {

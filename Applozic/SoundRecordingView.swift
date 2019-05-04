@@ -66,7 +66,7 @@ import Foundation
     }
 
     //MARK: - Create UI
-    private func createUI()
+    @objc public func createUI()
     {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(singleTapAudioRecord))
         tapGesture.numberOfTapsRequired = 1
@@ -85,7 +85,7 @@ import Foundation
        // displayDefaultText()
         
         
-        startAudioRecord()
+       startAudioRecord()
     }
 
     private func displayDefaultText() {
@@ -266,7 +266,14 @@ import Foundation
         }
     }
 
-    @objc fileprivate func stopAudioRecord()
+    
+    //modified by Chetu
+    
+     /*
+     Make method puclic to get direct access form ALChatviewController class
+     */
+    
+    @objc public func stopAudioRecord()
     {
         if isTimerStart == true
         {
@@ -293,6 +300,8 @@ import Foundation
         }
     }
 
+    //
+    
     private func playSound(url:URL) {
 
         recordingSession = AVAudioSession.sharedInstance()

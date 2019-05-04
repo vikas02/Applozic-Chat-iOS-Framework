@@ -10,6 +10,6 @@
 
 @interface ALVOIPCell : ALChatCell
 
--(instancetype)populateCell:(ALMessage*) alMessage viewSize:(CGSize)viewSize;
+-(instancetype)populateCell:(ALMessage*) alMessage viewSize:(CGSize)viewSize index:(NSIndexPath *)index tableview:(UITableView *)tblView withController:(UIViewController*)controller;
 
 @end

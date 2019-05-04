@@ -1057,6 +1057,12 @@
 
 }
 
+//Modified by chetu
++(BOOL) isFileOptionHidden{
+    return ([[self getHideAttachmentsOption] containsObject:@":file"]);
+}
+//
+
 +(BOOL) isBlockUserOptionHidden{
     return ([[self getHideAttachmentsOption] containsObject:@":blockUser"]);
 }

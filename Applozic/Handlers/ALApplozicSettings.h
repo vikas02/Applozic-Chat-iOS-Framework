@@ -384,6 +384,10 @@
 +(BOOL) isShareContactOptionHidden;
 +(BOOL) isAttachmentButtonHidden;
 
+//modified by chetu
++(BOOL) isFileOptionHidden;
+//
+
 +(BOOL)isS3StorageServiceEnabled;
 +(void)enableS3StorageService:(BOOL)flag;
 +(void) setDefaultGroupType:(NSInteger)type;

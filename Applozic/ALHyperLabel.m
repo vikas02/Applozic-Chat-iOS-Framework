@@ -5,6 +5,8 @@
 
 #import "ALHyperLabel.h"
 
+#define kCharacterSkipLength    5
+
 @interface ALHyperLabel ()
 
 @property (nonatomic) NSMutableDictionary *handlerDictionary;
@@ -29,8 +31,11 @@ static UIColor *ALHyperLabelLinkColorHighlight;
 
 - (instancetype)initWithFrame:(CGRect)frame {
 	self = [super initWithFrame:frame];
+    
 	if (self) {
 		[self checkInitialization];
+        
+        // _truncationString = @" ...More";
 	}
 	return self;
 }
@@ -39,6 +44,9 @@ static UIColor *ALHyperLabelLinkColorHighlight;
 	self = [super initWithCoder:coder];
 	if (self) {
 		[self checkInitialization];
+        
+//        _truncationString = @" ...More";
+//        [self setText:self.text];
 	}
 	return self;
 }
@@ -190,5 +198,85 @@ static UIColor *ALHyperLabelLinkColorHighlight;
 	
 	return nil;
 }
+
+
+//-(void)setText:(NSString *)text
+//{
+//    [super setText:text];
+//    
+//    if (text == nil) {
+//        return;
+//    }
+//    
+//    _isTruncated = [self checkTruncation];
+//    @try
+//    {
+//        if (_isTruncated) {
+//            NSMutableAttributedString* attributedString = [[NSMutableAttributedString alloc] initWithString:self.text];
+//            [attributedString setAttributes:@{NSFontAttributeName:self.font}
+//                                      range:NSMakeRange(0, self.attributedText.length-_truncationString.length)];
+//            [attributedString setAttributes:@{NSFontAttributeName:[UIFont fontWithName:@"HelveticaNeue-CondensedBold" size:self.font.pointSize],
+//                                              NSForegroundColorAttributeName:[UIColor colorWithRed:0 green:0 blue:0 alpha:0.3]}
+//                                      range:NSMakeRange(self.attributedText.length-_truncationString.length, _truncationString.length)];
+//            [self setAttributedText:attributedString];
+//        }
+//    }
+//    @catch (NSException *exception) //NSRangeException
+//    {
+//        return;
+//    }
+//}
+//
+//-(BOOL)checkTruncation
+//{
+//    BOOL isTruncated = NO;
+//    BOOL wasAdjustsFontSizeToFitWidth = self.adjustsFontSizeToFitWidth;
+//    
+//    CGFloat fontSize = self.font.pointSize;
+//    
+//    float height = self.frame.size.height;
+//    
+//    if (self.adjustsFontSizeToFitWidth) {
+//        [self setFont:[UIFont fontWithName:self.font.fontName size:fontSize * self.minimumScaleFactor]]; //set to smallest font
+//        [self setAdjustsFontSizeToFitWidth:NO];
+//    }
+//    
+//    float fitHeight = [self sizeThatFits:self.frame.size].height;
+//    
+//    if ([self sizeThatFits:self.frame.size].height >= height && _truncationString.length > 0) {
+//        NSString* fullText = self.text;
+//        [super setText:@""];
+//        int i = 0;
+//        
+//        NSString* lastGoodText;
+//        
+//        while ((fitHeight = [self sizeThatFits:self.frame.size].height) <= height && i < fullText.length) {
+//            isTruncated = YES;
+//            NSString* shorterText = self.text;
+//            
+//            shorterText = [fullText substringToIndex:i];
+//            shorterText = [NSString stringWithFormat:@"%@%@", shorterText, _truncationString];
+//            lastGoodText = self.text;
+//            [super setText:shorterText];
+//            
+//            i += kCharacterSkipLength;
+//        }
+//        [super setText:lastGoodText];
+//        
+//    }
+//    
+//    if ((fitHeight / (self.minimumScaleFactor*fontSize)) > 3.0) {// if more that ~3 lines align left
+//        [self setTextAlignment:NSTextAlignmentNatural];
+//    }else{
+//        [self setTextAlignment:NSTextAlignmentCenter];
+//    }
+//    
+//    [self setAdjustsFontSizeToFitWidth:wasAdjustsFontSizeToFitWidth];
+//    if (isTruncated == NO) {
+//        [self setFont:[UIFont fontWithName:self.font.fontName size:fontSize]];
+//    }
+//    
+//    return isTruncated;
+//}
 
 @end

@@ -147,7 +147,7 @@
     return self;
 }
 
--(instancetype)populateCell:(ALMessage*) alMessage viewSize:(CGSize)viewSize
+-(instancetype)populateCell:(ALMessage*) alMessage viewSize:(CGSize)viewSize index:(NSIndexPath *)index tableview:(UITableView *)tblView
 {
     return self;
 }

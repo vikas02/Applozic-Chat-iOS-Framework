@@ -10,6 +10,8 @@
 #import "ALUtilityClass.h"
 #import "ALApplozicSettings.h"
 
+
+
 @implementation ALCustomCell
 
 -(instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
@@ -22,9 +24,9 @@
     return self;
 }
 
--(instancetype)populateCell:(ALMessage*) alMessage viewSize:(CGSize)viewSize
+-(instancetype)populateCell:(ALMessage*) alMessage viewSize:(CGSize)viewSize index:(NSIndexPath *)index tableview:(UITableView *)tblView withController:(UIViewController*)controller
 {
-    [super populateCell:alMessage viewSize:viewSize];
+    [super populateCell:alMessage viewSize:viewSize index:index tableview:tblView withController:controller];
 
     [self.mMessageLabel setFont:[UIFont fontWithName:[ALApplozicSettings getCustomMessageFont]
                                                 size:[ALApplozicSettings getCustomMessageFontSize]]];
@@ -62,6 +64,8 @@
     [self.mMessageLabel setFrame: CGRectMake(self.mBubleImageView.frame.origin.x + padding ,padding,
                                              theTextSize.width,
                                              theTextSize.height)];
+    
+   
 
     return self;
 }
@@ -70,5 +74,9 @@
 {
     [self.delegate handleTapGestureForKeyBoard];
 }
+
+
+
+
 
 @end

@@ -10,6 +10,11 @@
 @property (nonatomic) NSDictionary *linkAttributeDefault;
 @property (nonatomic) NSDictionary *linkAttributeHighlight;
 
+
+//@property (strong, nonatomic) NSString* truncationString;
+//@property (readonly,assign, nonatomic) BOOL isTruncated;
+
+
 - (void)setLinkForRange:(NSRange)range withAttributes:(NSDictionary *)attributes andLinkHandler:(void (^)(ALHyperLabel *label, NSRange selectedRange))handler;
 - (void)setLinkForRange:(NSRange)range withLinkHandler:(void(^)(ALHyperLabel *label, NSRange selectedRange))handler;
 

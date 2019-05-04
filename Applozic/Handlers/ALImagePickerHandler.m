@@ -66,5 +66,25 @@
     }
 }
 
+
++(NSString *) saveFileToDocDirectory:(NSString *) fileUrl{
+    
+NSString *documentDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+NSString *filePath = [documentDir stringByAppendingPathComponent:[fileUrl lastPathComponent]];
+
+NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:fileUrl]];
+[NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue currentQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+    if (error) {
+        NSLog(@"Download Error:%@",error.description);
+    }
+    if (data) {
+        [data writeToFile:filePath atomically:YES];
+        NSLog(@"File is saved to %@",filePath);
+    }
+}];
+    
+    return filePath;
+}
+
 @end
 

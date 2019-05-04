@@ -11,7 +11,7 @@
  ***************************************************************************************/
 
 #define DATE_LABEL_SIZE 12
-#define MESSAGE_TEXT_SIZE 14
+#define MESSAGE_TEXT_SIZE 16//14
 
 #define USER_PROFILE_PADDING_X 5
 #define USER_PROFILE_PADDING_X_OUTBOX 50
@@ -70,7 +70,8 @@
 
 @property (nonatomic, assign) id <ALMediaBaseCellDelegate> delegate;     
 
--(instancetype)populateCell:(ALMessage*) alMessage viewSize:(CGSize)viewSize;
+-(instancetype)populateCell:(ALMessage*) alMessage viewSize:(CGSize)viewSize index:(NSIndexPath *)index tableview:(UITableView *)tblView;
+//-(instancetype)populateCell:(ALMessage*) alMessage viewSize:(CGSize)viewSize;
 @property (retain, nonatomic) MessageReplyView * replyUIView;
 -(void)setupProgress;
 -(void)dowloadRetryButtonAction;
