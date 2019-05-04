@@ -186,11 +186,26 @@
 -(void)setData{
     
     
-    // Setup quick recording if it's enabled in the settings
-    if([ALApplozicSettings isQuickAudioRecordingEnabled]) {
-        [self setUpSoundRecordingView];
-        [self showMicButton];
+    if (_isFromBroadcast == true) {
+        [self.attachmentOutlet setHidden:true];
+        [self showSendButton];
+    }else{
+        
+        [self.attachmentOutlet setHidden:false];
+        
+        // Setup quick recording if it's enabled in the settings
+        if([ALApplozicSettings isQuickAudioRecordingEnabled]) {
+            [self setUpSoundRecordingView];
+            [self showMicButton];
+        }
+        
     }
+    
+//    // Setup quick recording if it's enabled in the settings
+//    if([ALApplozicSettings isQuickAudioRecordingEnabled]) {
+//        [self setUpSoundRecordingView];
+//        [self showMicButton];
+//    }
     
     
     [self loadAllImages];
@@ -446,8 +461,14 @@
     
     if(![self isGroup])
     {
+    
         self.nsLayoutconstraintAttachmentWidth.constant = 40;
-        self.attachmentOutlet.hidden = NO;
+        
+        if (self.isFromBroadcast = false) {
+            self.attachmentOutlet.isHidden = NO;
+        }
+        
+        //self.attachmentOutlet.hidden = NO;
         [self serverCallForLastSeen];
     }else{
         ALChannelService * alChannelService  = [[ALChannelService alloc] init];
@@ -456,7 +477,13 @@
             self.attachmentOutlet.hidden = YES;
             self.nsLayoutconstraintAttachmentWidth.constant = 0;
         }else{
-            self.attachmentOutlet.hidden = NO;
+            
+            
+            if (self.isFromBroadcast = false) {
+                self.attachmentOutlet.isHidden = NO;
+            }
+            
+            //self.attachmentOutlet.hidden = NO;
             self.nsLayoutconstraintAttachmentWidth.constant = 40;
 
         }

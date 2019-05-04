@@ -1087,6 +1087,15 @@
         self.detailChatViewController.navigationController.navigationBarHidden = NO;
         
         
+        if (_isFromBroadcast == true) {
+            self.detailChatViewController.isFromBroadcast = true;
+        }else{
+            self.detailChatViewController.isFromBroadcast = false;
+            
+        }
+        
+        
+        
     }
     if([ALApplozicSettings isContactsGroupEnabled ] && _contactsGroupId)
     {
@@ -1132,6 +1141,14 @@
         // self.detailChatViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"ALChatViewController"];
         self.detailChatViewController = [self.aplozicStoryboard instantiateViewControllerWithIdentifier:@"ALChatViewController"];
 //        self.detailChatViewController.IS_USER_BLOCKED = YES;
+        
+        
+        if (_isFromBroadcast == true) {
+            self.detailChatViewController.isFromBroadcast = true;
+        }else{
+            self.detailChatViewController.isFromBroadcast = false;
+        }
+        
         self.detailChatViewController.navigationController.navigationBarHidden = NO;
         
     }
@@ -1709,6 +1726,13 @@
         //amolchat
         //self.detailChatViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"ALChatViewController"];
         self.detailChatViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"ALChatViewController"];
+        
+        if (_isFromBroadcast == true) {
+            self.detailChatViewController.isFromBroadcast = true;
+        }else{
+            self.detailChatViewController.isFromBroadcast = false;
+            
+        }
         
     }
     

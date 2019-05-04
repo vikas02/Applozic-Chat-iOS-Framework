@@ -68,6 +68,9 @@
 
 @property (strong, nonatomic) NSNumber *parentGroupKey;
 @property (strong, nonatomic) NSMutableArray *childGroupList;
+
+@property (strong, nonatomic) NSMutableArray *isFromBroadcast;
+
 -(void)intializeSubgroupMessages;
 
 @end

@@ -54,6 +54,8 @@
 @property (nonatomic,assign) BOOL IS_USER_BLOCKED;
 @property (strong, nonatomic) id <ALChatViewControllerDelegate> chatViewDelegate;
 
+@property (nonatomic,assign) BOOL isFromBroadcast;
+
 -(void)fetchAndRefresh;
 -(void)fetchAndRefresh:(BOOL)flag;
 
